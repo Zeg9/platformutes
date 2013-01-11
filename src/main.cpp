@@ -17,7 +17,7 @@ int main(int argc, char ** argv)
 	Device &d = getDevice();
 	// TODO I DON'T WANNA SEE THIS HERE !
 	Image *c = getResourceMgr().getImage("sprites/character/stand");
-	int cx(10), cy(64), ncx(cx), ncy(cy), cxv(0), cyv(1); // character position and velocity; TODO be implemented elsewhere
+	int cx(32), cy(64), ncx(cx), ncy(cy), cxv(0), cyv(1); // character position and velocity; TODO be implemented elsewhere
 	Level lvl("../data/levels/test.pmlvl");
 	// </TODO>
 	SDL_Event e;
@@ -77,8 +77,8 @@ int main(int argc, char ** argv)
 			lvl.get((ncx-1)/BLOCK_WIDTH+1, (cy-1)/BLOCK_HEIGHT+2).isSolid()
 			))
 			cx = ncx;
-		if (lvl.get(cx/BLOCK_WIDTH, cy/BLOCK_HEIGHT+2).getHurt())
-		{ cx = 10; cy = 64; }
+		if (lvl.get(cx/BLOCK_WIDTH, (cy-1)/BLOCK_HEIGHT+2).getHurt())
+		{ cx = 32; cy = 64; }
 		d.drawImage(c, cx, cy);
 		// </TODO>
 		// handle events
