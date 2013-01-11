@@ -47,10 +47,36 @@ int main(int argc, char ** argv)
 		if (cyv < 2)
 			cyv += 1;
 		ncx = cx+cxv; ncy = cy+cyv;
-		if (!lvl.get(ncx/BLOCK_WIDTH, cy/BLOCK_HEIGHT+1).isSolid())
+		if (cyv < 0)
+		{
+			if (!(
+			lvl.get(cx/BLOCK_WIDTH,ncy/BLOCK_HEIGHT).isSolid() ||
+			lvl.get(cx/BLOCK_WIDTH+1,ncy/BLOCK_HEIGHT).isSolid()
+			))
+				cy = ncy;
+			else
+				cyv += 1;
+		}
+		if (cyv > 0)
+		{
+			if (!(
+			lvl.get(cx/BLOCK_WIDTH,(ncy-1)/BLOCK_HEIGHT+2).isSolid() ||
+			lvl.get(cx/BLOCK_WIDTH+1,(ncy-1)/BLOCK_HEIGHT+2).isSolid()
+			))
+				cy = ncy;
+			else
+				cyv -= 1;
+		}
+		if (cxv < 0 && !(
+			lvl.get(ncx/BLOCK_WIDTH, (cy-1)/BLOCK_HEIGHT+1).isSolid() ||
+			lvl.get(ncx/BLOCK_WIDTH, (cy-1)/BLOCK_HEIGHT+2).isSolid()
+			))
 			cx = ncx;
-		if (!lvl.get(cx/BLOCK_WIDTH, ncy/BLOCK_HEIGHT+2).isSolid())
-			cy = ncy;
+		if (cxv > 0 && !(
+			lvl.get((ncx-1)/BLOCK_WIDTH+1, (cy-1)/BLOCK_HEIGHT+1).isSolid() ||
+			lvl.get((ncx-1)/BLOCK_WIDTH+1, (cy-1)/BLOCK_HEIGHT+2).isSolid()
+			))
+			cx = ncx;
 		if (lvl.get(cx/BLOCK_WIDTH, cy/BLOCK_HEIGHT+2).getHurt())
 		{ cx = 10; cy = 64; }
 		d.drawImage(c, cx, cy);
@@ -72,6 +98,13 @@ int main(int argc, char ** argv)
 							break;
 						case SDLK_UP:
 							cyv = -10;
+							break;
+						case SDLK_DOWN:
+							cyv = 2;
+							break;
+						case SDLK_p:
+							std::cout << cx << ',' << cy << std::endl;
+							break;
 						default:
 							break;
 					}
@@ -82,6 +115,10 @@ int main(int argc, char ** argv)
 						case SDLK_LEFT:
 						case SDLK_RIGHT:
 							cxv = 0;
+							break;
+						case SDLK_UP:
+						case SDLK_DOWN:
+							cyv = 0;
 							break;
 						default:
 							break;

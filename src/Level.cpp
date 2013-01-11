@@ -75,7 +75,7 @@ Level::Level(std::string filename):
 
 Tile &Level::get(int x, int y)
 {
-	if (x < width && y < height)
+	if (x >= 0 && y >= 0 && x < width && y < height)
 	{
 		return getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
 	}
