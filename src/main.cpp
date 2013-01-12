@@ -34,13 +34,18 @@ int main(int argc, char ** argv)
 	while (d.run())
 	{
 		// draw background
-		for (int x = 0; x < d.getWidth();
+		for (int x = 0; x <= d.getWidth();
 			x += lvl.getBackground()->getWidth())
 		{
-			for (int y = 0; y < d.getHeight();
+			for (int y = 0; y <= d.getHeight();
 				y += lvl.getBackground()->getHeight())
 			{
-				d.drawImage(lvl.getBackground(),x,y);
+				int dx = x-cx%BW, dy = y-cy%BH;
+				if (cx < d.getWidth()/2 || cx > lvl.getWidth()*BW-d.getWidth()/2)
+					dx = x;
+				if (cy < d.getHeight()/2 || cy+BH > lvl.getHeight()*BW-d.getHeight()/2)
+					dy = y;
+				d.drawImage(lvl.getBackground(),dx,dy);
 			}
 		}
 		// draw tiles
