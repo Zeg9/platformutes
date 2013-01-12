@@ -112,7 +112,7 @@ int main(int argc, char ** argv)
 			lvl.get(PPOS.x/BW, (PPOS.y-1+BH*2)/BH).getHurt() ||
 			lvl.get(PPOS.x/BW+1, (PPOS.y-1+BH*2)/BH).getHurt()
 			)
-		{ getEnvironment().player->setPos(32,64); }
+		{ getEnvironment().player->die(); }
 		getEnvironment().step();
 		getEnvironment().render();
 		// </TODO>
@@ -142,7 +142,7 @@ int main(int argc, char ** argv)
 							std::cout << PPOS.x << ',' << PPOS.y << std::endl;
 							break;
 						case SDLK_BACKSPACE:
-							getEnvironment().player->setPos(32,64);
+							getEnvironment().player->die();
 							break;
 						default:
 							break;

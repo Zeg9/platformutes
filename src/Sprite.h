@@ -19,6 +19,7 @@ class Sprite
 		vec2 getVel();
 		void setSize(int x, int y);
 		vec2 getSize();
+		virtual void die();
 		virtual void render();
 		virtual void step();
 	protected:

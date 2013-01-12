@@ -1,10 +1,11 @@
 #include "Sprite.h"
+#include "Player.h"
 #include "Environment.h"
 
 #include <iostream>
 
 Environment::Environment() :
-	player(new Sprite("character",32,64,32,64))
+	player(new Player())
 {}
 Environment::~Environment()
 {

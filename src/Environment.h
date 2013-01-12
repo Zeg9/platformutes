@@ -3,6 +3,8 @@
 
 #include <vector>
 #include "Level.h"
+#include "Sprite.h"
+#include "Player.h"
 #include "tools.h"
 
 #define ENV getEnvironment()
@@ -11,15 +13,13 @@
 #define PVEL PLAYER->getVel()
 #define PSIZE PLAYER->getSize()
 
-class Sprite;
-
 class Environment
 {
 	friend Environment &getEnvironment();
 	public:
 		Level lvl;
 		std::vector<Sprite*> sprites;
-		Sprite *player;
+		Player *player;
 		void render();
 		void step();
 		void quit();

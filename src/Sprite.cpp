@@ -28,6 +28,11 @@ vec2 Sprite::getVel() { return v; }
 void Sprite::setSize(int x, int y) { s = vec2(x,y); }
 vec2 Sprite::getSize() { return s; }
 
+void Sprite::die()
+{
+	// This should be implemented in derivated classes, like player
+}
+
 void Sprite::render()
 {
 	Level &lvl = getEnvironment().lvl;
