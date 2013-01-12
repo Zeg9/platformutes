@@ -21,7 +21,4 @@ struct vec2
 	int x, y;
 };
 
-typedef vec2 pos;
-typedef vec2 size;
-
 #endif//__TOOLS_H__

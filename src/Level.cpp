@@ -5,6 +5,9 @@
 #include "ResourceMgr.h"
 #include "Tile.h"
 #include "Tileset.h"
+#include "Environment.h"
+#include "Sprite.h"
+#include "Badguys.h"
 #include "Level.h"
 
 #include <iostream>
@@ -79,7 +82,15 @@ Tile &Level::get(int x, int y)
 {
 	if (x >= 0 && y >= 0 && x < width && y < height)
 	{
-		return getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
+		Tile &t = getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
+		if (t.getSpawn() != "")
+		{
+			if (t.getSpawn() == "mummy")
+				ENV.sprites.push_back(new Mummy(x*BLOCK_WIDTH, y*BLOCK_HEIGHT));
+			blocks[x][y] = -1;
+			return getAirTile();
+		}
+		return t;
 	}
 	return getAirTile();
 }

@@ -26,6 +26,7 @@ Tileset::Tileset(std::string filename)
 			if (kv.size() != 2) continue;
 			std::string key = kv[0], value = kv[1];
 			if (key == "img") tiles[num].img = value;
+			if (key == "spawn") tiles[num].spawn = value;
 			if (key == "light") tiles[num].light = toint(value);
 			if (key == "hurt") tiles[num].hurt = toint(value);
 			if (key == "solid") tiles[num].solid = tobool(value);

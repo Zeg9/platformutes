@@ -7,16 +7,11 @@
 #include "Sprite.h"
 #include "ResourceMgr.h"
 #include "Environment.h"
+#include "Badguys.h"
 #include "tools.h"
 
 #define BW BLOCK_WIDTH
 #define BH BLOCK_HEIGHT
-
-// WARNING:
-// Some (most) of the code here will be moved soon
-// It was for testing but it looks like it works great
-// so don't complain about "everything is in one file"
-// because this will be fixed soon :D
 
 int main(int argc, char ** argv)
 {
@@ -30,14 +25,10 @@ int main(int argc, char ** argv)
 		lvlpath = argv[1];
 	Device &d = getDevice();
 	Level &lvl = getEnvironment().lvl;
-	Sprite *playerSprite = new Sprite("character/stand_r",32,64,32,64);
-	getEnvironment().sprites.push_back(playerSprite);
 	lvl.load(lvlpath);
-	pos &ppos = getEnvironment().ppos;
 	SDL_Event e;
 	while (d.run())
 	{
-		ppos = playerSprite->getPos();
 		// draw background
 		for (int x = 0; x <= d.getWidth();
 			x += lvl.getBackground()->getWidth())
@@ -45,10 +36,10 @@ int main(int argc, char ** argv)
 			for (int y = 0; y <= d.getHeight();
 				y += lvl.getBackground()->getHeight())
 			{
-				int dx = x-ppos.x%BW, dy = y-ppos.y%BH;
-				if (ppos.x < d.getWidth()/2 || ppos.x > lvl.getWidth()*BW-d.getWidth()/2)
+				int dx = x-PPOS.x%BW, dy = y-PPOS.y%BH;
+				if (PPOS.x < d.getWidth()/2 || PPOS.x > lvl.getWidth()*BW-d.getWidth()/2)
 					dx = x;
-				if (ppos.y < d.getHeight()/2 || ppos.y+BH > lvl.getHeight()*BW-d.getHeight()/2)
+				if (PPOS.y < d.getHeight()/2 || PPOS.y+BH > lvl.getHeight()*BW-d.getHeight()/2)
 					dy = y;
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
@@ -59,26 +50,26 @@ int main(int argc, char ** argv)
 		{
 			for (int sy = 0; sy < d.getHeight()/BH+1; sy++)
 			{
-				int x = sx - d.getWidth()/2/BW+ppos.x/BW;
-				int y = sy - d.getHeight()/2/BW+ppos.y/BH;
-				int dx = sx*BW-ppos.x%BW;
-				int dy = sy*BH-ppos.y%BH;
-				if (ppos.x < d.getWidth()/2)
+				int x = sx - d.getWidth()/2/BW+PPOS.x/BW;
+				int y = sy - d.getHeight()/2/BW+PPOS.y/BH;
+				int dx = sx*BW-PPOS.x%BW;
+				int dy = sy*BH-PPOS.y%BH;
+				if (PPOS.x < d.getWidth()/2)
 				{
 					x = sx;
 					dx = sx*BW;
 				}
-				else if (ppos.x > lvl.getWidth()*BW-d.getWidth()/2)
+				else if (PPOS.x > lvl.getWidth()*BW-d.getWidth()/2)
 				{
 					x = lvl.getWidth()-d.getWidth()/BW+sx;
 					dx = sx*BW;
 				}
-				if (ppos.y < d.getHeight()/2)
+				if (PPOS.y < d.getHeight()/2)
 				{
 					y = sy;
 					dy = sy*BH;
 				}
-				else if (ppos.y+BH > lvl.getHeight()*BH-d.getHeight()/2)
+				else if (PPOS.y+BH > lvl.getHeight()*BH-d.getHeight()/2)
 				{
 					y = lvl.getHeight()-d.getHeight()/BH+sy;
 					dy = sy*BH;
@@ -117,14 +108,13 @@ int main(int argc, char ** argv)
 		// draw sprites and character
 		// TODO handle this elsewhere
 		if (
-			ppos.y > lvl.getHeight()*BH ||
-			lvl.get(ppos.x/BW, (ppos.y-1+BH*2)/BH).getHurt() ||
-			lvl.get(ppos.x/BW+1, (ppos.y-1+BH*2)/BH).getHurt()
+			PPOS.y > lvl.getHeight()*BH ||
+			lvl.get(PPOS.x/BW, (PPOS.y-1+BH*2)/BH).getHurt() ||
+			lvl.get(PPOS.x/BW+1, (PPOS.y-1+BH*2)/BH).getHurt()
 			)
-		{ ppos.x = 32; ppos.y = 64; }
-		playerSprite->setPos(ppos.x, ppos.y);
+		{ getEnvironment().player->setPos(32,64); }
 		getEnvironment().step();
-		getEnvironment().renderSprites();
+		getEnvironment().render();
 		// </TODO>
 		// handle events
 		while(d.hasEvent())
@@ -136,23 +126,23 @@ int main(int argc, char ** argv)
 					switch (e.key.keysym.sym)
 					{
 						case SDLK_LEFT:
-							playerSprite->setVel(-2,playerSprite->getVel().y);
-							playerSprite->setImage("character/stand_l");
+							PLAYER->setVel(-2,PLAYER->getVel().y);
+							PLAYER->setState("stand_l");
 							break;
 						case SDLK_RIGHT:
-							playerSprite->setVel(2,playerSprite->getVel().y);
-							playerSprite->setImage("character/stand_r");
+							PLAYER->setVel(2,PLAYER->getVel().y);
+							PLAYER->setState("stand_r");
 							break;
 						case SDLK_UP:
-							if (lvl.get(ppos.x/BW,ppos.y/BW+2).isSolid()
-							 || lvl.get((ppos.x-1)/BW+1,ppos.y/BW+2).isSolid())
-								playerSprite->setVel(playerSprite->getVel().x,-10);
+							if (lvl.get(PPOS.x/BW,PPOS.y/BW+2).isSolid()
+							 || lvl.get((PPOS.x-1)/BW+1,PPOS.y/BW+2).isSolid())
+								PLAYER->setVel(PLAYER->getVel().x,-10);
 							break;
 						case SDLK_p:
-							std::cout << ppos.x << ',' << ppos.y << std::endl;
+							std::cout << PPOS.x << ',' << PPOS.y << std::endl;
 							break;
 						case SDLK_BACKSPACE:
-							ppos.x = 32; ppos.y = 64;
+							getEnvironment().player->setPos(32,64);
 							break;
 						default:
 							break;
@@ -162,12 +152,12 @@ int main(int argc, char ** argv)
 					switch (e.key.keysym.sym)
 					{
 						case SDLK_LEFT:
-							if (playerSprite->getVel().x < 0)
-								playerSprite->setVel(0,playerSprite->getVel().y);
+							if (PLAYER->getVel().x < 0)
+								PLAYER->setVel(0,PLAYER->getVel().y);
 							break;
 						case SDLK_RIGHT:
-							if (playerSprite->getVel().x > 0)
-								playerSprite->setVel(0,playerSprite->getVel().y);
+							if (PLAYER->getVel().x > 0)
+								PLAYER->setVel(0,PLAYER->getVel().y);
 							break;
 						default:
 							break;

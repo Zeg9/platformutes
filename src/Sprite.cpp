@@ -11,7 +11,7 @@
 #include <iostream>
 
 Sprite::Sprite(std::string _img, int x, int y, int w, int h) :
-	img(_img), p(x, y), v(0,0), s(w, h), physics(true)
+	img(_img), state("stand_r"), p(x, y), v(0,0), s(w, h), physics(true)
 {}
 
 Sprite::~Sprite()
@@ -20,29 +20,31 @@ Sprite::~Sprite()
 }
 
 void Sprite::setImage(std::string _img) { img = _img; }
+void Sprite::setState(std::string _state) { state = _state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
 vec2 Sprite::getPos() { return p; }
 void Sprite::setVel(int x, int y) { v = vec2(x,y); }
 vec2 Sprite::getVel() { return v; }
+void Sprite::setSize(int x, int y) { s = vec2(x,y); }
+vec2 Sprite::getSize() { return s; }
 
 void Sprite::render()
 {
-	pos pl = getEnvironment().ppos;
 	Level &lvl = getEnvironment().lvl;
 	Device &d = getDevice();
 	int lw = lvl.getWidth()*BLOCK_WIDTH;
 	int lh = lvl.getHeight()*BLOCK_HEIGHT;
-	int dx = p.x - pl.x + d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH;
-	int dy = p.y - pl.y + d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT;
-	if (pl.x < d.getWidth()/2)
+	int dx = p.x - PPOS.x + d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH;
+	int dy = p.y - PPOS.y + d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT;
+	if (PPOS.x < d.getWidth()/2)
 		dx = p.x;
-	else if (pl.x > lw-d.getWidth()/2)
+	else if (PPOS.x > lw-d.getWidth()/2)
 		dx = p.x - lw + d.getWidth();
-	if (pl.y < d.getHeight()/2)
+	if (PPOS.y < d.getHeight()/2)
 		dy = p.y;
-	else if (pl.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
+	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
 		dy = p.y - lh + d.getHeight();
-	d.drawImage(getResourceMgr().getImage("sprites/"+img),dx,dy);
+	d.drawImage(getResourceMgr().getImage("sprites/"+img+'/'+state),dx,dy);
 }
 
 void Sprite::step()

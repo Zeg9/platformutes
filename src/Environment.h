@@ -5,6 +5,12 @@
 #include "Level.h"
 #include "tools.h"
 
+#define ENV getEnvironment()
+#define PLAYER ENV.player
+#define PPOS PLAYER->getPos()
+#define PVEL PLAYER->getVel()
+#define PSIZE PLAYER->getSize()
+
 class Sprite;
 
 class Environment
@@ -12,9 +18,9 @@ class Environment
 	friend Environment &getEnvironment();
 	public:
 		Level lvl;
-		pos ppos;
 		std::vector<Sprite*> sprites;
-		void renderSprites();
+		Sprite *player;
+		void render();
 		void step();
 		void quit();
 	private:

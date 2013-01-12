@@ -11,13 +11,14 @@ class Tile
 	public:
 		Tile();
 		Image *getImage();
+		std::string getSpawn();
 		int getLighting();
 		int getHurt();
 		bool isSolid();
 		bool hasShading();
 		virtual bool isAir();
 	protected:
-		std::string img;
+		std::string img, spawn;
 		int light, hurt;
 		bool solid, shading;
 };
