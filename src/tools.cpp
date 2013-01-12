@@ -24,6 +24,13 @@ bool tobool(std::string s)
 	return false;
 }
 
+int round(int i, int f)
+{
+	if (i%f > f/2)
+		return (i/f+1)*f;
+	return (i/f)*f;
+}
+
 std::vector<std::string> split(std::string in, char sep)
 {
 	std::vector<std::string> r;

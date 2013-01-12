@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "Tileset.h"
 #include "ResourceMgr.h"
+#include "tools.h"
 
 #define BW BLOCK_WIDTH
 #define BH BLOCK_HEIGHT
@@ -45,6 +46,7 @@ int main(int argc, char ** argv)
 				d.drawImage(lvl.get(x,y).getImage(), x*BW, y*BH);
 				if (!lvl.get(x,y).isSolid()) continue;
 				bool t, b, l, r, tr, br, bl, tl;
+				int w = lvl.getWidth(), h = lvl.getHeight();
 				t = !lvl.get(x,y-1).isSolid();
 				b = !lvl.get(x,y+1).isSolid();
 				l = !lvl.get(x-1,y).isSolid();
@@ -53,13 +55,13 @@ int main(int argc, char ** argv)
 				br = !lvl.get(x+1,y+1).isSolid();
 				bl = !lvl.get(x-1,y+1).isSolid();
 				tl = !lvl.get(x-1,y-1).isSolid();
-				if (t)
+				if (y > 0 && t)
 					d.drawImage(getResourceMgr().getImage("shading/t"),x*BW,y*BH);
-				if (b)
+				if (y < h-1 && b)
 					d.drawImage(getResourceMgr().getImage("shading/b"),x*BW,y*BH);
-				if (l)
+				if (x > 0 && l)
 					d.drawImage(getResourceMgr().getImage("shading/l"),x*BW,y*BH);
-				if (r)
+				if (x < w-1 && r)
 					d.drawImage(getResourceMgr().getImage("shading/r"),x*BW,y*BH);
 				if (tr && !(t || r))
 					d.drawImage(getResourceMgr().getImage("shading/tr"),x*BW,y*BH);
@@ -73,8 +75,6 @@ int main(int argc, char ** argv)
 		}
 		// draw sprites and character
 		// TODO better collisions
-		if (cyv < 2)
-			cyv += 1;
 		ncx = cx+cxv; ncy = cy+cyv;
 		if (cyv < 0 && !(
 			lvl.get(cx/BW,ncy/BH).isSolid() ||
@@ -86,6 +86,8 @@ int main(int argc, char ** argv)
 			lvl.get((cx-1)/BW+1,(ncy-1+BH*2)/BH).isSolid()
 			))
 			cy = ncy;
+		else if (cyv > 0)
+			cy = round(cy,BH);
 		if (cxv < 0 && !(
 			lvl.get(ncx/BW, cy/BH).isSolid() ||
 			lvl.get(ncx/BW, (cy-1+BH)/BH).isSolid() ||
@@ -98,6 +100,8 @@ int main(int argc, char ** argv)
 			lvl.get((ncx-1)/BW+1, (cy-1+BH*2)/BH).isSolid()
 			))
 			cx = ncx;
+		if (cyv < 5)
+			cyv += 1;
 		if (
 			lvl.get(cx/BW, (cy-1+BH*2)/BH).getHurt() ||
 			lvl.get(cx/BW+1, (cy-1+BH*2)/BH).getHurt()
