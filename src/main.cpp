@@ -154,6 +154,7 @@ int main(int argc, char ** argv)
 		if (cyv < 5)
 			cyv += 1;
 		if (
+			cy > lvl.getHeight()*BH ||
 			lvl.get(cx/BW, (cy-1+BH*2)/BH).getHurt() ||
 			lvl.get(cx/BW+1, (cy-1+BH*2)/BH).getHurt()
 			)

@@ -1,4 +1,4 @@
-width:100; height:100; tileset:lab; background:lab;
+name: Lab 1; creator: jmf; width:100; height:100; tileset:lab; background:lab;
 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1
