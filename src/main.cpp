@@ -106,7 +106,6 @@ int main(int argc, char ** argv)
 			}
 		}
 		// draw sprites and character
-		// TODO handle this elsewhere
 		if (
 			PPOS.y > lvl.getHeight()*BH ||
 			lvl.get(PPOS.x/BW, (PPOS.y-1+BH*2)/BH).getHurt() ||
@@ -115,8 +114,7 @@ int main(int argc, char ** argv)
 		{ getEnvironment().player->die(); }
 		getEnvironment().step();
 		getEnvironment().render();
-		// </TODO>
-		// handle events
+		// handle events (TODO move this too)
 		while(d.hasEvent())
 		{
 			e = d.nextEvent();
