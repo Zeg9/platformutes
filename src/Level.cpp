@@ -87,3 +87,6 @@ Image *Level::getBackground()
 	return getResourceMgr().getImage("backgrounds/"+background);
 }
 
+int Level::getWidth() { return width; }
+int Level::getHeight() { return height; }
+

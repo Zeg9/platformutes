@@ -15,6 +15,8 @@ class Level
 		Level(std::string filename);
 		Tile &get(int x, int y);
 		Image *getBackground();
+		int getWidth();
+		int getHeight();
 	protected:
 		std::string tileset;
 		std::string background;
