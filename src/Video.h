@@ -8,7 +8,7 @@
 #define VIDEO_BPP 32
 #define VIDEO_SDL_FLAGS 0
 
-#define MAX_FPS 45
+#define MAX_FPS 60
 #define TBF 1000/MAX_FPS // Time between frames
 
 

@@ -10,6 +10,12 @@
 #define BW BLOCK_WIDTH
 #define BH BLOCK_HEIGHT
 
+// WARNING:
+// Some (most) of the code here will be moved soon
+// It was for testing but it looks like it works great
+// so don't complain about "everything is in one file"
+// because this will be fixed soon :D
+
 int main(int argc, char ** argv)
 {
 	if (argc > 1)
@@ -38,12 +44,37 @@ int main(int argc, char ** argv)
 			}
 		}
 		// draw tiles
-		for (int x = 0; x < d.getWidth()/BW+1; x++)
+		// TODO move this ?
+		for (int sx = 0; sx < d.getWidth()/BW+1; sx++)
 		{
-			for (int y = 0; y < d.getHeight()/BH+1; y++)
+			for (int sy = 0; sy < d.getHeight()/BH+1; sy++)
 			{
+				int x = sx - d.getWidth()/2/BW+cx/BW;
+				int y = sy - d.getHeight()/2/BW+cy/BH;
+				int dx = sx*BW-cx%BW;
+				int dy = sy*BH-cy%BH;
+				if (cx < d.getWidth()/2)
+				{
+					x = sx;
+					dx = sx*BW;
+				}
+				else if (cx > lvl.getWidth()*BW-d.getWidth()/2)
+				{
+					x = lvl.getWidth()-d.getWidth()/BW+sx;
+					dx = sx*BW;
+				}
+				if (cy < d.getHeight()/2)
+				{
+					y = sy;
+					dy = sy*BH;
+				}
+				else if (cy+BH > lvl.getHeight()*BH-d.getHeight()/2)
+				{
+					y = lvl.getHeight()-d.getHeight()/BH+sy;
+					dy = sy*BH;
+				}
 				if (lvl.get(x,y).isAir()) continue;
-				d.drawImage(lvl.get(x,y).getImage(), x*BW, y*BH);
+				d.drawImage(lvl.get(x,y).getImage(), dx, dy);
 				if (!lvl.get(x,y).isSolid()) continue;
 				bool t, b, l, r, tr, br, bl, tl;
 				int w = lvl.getWidth(), h = lvl.getHeight();
@@ -56,25 +87,25 @@ int main(int argc, char ** argv)
 				bl = !lvl.get(x-1,y+1).isSolid();
 				tl = !lvl.get(x-1,y-1).isSolid();
 				if (y > 0 && t)
-					d.drawImage(getResourceMgr().getImage("shading/t"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/t"),dx,dy);
 				if (y < h-1 && b)
-					d.drawImage(getResourceMgr().getImage("shading/b"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/b"),dx,dy);
 				if (x > 0 && l)
-					d.drawImage(getResourceMgr().getImage("shading/l"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/l"),dx,dy);
 				if (x < w-1 && r)
-					d.drawImage(getResourceMgr().getImage("shading/r"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/r"),dx,dy);
 				if (tr && !(t || r))
-					d.drawImage(getResourceMgr().getImage("shading/tr"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/tr"),dx,dy);
 				if (br && !(b || r))
-					d.drawImage(getResourceMgr().getImage("shading/br"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/br"),dx,dy);
 				if (bl && !(b || l))
-					d.drawImage(getResourceMgr().getImage("shading/bl"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/bl"),dx,dy);
 				if (tl && !(t || l))
-					d.drawImage(getResourceMgr().getImage("shading/tl"),x*BW,y*BH);
+					d.drawImage(getResourceMgr().getImage("shading/tl"),dx,dy);
 			}
 		}
 		// draw sprites and character
-		// TODO better collisions
+		// TODO handle this elsewhere
 		ncx = cx+cxv; ncy = cy+cyv;
 		if (cyv < 0 && !(
 			lvl.get(cx/BW,ncy/BH).isSolid() ||
@@ -119,7 +150,17 @@ int main(int argc, char ** argv)
 			lvl.get(cx/BW+1, (cy-1+BH*2)/BH).getHurt()
 			)
 		{ cx = 32; cy = 64; }
-		d.drawImage(c, cx, cy);
+		int dx = d.getWidth()/2/BW*BW;
+		int dy = d.getHeight()/2/BH*BH;
+		if (cx < d.getWidth()/2)
+			dx = cx;
+		else if (cx > lvl.getWidth()*BW-d.getWidth()/2)
+			dx = cx - lvl.getWidth()*BW+d.getWidth();
+		if (cy < d.getHeight()/2)
+			dy = cy;
+		else if (cy+BH > lvl.getHeight()*BH-d.getHeight()/2)
+			dy = cy - lvl.getHeight()*BH+d.getHeight();
+		d.drawImage(c, dx, dy);
 		// </TODO>
 		// handle events
 		while(d.hasEvent())
@@ -143,6 +184,9 @@ int main(int argc, char ** argv)
 							break;
 						case SDLK_p:
 							std::cout << cx << ',' << cy << std::endl;
+							break;
+						case SDLK_BACKSPACE:
+							cx = 32; cy = 64;
 							break;
 						default:
 							break;
