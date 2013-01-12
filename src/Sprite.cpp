@@ -14,7 +14,10 @@ Sprite::Sprite(std::string _img, int x, int y, int w, int h) :
 	img(_img), p(x, y), v(0,0), s(w, h), physics(true)
 {}
 
-Sprite::~Sprite() {}
+Sprite::~Sprite()
+{
+	std::cout << "Removing sprite (" << img << ")..." << std::endl;
+}
 
 void Sprite::setImage(std::string _img) { img = _img; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
@@ -49,7 +52,7 @@ void Sprite::step()
 	int nx = p.x+v.x, ny = p.y+v.y;
 	if (v.y < 0 && !(
 		lvl.get(p.x/BLOCK_WIDTH,ny/BLOCK_HEIGHT).isSolid() ||
-		lvl.get(p.x/BLOCK_WIDTH+1,ny/BLOCK_HEIGHT).isSolid()
+		lvl.get((p.x-1)/BLOCK_WIDTH+1,ny/BLOCK_HEIGHT).isSolid()
 		))
 		p.y = ny;
 	else if (v.y < 0)

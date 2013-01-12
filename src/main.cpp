@@ -145,7 +145,7 @@ int main(int argc, char ** argv)
 							break;
 						case SDLK_UP:
 							if (lvl.get(ppos.x/BW,ppos.y/BW+2).isSolid()
-							 || lvl.get(ppos.x/BW+1,ppos.y/BW+2).isSolid())
+							 || lvl.get((ppos.x-1)/BW+1,ppos.y/BW+2).isSolid())
 								playerSprite->setVel(playerSprite->getVel().x,-10);
 							break;
 						case SDLK_p:
