@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
 		std::cerr << "Usage: " << argv[0] << " [<level>]" << std::endl;
 		return 1;
 	}
-	std::string lvlpath("../data/levels/test.pmlvl");
+	std::string lvlpath("../data/levels/pyramid.pmlvl");
 	if (argc == 2)
 		lvlpath = argv[1];
 	Device &d = getDevice();

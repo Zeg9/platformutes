@@ -2,7 +2,7 @@
 #include "Image.h"
 #include "ResourceMgr.h"
 
-Tile::Tile() : img(""), light(0), hurt(0), solid(true), shading(true) {}
+Tile::Tile() : img(""), light(0), hurt(0), solid(true), shading(false) {}
 
 Image *Tile::getImage() { return getResourceMgr().getImage("tiles/"+img); }
 int Tile::getLighting() { return light; }
@@ -11,7 +11,7 @@ bool Tile::isSolid() { return solid; }
 bool Tile::hasShading() { return shading; }
 bool Tile::isAir() { return false; }
 
-AirTile::AirTile() : Tile() { solid = false; shading = false; }
+AirTile::AirTile() : Tile() { solid = false; }
 bool AirTile::isAir() { return true; }
 
 AirTile &getAirTile()
