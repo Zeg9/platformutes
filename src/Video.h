@@ -2,6 +2,7 @@
 #define __VIDEO_H__
 
 #include <stack>
+#include <SDL/SDL.h>
 
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480

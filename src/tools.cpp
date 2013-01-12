@@ -52,7 +52,7 @@ std::vector<std::string> split(std::string in, char sep)
 std::string strip(std::string in, std::string what)
 {
 	std::string out("");
-	for (int i = 0; i < in.size(); i++)
+	for (unsigned int i = 0; i < in.size(); i++)
 	{
 		if (what.find(in[i]) == what.npos)
 			out += in[i];
@@ -68,8 +68,12 @@ std::string stripspaces(std::string in)
 std::string lowercase(std::string in)
 {
 	std::string out;
-	for (int i = 0; i < in.size(); i++)
+	for (unsigned int i = 0; i < in.size(); i++)
 		out += tolower(in[i]);
 	return out;
 }
+
+vec2::vec2(int _x, int _y) :
+	x(_x), y(_y)
+	{}
 

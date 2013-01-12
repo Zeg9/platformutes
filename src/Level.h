@@ -8,11 +8,13 @@
 #define BLOCK_HEIGHT 32
 
 class Tile;
+class Image;
 
 class Level
 {
 	public:
-		Level(std::string filename);
+		Level();
+		void load(std::string filename);
 		Tile &get(int x, int y);
 		Image *getBackground();
 		int getWidth();

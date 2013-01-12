@@ -15,5 +15,13 @@ std::string stripspaces(std::string in);
 
 std::string lowercase(std::string in);
 
+struct vec2
+{
+	vec2(int _x, int _y);
+	int x, y;
+};
+
+typedef vec2 pos;
+typedef vec2 size;
 
 #endif//__TOOLS_H__

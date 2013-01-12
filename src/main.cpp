@@ -4,7 +4,9 @@
 #include "Image.h"
 #include "Level.h"
 #include "Tileset.h"
+#include "Sprite.h"
 #include "ResourceMgr.h"
+#include "Environment.h"
 #include "tools.h"
 
 #define BW BLOCK_WIDTH
@@ -20,7 +22,6 @@ int main(int argc, char ** argv)
 {
 	if (argc > 2)
 	{
-		// you have no argument !
 		std::cerr << "Usage: " << argv[0] << " [<level>]" << std::endl;
 		return 1;
 	}
@@ -28,14 +29,15 @@ int main(int argc, char ** argv)
 	if (argc == 2)
 		lvlpath = argv[1];
 	Device &d = getDevice();
-	// TODO I DON'T WANNA SEE THIS HERE !
-	Image *c = getResourceMgr().getImage("sprites/character/stand");
-	int cx(32), cy(64), ncx(cx), ncy(cy), cxv(0), cyv(1); // character position and velocity; TODO be implemented elsewhere
-	Level lvl(lvlpath);
-	// </TODO>
+	Level &lvl = getEnvironment().lvl;
+	Sprite *playerSprite = new Sprite("character/stand_r",32,64,32,64);
+	getEnvironment().sprites.push_back(playerSprite);
+	lvl.load(lvlpath);
+	pos &ppos = getEnvironment().ppos;
 	SDL_Event e;
 	while (d.run())
 	{
+		ppos = playerSprite->getPos();
 		// draw background
 		for (int x = 0; x <= d.getWidth();
 			x += lvl.getBackground()->getWidth())
@@ -43,10 +45,10 @@ int main(int argc, char ** argv)
 			for (int y = 0; y <= d.getHeight();
 				y += lvl.getBackground()->getHeight())
 			{
-				int dx = x-cx%BW, dy = y-cy%BH;
-				if (cx < d.getWidth()/2 || cx > lvl.getWidth()*BW-d.getWidth()/2)
+				int dx = x-ppos.x%BW, dy = y-ppos.y%BH;
+				if (ppos.x < d.getWidth()/2 || ppos.x > lvl.getWidth()*BW-d.getWidth()/2)
 					dx = x;
-				if (cy < d.getHeight()/2 || cy+BH > lvl.getHeight()*BW-d.getHeight()/2)
+				if (ppos.y < d.getHeight()/2 || ppos.y+BH > lvl.getHeight()*BW-d.getHeight()/2)
 					dy = y;
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
@@ -57,26 +59,26 @@ int main(int argc, char ** argv)
 		{
 			for (int sy = 0; sy < d.getHeight()/BH+1; sy++)
 			{
-				int x = sx - d.getWidth()/2/BW+cx/BW;
-				int y = sy - d.getHeight()/2/BW+cy/BH;
-				int dx = sx*BW-cx%BW;
-				int dy = sy*BH-cy%BH;
-				if (cx < d.getWidth()/2)
+				int x = sx - d.getWidth()/2/BW+ppos.x/BW;
+				int y = sy - d.getHeight()/2/BW+ppos.y/BH;
+				int dx = sx*BW-ppos.x%BW;
+				int dy = sy*BH-ppos.y%BH;
+				if (ppos.x < d.getWidth()/2)
 				{
 					x = sx;
 					dx = sx*BW;
 				}
-				else if (cx > lvl.getWidth()*BW-d.getWidth()/2)
+				else if (ppos.x > lvl.getWidth()*BW-d.getWidth()/2)
 				{
 					x = lvl.getWidth()-d.getWidth()/BW+sx;
 					dx = sx*BW;
 				}
-				if (cy < d.getHeight()/2)
+				if (ppos.y < d.getHeight()/2)
 				{
 					y = sy;
 					dy = sy*BH;
 				}
-				else if (cy+BH > lvl.getHeight()*BH-d.getHeight()/2)
+				else if (ppos.y+BH > lvl.getHeight()*BH-d.getHeight()/2)
 				{
 					y = lvl.getHeight()-d.getHeight()/BH+sy;
 					dy = sy*BH;
@@ -114,62 +116,15 @@ int main(int argc, char ** argv)
 		}
 		// draw sprites and character
 		// TODO handle this elsewhere
-		ncx = cx+cxv; ncy = cy+cyv;
-		if (cyv < 0 && !(
-			lvl.get(cx/BW,ncy/BH).isSolid() ||
-			lvl.get(cx/BW+1,ncy/BH).isSolid()
-			))
-			cy = ncy;
-		else if (cyv < 0)
-		{
-			cy = round(cy,BH);
-			cyv = 0;
-		}
-		if (cyv > 0 && !(
-			lvl.get(cx/BW,(ncy-1+BH*2)/BH).isSolid() ||
-			lvl.get((cx-1)/BW+1,(ncy-1+BH*2)/BH).isSolid()
-			))
-			cy = ncy;
-		else if (cyv > 0)
-		{
-			cy = round(cy,BH);
-			cyv = 0;
-		}
-		if (cxv < 0 && !(
-			lvl.get(ncx/BW, cy/BH).isSolid() ||
-			lvl.get(ncx/BW, (cy-1+BH)/BH).isSolid() ||
-			lvl.get(ncx/BW, (cy-1+BH*2)/BH).isSolid()
-			))
-			cx = ncx;
-		else if (cxv < 0)
-			cx = round(cx,BW);
-		if (cxv > 0 && !(
-			lvl.get((ncx-1)/BW+1, cy/BH).isSolid() ||
-			lvl.get((ncx-1)/BW+1, (cy-1+BH)/BH).isSolid() ||
-			lvl.get((ncx-1)/BW+1, (cy-1+BH*2)/BH).isSolid()
-			))
-			cx = ncx;
-		else if (cxv > 0)
-			cx = round(cx,BW);
-		if (cyv < 5)
-			cyv += 1;
 		if (
-			cy > lvl.getHeight()*BH ||
-			lvl.get(cx/BW, (cy-1+BH*2)/BH).getHurt() ||
-			lvl.get(cx/BW+1, (cy-1+BH*2)/BH).getHurt()
+			ppos.y > lvl.getHeight()*BH ||
+			lvl.get(ppos.x/BW, (ppos.y-1+BH*2)/BH).getHurt() ||
+			lvl.get(ppos.x/BW+1, (ppos.y-1+BH*2)/BH).getHurt()
 			)
-		{ cx = 32; cy = 64; }
-		int dx = d.getWidth()/2/BW*BW;
-		int dy = d.getHeight()/2/BH*BH;
-		if (cx < d.getWidth()/2)
-			dx = cx;
-		else if (cx > lvl.getWidth()*BW-d.getWidth()/2)
-			dx = cx - lvl.getWidth()*BW+d.getWidth();
-		if (cy < d.getHeight()/2)
-			dy = cy;
-		else if (cy+BH > lvl.getHeight()*BH-d.getHeight()/2)
-			dy = cy - lvl.getHeight()*BH+d.getHeight();
-		d.drawImage(c, dx, dy);
+		{ ppos.x = 32; ppos.y = 64; }
+		playerSprite->setPos(ppos.x, ppos.y);
+		getEnvironment().step();
+		getEnvironment().renderSprites();
 		// </TODO>
 		// handle events
 		while(d.hasEvent())
@@ -181,21 +136,23 @@ int main(int argc, char ** argv)
 					switch (e.key.keysym.sym)
 					{
 						case SDLK_LEFT:
-							cxv = -2;
+							playerSprite->setVel(-2,playerSprite->getVel().y);
+							playerSprite->setImage("character/stand_l");
 							break;
 						case SDLK_RIGHT:
-							cxv = 2;
+							playerSprite->setVel(2,playerSprite->getVel().y);
+							playerSprite->setImage("character/stand_r");
 							break;
 						case SDLK_UP:
-							if (lvl.get(cx/BW,cy/BW+2).isSolid()
-							 || lvl.get(cx/BW+1,cy/BW+2).isSolid())
-								cyv = -10;
+							if (lvl.get(ppos.x/BW,ppos.y/BW+2).isSolid()
+							 || lvl.get(ppos.x/BW+1,ppos.y/BW+2).isSolid())
+								playerSprite->setVel(playerSprite->getVel().x,-10);
 							break;
 						case SDLK_p:
-							std::cout << cx << ',' << cy << std::endl;
+							std::cout << ppos.x << ',' << ppos.y << std::endl;
 							break;
 						case SDLK_BACKSPACE:
-							cx = 32; cy = 64;
+							ppos.x = 32; ppos.y = 64;
 							break;
 						default:
 							break;
@@ -205,10 +162,12 @@ int main(int argc, char ** argv)
 					switch (e.key.keysym.sym)
 					{
 						case SDLK_LEFT:
-							if (cxv < 0) cxv = 0;
+							if (playerSprite->getVel().x < 0)
+								playerSprite->setVel(0,playerSprite->getVel().y);
 							break;
 						case SDLK_RIGHT:
-							if (cxv > 0) cxv = 0;
+							if (playerSprite->getVel().x > 0)
+								playerSprite->setVel(0,playerSprite->getVel().y);
 							break;
 						default:
 							break;

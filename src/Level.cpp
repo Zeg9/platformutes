@@ -9,10 +9,12 @@
 
 #include <iostream>
 
-Level::Level(std::string filename):
+Level::Level():
 	tileset(""), background(""),
 	width(0), height(0),
 	blocks(0)
+{}
+void Level::load(std::string filename)
 {
 	std::cout << "== Loading level: " << filename << "..." << std::endl;
 	std::ifstream ifs(filename.c_str());
