@@ -81,25 +81,37 @@ int main(int argc, char ** argv)
 			lvl.get(cx/BW+1,ncy/BH).isSolid()
 			))
 			cy = ncy;
+		else if (cyv < 0)
+		{
+			cy = round(cy,BH);
+			cyv = 0;
+		}
 		if (cyv > 0 && !(
 			lvl.get(cx/BW,(ncy-1+BH*2)/BH).isSolid() ||
 			lvl.get((cx-1)/BW+1,(ncy-1+BH*2)/BH).isSolid()
 			))
 			cy = ncy;
 		else if (cyv > 0)
+		{
 			cy = round(cy,BH);
+			cyv = 0;
+		}
 		if (cxv < 0 && !(
 			lvl.get(ncx/BW, cy/BH).isSolid() ||
 			lvl.get(ncx/BW, (cy-1+BH)/BH).isSolid() ||
 			lvl.get(ncx/BW, (cy-1+BH*2)/BH).isSolid()
 			))
 			cx = ncx;
+		else if (cxv < 0)
+			cx = round(cx,BW);
 		if (cxv > 0 && !(
 			lvl.get((ncx-1)/BW+1, cy/BH).isSolid() ||
 			lvl.get((ncx-1)/BW+1, (cy-1+BH)/BH).isSolid() ||
 			lvl.get((ncx-1)/BW+1, (cy-1+BH*2)/BH).isSolid()
 			))
 			cx = ncx;
+		else if (cxv > 0)
+			cx = round(cx,BW);
 		if (cyv < 5)
 			cyv += 1;
 		if (
@@ -125,7 +137,9 @@ int main(int argc, char ** argv)
 							cxv = 2;
 							break;
 						case SDLK_UP:
-							cyv = -10;
+							if (lvl.get(cx/BW,cy/BW+2).isSolid()
+							 || lvl.get(cx/BW+1,cy/BW+2).isSolid())
+								cyv = -10;
 							break;
 						case SDLK_p:
 							std::cout << cx << ',' << cy << std::endl;
