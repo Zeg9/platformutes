@@ -1,1 +1,4 @@
 1)img:lab/steel
+2) img:lab/lamp; light:2; solid:0;
+3) img:lab/acid; hurt:1; solid:0;
+
