@@ -18,17 +18,20 @@
 
 int main(int argc, char ** argv)
 {
-	if (argc > 1)
+	if (argc > 2)
 	{
 		// you have no argument !
-		std::cerr << "Usage: " << argv[0] << std::endl;
+		std::cerr << "Usage: " << argv[0] << " [<level>]" << std::endl;
 		return 1;
 	}
+	std::string lvlpath("../data/levels/test.pmlvl");
+	if (argc == 2)
+		lvlpath = argv[1];
 	Device &d = getDevice();
 	// TODO I DON'T WANNA SEE THIS HERE !
 	Image *c = getResourceMgr().getImage("sprites/character/stand");
 	int cx(32), cy(64), ncx(cx), ncy(cy), cxv(0), cyv(1); // character position and velocity; TODO be implemented elsewhere
-	Level lvl("../data/levels/test.pmlvl");
+	Level lvl(lvlpath);
 	// </TODO>
 	SDL_Event e;
 	while (d.run())
