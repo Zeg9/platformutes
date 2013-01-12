@@ -49,10 +49,30 @@ int main(int argc, char ** argv)
 		{
 			for (int sy = 0; sy < d.getHeight()/BH+1; sy++)
 			{
-				int x = sx + (cx/d.getWidth()*d.getWidth())/BW;
-				int y = sy + (cy/d.getHeight()*d.getHeight())/BH;
-				int dx = sx*BW;
-				int dy = sy*BH;
+				int x = sx - d.getWidth()/2/BW+cx/BW;
+				int y = sy - d.getHeight()/2/BW+cy/BH;
+				int dx = sx*BW-cx%BW;
+				int dy = sy*BH-cy%BH;
+				if (cx < d.getWidth()/2)
+				{
+					x = sx;
+					dx = sx*BW;
+				}
+				else if (cx > lvl.getWidth()*BW-d.getWidth()/2)
+				{
+					x = lvl.getWidth()-d.getWidth()/BW+sx;
+					dx = sx*BW;
+				}
+				if (cy < d.getHeight()/2)
+				{
+					y = sy;
+					dy = sy*BH;
+				}
+				else if (cy+BH > lvl.getHeight()*BH-d.getHeight()/2)
+				{
+					y = lvl.getHeight()-d.getHeight()/BH+sy;
+					dy = sy*BH;
+				}
 				if (lvl.get(x,y).isAir()) continue;
 				d.drawImage(lvl.get(x,y).getImage(), dx, dy);
 				if (!lvl.get(x,y).isSolid()) continue;
@@ -130,7 +150,17 @@ int main(int argc, char ** argv)
 			lvl.get(cx/BW+1, (cy-1+BH*2)/BH).getHurt()
 			)
 		{ cx = 32; cy = 64; }
-		d.drawImage(c, cx%d.getWidth(), cy%d.getHeight());
+		int dx = d.getWidth()/2/BW*BW;
+		int dy = d.getHeight()/2/BH*BH;
+		if (cx < d.getWidth()/2)
+			dx = cx;
+		else if (cx > lvl.getWidth()*BW-d.getWidth()/2)
+			dx = cx - lvl.getWidth()*BW+d.getWidth();
+		if (cy < d.getHeight()/2)
+			dy = cy;
+		else if (cy+BH > lvl.getHeight()*BH-d.getHeight()/2)
+			dy = cy - lvl.getHeight()*BH+d.getHeight();
+		d.drawImage(c, dx, dy);
 		// </TODO>
 		// handle events
 		while(d.hasEvent())
