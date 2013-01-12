@@ -14,11 +14,12 @@ class Tile
 		int getLighting();
 		int getHurt();
 		bool isSolid();
+		bool hasShading();
 		virtual bool isAir();
 	protected:
 		std::string img;
 		int light, hurt;
-		bool solid;
+		bool solid, shading;
 };
 class AirTile : public Tile
 {

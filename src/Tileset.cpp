@@ -29,6 +29,7 @@ Tileset::Tileset(std::string filename)
 			if (key == "light") tiles[num].light = toint(value);
 			if (key == "hurt") tiles[num].hurt = toint(value);
 			if (key == "solid") tiles[num].solid = tobool(value);
+			if (key == "shading") tiles[num].shading = tobool(value);
 		}
 		std::cout << "Loaded tile " << num << " with image " << tiles[num].img << std::endl;
 	}

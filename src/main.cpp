@@ -83,17 +83,17 @@ int main(int argc, char ** argv)
 				}
 				if (lvl.get(x,y).isAir()) continue;
 				d.drawImage(lvl.get(x,y).getImage(), dx, dy);
-				if (!lvl.get(x,y).isSolid()) continue;
+				if (!lvl.get(x,y).hasShading()) continue;
 				bool t, b, l, r, tr, br, bl, tl;
 				int w = lvl.getWidth(), h = lvl.getHeight();
-				t = !lvl.get(x,y-1).isSolid();
-				b = !lvl.get(x,y+1).isSolid();
-				l = !lvl.get(x-1,y).isSolid();
-				r = !lvl.get(x+1,y).isSolid();
-				tr = !lvl.get(x+1,y-1).isSolid();
-				br = !lvl.get(x+1,y+1).isSolid();
-				bl = !lvl.get(x-1,y+1).isSolid();
-				tl = !lvl.get(x-1,y-1).isSolid();
+				t = !lvl.get(x,y-1).hasShading();
+				b = !lvl.get(x,y+1).hasShading();
+				l = !lvl.get(x-1,y).hasShading();
+				r = !lvl.get(x+1,y).hasShading();
+				tr = !lvl.get(x+1,y-1).hasShading();
+				br = !lvl.get(x+1,y+1).hasShading();
+				bl = !lvl.get(x-1,y+1).hasShading();
+				tl = !lvl.get(x-1,y-1).hasShading();
 				if (y > 0 && t)
 					d.drawImage(getResourceMgr().getImage("shading/t"),dx,dy);
 				if (y < h-1 && b)
