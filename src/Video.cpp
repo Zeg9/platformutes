@@ -46,6 +46,17 @@ bool Device::run()
 			case SDL_QUIT:
 				done = true;
 				break;
+			case SDL_KEYDOWN:
+				switch (e.key.keysym.sym)
+				{
+					case SDLK_F4:
+						if (e.key.keysym.mod & KMOD_ALT)
+							done = true;
+						break;
+					default:
+						break;
+				}
+				break;
 			default:
 				break;
 		}

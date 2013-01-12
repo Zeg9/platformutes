@@ -77,7 +77,10 @@ int main(int argc, char ** argv)
 			lvl.get((ncx-1)/BLOCK_WIDTH+1, (cy-1)/BLOCK_HEIGHT+2).isSolid()
 			))
 			cx = ncx;
-		if (lvl.get(cx/BLOCK_WIDTH, (cy-1)/BLOCK_HEIGHT+2).getHurt())
+		if (
+			lvl.get(cx/BLOCK_WIDTH, (cy-1)/BLOCK_HEIGHT+2).getHurt() ||
+			lvl.get(cx/BLOCK_WIDTH+1, (cy-1)/BLOCK_HEIGHT+2).getHurt()
+			)
 		{ cx = 32; cy = 64; }
 		d.drawImage(c, cx, cy);
 		// </TODO>

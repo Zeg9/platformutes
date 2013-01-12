@@ -3,7 +3,7 @@
 
 #include <stack>
 
-#define VIDEO_WIDTH 639
+#define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
 #define VIDEO_BPP 32
 #define VIDEO_SDL_FLAGS 0
