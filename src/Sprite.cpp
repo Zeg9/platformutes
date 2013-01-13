@@ -11,6 +11,9 @@
 
 #include <iostream>
 
+#define W getSize().x
+#define H getSize().y
+
 Sprite::Sprite(std::string _img, int x, int y) :
 	img(_img), state("stand_r"), p(x, y), v(0,0), physics(true)
 {}
@@ -78,8 +81,8 @@ void Sprite::step()
 		v.y = 0;
 	}
 	if (v.y > 0 && !(
-		lvl.get(p.x/BLOCK_WIDTH,(ny-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).isSolid() ||
-		lvl.get((p.x-1)/BLOCK_WIDTH+1,(ny-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).isSolid()
+		lvl.get(p.x/BLOCK_WIDTH,(ny-1+H)/BLOCK_HEIGHT).isSolid() ||
+		lvl.get((p.x-1)/BLOCK_WIDTH+1,(ny-1+H)/BLOCK_HEIGHT).isSolid()
 		))
 		p.y = ny;
 	else if (v.y > 0)
