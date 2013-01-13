@@ -30,19 +30,24 @@
 	img: mummy-detector&idle;
 	sprite: scripted;
 	on_contact:
-		sprite: scripted; 
 		level.set_tile(-2,-1,4)
 		level.set_tile(-2,0,4)
 		ifeq($player.image, mummy)
 			level.set_tile(-2,-1,0)
 			level.set_tile(-2,0,0)
 		endif()
-[30]
+[23]
 	img: lever&off;
 	sprite: scripted;
 	on_contact:
 		sprite.state(on)
 		level.set_tile(-2,0,4)
+[24]
+	img: lever&off;
+	sprite: scripted;
+	on_contact:
+		sprite.state(on)
+		level.set_tile(0,1,0)
 [40]
 	img: common.potion&idle;
 	sprite: scripted;
