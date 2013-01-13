@@ -22,14 +22,14 @@ ResourceMgr::~ResourceMgr()
 Image *ResourceMgr::getImage(std::string name)
 {
 	if (images.find(name) == images.end())
-		images[name] = new Image(DATA_PATH"images/"+name+".png");
+		images[name] = new Image(DATA_PATH+name+".png");
 	return images[name];
 }
 
 Tileset *ResourceMgr::getTileset(std::string name)
 {
 	if (tilesets.find(name) == tilesets.end())
-		tilesets[name] = new Tileset(DATA_PATH"tilesets/"+name+".pmts");
+		tilesets[name] = new Tileset(DATA_PATH"tilesets/"+name+"/tileset");
 	return tilesets[name];
 }
 

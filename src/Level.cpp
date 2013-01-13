@@ -103,9 +103,10 @@ Tile &Level::get(int x, int y)
 
 Image *Level::getBackground()
 {
-	return getResourceMgr().getImage("backgrounds/"+background);
+	return getResourceMgr().getImage("tilesets/"+tileset+"/background");
 }
 
+std::string Level::getTilesetName() { return tileset; }
 int Level::getWidth() { return width; }
 int Level::getHeight() { return height; }
 

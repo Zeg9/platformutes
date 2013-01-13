@@ -1,10 +1,15 @@
 #include "Tile.h"
 #include "Image.h"
 #include "ResourceMgr.h"
+#include "Environment.h"
 
 Tile::Tile() : img(""), sprite("none"), light(0), hurt(0), solid(true), shading(false) {}
 
-Image *Tile::getImage() { return getResourceMgr().getImage("tiles/"+img); }
+Image *Tile::getImage()
+{
+	return getResourceMgr().getImage(
+		"tilesets/"+ENV.lvl.getTilesetName()+"/tiles/"+img);
+}
 std::string Tile::getImageName() { return img; }
 std::string Tile::getSprite() { return sprite; }
 std::map<std::string,std::string> &Tile::getScripts() { return scripts; }

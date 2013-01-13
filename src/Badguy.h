@@ -1,10 +1,9 @@
 #ifndef __BADGUY_H__
 #define __BADGUY_H__
 
-#include <map>
 #include "Sprite.h"
 
-class Badguy : public Sprite
+class Badguy : public ScriptedSprite
 {
 	public:
 		Badguy(std::string _img, int x, int y,
@@ -15,8 +14,6 @@ class Badguy : public Sprite
 		bool isGoingRight();
 		bool shouldGoLeft();
 		bool shouldGoRight();
-		std::map<std::string, std::string> scripts;
-		bool hasContact;
 };
 
 #endif//__BADGUYS_H__

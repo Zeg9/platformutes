@@ -87,21 +87,21 @@ int main(int argc, char ** argv)
 				bl = !lvl.get(x-1,y+1).hasShading();
 				tl = !lvl.get(x-1,y-1).hasShading();
 				if (y > 0 && t)
-					d.drawImage(getResourceMgr().getImage("shading/t"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/t"),dx,dy);
 				if (y < h-1 && b)
-					d.drawImage(getResourceMgr().getImage("shading/b"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/b"),dx,dy);
 				if (x > 0 && l)
-					d.drawImage(getResourceMgr().getImage("shading/l"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/l"),dx,dy);
 				if (x < w-1 && r)
-					d.drawImage(getResourceMgr().getImage("shading/r"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/r"),dx,dy);
 				if (tr && !(t || r))
-					d.drawImage(getResourceMgr().getImage("shading/tr"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/tr"),dx,dy);
 				if (br && !(b || r))
-					d.drawImage(getResourceMgr().getImage("shading/br"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/br"),dx,dy);
 				if (bl && !(b || l))
-					d.drawImage(getResourceMgr().getImage("shading/bl"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/bl"),dx,dy);
 				if (tl && !(t || l))
-					d.drawImage(getResourceMgr().getImage("shading/tl"),dx,dy);
+					d.drawImage(getResourceMgr().getImage("common/shading/tl"),dx,dy);
 			}
 		}
 		// draw sprites and character

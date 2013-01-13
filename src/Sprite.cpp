@@ -1,4 +1,3 @@
-
 #include <string>
 #include "tools.h"
 #include "ResourceMgr.h"
@@ -7,6 +6,7 @@
 #include "Environment.h"
 #include "Tile.h"
 #include "Image.h"
+#include "Script.h"
 #include "Sprite.h"
 
 #include <iostream>
@@ -23,7 +23,13 @@ Sprite::~Sprite()
 void Sprite::setImage(std::string _img) { img = _img; }
 Image *Sprite::getImage()
 {
-	return getResourceMgr().getImage("sprites/"+img+'/'+state);
+	std::vector<std::string> tokens = split(img,'.');
+	if (tokens.size() == 2 && tokens[0]=="common")
+		return getResourceMgr().getImage(
+			"common/sprites/"+tokens[1]+'/'+state);
+	return getResourceMgr().getImage(
+		"tilesets/"+getEnvironment().lvl.getTilesetName()
+		+"/sprites/"+img+'/'+state);
 }
 void Sprite::setState(std::string _state) { state = _state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
@@ -99,5 +105,28 @@ void Sprite::step()
 		p.x = round(p.x,BLOCK_WIDTH);
 	if (v.y < 5)
 		v.y += 1;
+}
+
+ScriptedSprite::ScriptedSprite(std::string _img, int x, int y,
+	std::map<std::string, std::string> &_scripts):
+		Sprite(_img,x,y), scripts(_scripts), hasContact(false)
+{}
+
+void ScriptedSprite::step()
+{
+	if (p.x+getSize().x >= PPOS.x
+	 && p.x <= PPOS.x + PSIZE.x-1
+	 && p.y+getSize().y >= PPOS.y
+	 && p.y <= PPOS.y + PSIZE.y-1)
+	{
+		if (!hasContact)
+		{
+			runScript(scripts["on_contact"], this);
+			hasContact = true;
+		}
+	}
+	else if (hasContact)
+		hasContact = false;
+	Sprite::step();
 }
 
