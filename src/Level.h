@@ -18,6 +18,7 @@ class Level
 		void load_next();
 		void reload();
 		Tile &get(int x, int y);
+		void set(int x, int y, int tile);
 		Image *getBackground();
 		std::string getTilesetName();
 		int getWidth();

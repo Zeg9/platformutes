@@ -4,3 +4,5 @@
 10) sprite: badguy; img: mummy; on_contact: player.image(mummy)
 11) sprite: scripted; img: common.potion&idle; on_contact: player.image(common.character) sprite.remove()
 12) sprite: scripted; img: door&idle; on_contact: ifeq ($player.image, common.character) level.load_next() endif()
+20) sprite: scripted; img: mummy-detector&idle; on_contact: level.set_tile(2,-1,1) level.set_tile(2,0,1) ifeq($player.image, mummy) level.set_tile(2,-1,0) level.set_tile(2,0,0) endif()
+71) sprite: scripted; img: tutorial&1; solid: 0;

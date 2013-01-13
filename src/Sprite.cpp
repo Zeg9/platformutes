@@ -92,6 +92,7 @@ void Sprite::step()
 		v.y = 0;
 	}
 	if (v.x < 0 && !(
+		nx < 0 ||
 		lvl.get(nx/BLOCK_WIDTH, p.y/BLOCK_HEIGHT).isSolid() ||
 		lvl.get(nx/BLOCK_WIDTH, (p.y-1+BLOCK_HEIGHT)/BLOCK_HEIGHT).isSolid() ||
 		lvl.get(nx/BLOCK_WIDTH, (p.y-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).isSolid()
@@ -125,7 +126,7 @@ void ScriptedSprite::step()
 	{
 		if (!hasContact)
 		{
-			runScript(scripts["on_contact"], this);
+			runScript(scripts["on_contact"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
 			hasContact = true;
 		}
 	}

@@ -19,7 +19,7 @@ int main(int argc, char ** argv)
 		std::cerr << "Usage: " << argv[0] << " [<level name>]" << std::endl;
 		return 1;
 	}
-	std::string lvlname("pyramid");
+	std::string lvlname("pyramid/lvl1");
 	if (argc == 2)
 		lvlname = argv[1];
 	Device &d = getDevice();

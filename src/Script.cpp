@@ -24,6 +24,7 @@ void checkArgs(std::string function, int argc)
 	expectedArgs["sprite.remove"] = 0;
 	expectedArgs["level.load"] = 1;
 	expectedArgs["level.load_next"] = 0;
+	expectedArgs["level.set_tile"] = 3;
 	expectedArgs["ifeq"] = 2;
 	expectedArgs["endif"] = 0;
 	if (argc != expectedArgs[function])
@@ -31,7 +32,7 @@ void checkArgs(std::string function, int argc)
 			+" arguments to "+function);
 }
 
-void runScript(std::string script, Sprite *caller)
+void runScript(std::string script, Sprite*sprite, vec2 pos)
 {
 	std::vector<std::string> tokens = split(script,')');
 	bool isinif(false), ifok(false);
@@ -43,6 +44,8 @@ void runScript(std::string script, Sprite *caller)
 		std::vector<std::string> args;
 		if (t.size()>1) args = split(t[1],',');
 		checkArgs(function,args.size());
+		if (startswith(function, "sprite.") && !sprite)
+			continue;
 		if (isinif && !ifok)
 		{
 			if (function == "endif")
@@ -52,10 +55,6 @@ void runScript(std::string script, Sprite *caller)
 			PLAYER->setImage(args[0]);
 		else if (function == "player.die")
 			PLAYER->die();
-		else if (function == "sprite.image")
-			caller->setImage(args[0]);
-		else if (function == "sprite.remove")
-			ENV.removeSprite(caller);
 		else if (function == "level.load")
 		{
 			PLAYER->setPos(32,64);
@@ -70,6 +69,13 @@ void runScript(std::string script, Sprite *caller)
 			ENV.reset();
 			ENV.lvl.load_next();
 		}
+		else if (function == "level.set_tile")
+		{
+			ENV.lvl.set(
+				toint(args[0])+pos.x,
+				toint(args[1])+pos.y,
+				toint(args[2]));
+		}
 		else if (function == "ifeq")
 		{
 			isinif = true;
@@ -79,6 +85,11 @@ void runScript(std::string script, Sprite *caller)
 				ifok = false;
 		}
 		else if (function == "endif") {}
+		else if (function == "sprite.image")
+			sprite->setImage(args[0]);
+		else if (function == "sprite.remove")
+			ENV.removeSprite(sprite);
 		else throw std::runtime_error("Unknown function: "+function);
 	}
 }
+

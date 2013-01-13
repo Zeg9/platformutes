@@ -127,6 +127,11 @@ Tile &Level::get(int x, int y)
 	}
 	return getAirTile();
 }
+void Level::set(int x, int y, int tile)
+{
+	if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight())
+		blocks[x][y] = tile;
+}
 
 Image *Level::getBackground()
 {
