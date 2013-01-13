@@ -86,12 +86,24 @@ Tile &Level::get(int x, int y)
 		Tile &t = getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
 		if (t.getSprite() != "none")
 		{
-			if (t.getSprite() == "badguy")
-			{
-				std::string image = t.getImageName();
-				ENV.addSprite(new Badguy(
+			std::string image = t.getImageName();
+			std::vector<std::string> tokens = split(image,'&',2);
+			if (tokens.size()==2)
+				image = tokens[0];
+			Sprite * s = 0;
+			if(t.getSprite() == "badguy")
+				s = new Badguy(
 					image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
-					t.getScripts()));
+					t.getScripts());
+			else if (t.getSprite() == "scripted")
+				s = new ScriptedSprite(
+					image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
+					t.getScripts());
+			if (s != 0)
+			{
+				if (tokens.size()==2)
+					s->setState(tokens[1]);
+				ENV.addSprite(s);
 			}
 			blocks[x][y] = -1;
 			return getAirTile();

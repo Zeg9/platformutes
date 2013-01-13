@@ -1,5 +1,5 @@
-1) img:pyramid/sandstone; shading:true;
-2) img:pyramid/torch; light:2; solid:0;
-3) img:pyramid/spikes; hurt:1; solid:0;
+1) img: sandstone; shading:true;
+2) img: torch; light:2; solid:0;
+3) img: spikes; hurt:1; solid:0;
 10) sprite: badguy; img: mummy; on_contact: player.image(mummy)
-11) sprite: scripted; img: potion; on_contact: player.image(common.character)
+11) sprite: scripted; img: common.potion&idle; on_contact: player.image(common.character) sprite.remove()
