@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include "tools.h"
 #include "Image.h"
 
 Image::Image(std::string filename)
@@ -23,5 +24,10 @@ int Image::getWidth()
 int Image::getHeight()
 {
 	return surf->h;
+}
+
+vec2 Image::getSize()
+{
+	return vec2(getWidth(), getHeight());
 }
 

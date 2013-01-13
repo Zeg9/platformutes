@@ -15,7 +15,7 @@ Tileset::Tileset(std::string filename)
 	while (ifs.good())
 	{
 		getline(ifs, l);
-		ls = split(stripspaces(l),')');
+		ls = split(stripspaces(l),')',2);
 		if (ls.size() != 2) continue;
 		int num = toint(ls[0]);
 		if (!num) continue;
@@ -26,11 +26,12 @@ Tileset::Tileset(std::string filename)
 			if (kv.size() != 2) continue;
 			std::string key = kv[0], value = kv[1];
 			if (key == "img") tiles[num].img = value;
-			if (key == "spawn") tiles[num].spawn = value;
+			if (key == "sprite") tiles[num].sprite = value;
 			if (key == "light") tiles[num].light = toint(value);
 			if (key == "hurt") tiles[num].hurt = toint(value);
 			if (key == "solid") tiles[num].solid = tobool(value);
 			if (key == "shading") tiles[num].shading = tobool(value);
+			if (startswith(key,"on_")) tiles[num].scripts[key] = value;
 		}
 		std::cout << "Loaded tile " << num << " with image " << tiles[num].img << std::endl;
 	}

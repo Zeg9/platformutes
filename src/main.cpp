@@ -7,7 +7,6 @@
 #include "Sprite.h"
 #include "ResourceMgr.h"
 #include "Environment.h"
-#include "Badguys.h"
 #include "tools.h"
 
 #define BW BLOCK_WIDTH

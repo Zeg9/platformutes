@@ -1,7 +1,8 @@
 #ifndef __ENVIRONMENT_H__
 #define __ENVIRONMENT_H__
 
-#include <vector>
+#include <list>
+#include <stack>
 #include "Level.h"
 #include "Sprite.h"
 #include "Player.h"
@@ -18,12 +19,15 @@ class Environment
 	friend Environment &getEnvironment();
 	public:
 		Level lvl;
-		std::vector<Sprite*> sprites;
+		void addSprite(Sprite *s);
+		void removeSprite(Sprite *s);
 		Player *player;
 		void render();
 		void step();
 		void quit();
 	private:
+		std::list<Sprite*> sprites;
+		std::stack<Sprite*> s2r; // sprites to remove
 		Environment();
 		~Environment();
 };

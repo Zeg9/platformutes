@@ -2,31 +2,43 @@
 #include "Player.h"
 #include "Environment.h"
 
-#include <iostream>
-
 Environment::Environment() :
 	player(new Player())
 {}
 Environment::~Environment()
 {
-	for (unsigned int i = 0; i < sprites.size(); i++)
-		delete sprites[i];
+	for (std::list<Sprite*>::iterator i = sprites.begin();
+		i != sprites.end(); i++)
+		delete (*i);
 	delete player;
-	std::cout << "== Bye !" << std::endl;
+}
+
+void Environment::addSprite(Sprite *s) { sprites.push_back(s); }
+void Environment::removeSprite(Sprite *s)
+{
+	s2r.push(s);
 }
 
 void Environment::render()
 {
-	for (unsigned int i = 0; i < sprites.size(); i++)
-		sprites[i]->render();
+	for (std::list<Sprite*>::iterator i = sprites.begin();
+		i != sprites.end(); i++)
+		(*i)->render();
 	player->render();
 }
 
 void Environment::step()
 {
-	for (unsigned int i = 0; i < sprites.size(); i++)
-		sprites[i]->step();
+	for (std::list<Sprite*>::iterator i = sprites.begin();
+		i != sprites.end(); i++)
+		(*i)->step();
 	player->step();
+	while (!s2r.empty())
+	{
+		sprites.remove(s2r.top());
+		delete s2r.top();
+		s2r.pop();
+	}
 }
 
 Environment &getEnvironment()

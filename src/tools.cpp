@@ -2,6 +2,8 @@
 #include <vector>
 #include "tools.h"
 
+#include <iostream>
+
 std::string tostring(int i)
 {
 	std::ostringstream oss;
@@ -31,21 +33,23 @@ int round(int i, int f)
 	return (i/f)*f;
 }
 
-std::vector<std::string> split(std::string in, char sep)
+std::vector<std::string> split(std::string in, char sep, unsigned int max)
 {
 	std::vector<std::string> r;
 	std::string current("");
 	for (unsigned int i = 0; i < in.size(); i++)
 	{
-		if (in[i] == sep)
+		if (in[i] == sep && (max==0 || r.size()+1 < max))
 		{
-			r.push_back(current);
+			if (current != "")
+				r.push_back(current);
 			current = "";
 		}
 		else
 			current += in[i];
 	}
-	r.push_back(current);
+	if (current != "")
+		r.push_back(current);
 	return r;
 }
 
@@ -71,6 +75,13 @@ std::string lowercase(std::string in)
 	for (unsigned int i = 0; i < in.size(); i++)
 		out += tolower(in[i]);
 	return out;
+}
+
+bool startswith(std::string s, std::string what)
+{
+	if (s.size() < what.size()) return false;
+	if (s.substr(0,what.size()) == what) return true;
+	return false;
 }
 
 vec2::vec2(int _x, int _y) :

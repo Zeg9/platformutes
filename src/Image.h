@@ -3,6 +3,8 @@
 
 #include <string>
 #include <SDL/SDL.h>
+#include "tools.h"
+
 
 class Image
 {
@@ -12,6 +14,7 @@ class Image
 		~Image();
 		int getWidth();
 		int getHeight();
+		vec2 getSize();
 	private:
 		SDL_Surface *surf;
 };

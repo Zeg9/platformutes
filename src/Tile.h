@@ -1,6 +1,7 @@
 #ifndef __TILE_H__
 #define __TILE_H__
 
+#include <map>
 #include <string>
 
 class Image;
@@ -11,14 +12,17 @@ class Tile
 	public:
 		Tile();
 		Image *getImage();
-		std::string getSpawn();
+		std::string getImageName();
+		std::string getSprite();
+		std::map<std::string,std::string> &getScripts();
 		int getLighting();
 		int getHurt();
 		bool isSolid();
 		bool hasShading();
 		virtual bool isAir();
 	protected:
-		std::string img, spawn;
+		std::string img, sprite;
+		std::map<std::string,std::string> scripts;
 		int light, hurt;
 		bool solid, shading;
 };

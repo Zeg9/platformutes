@@ -1,4 +1,4 @@
 1) img:pyramid/sandstone; shading:true;
 2) img:pyramid/torch; light:2; solid:0;
 3) img:pyramid/spikes; hurt:1; solid:0;
-128) spawn:mummy;
+10) sprite: badguy; img: mummy; on_contact: player.image(mummy)

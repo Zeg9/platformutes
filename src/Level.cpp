@@ -7,7 +7,8 @@
 #include "Tileset.h"
 #include "Environment.h"
 #include "Sprite.h"
-#include "Badguys.h"
+#include "Badguy.h"
+#include "Image.h"
 #include "Level.h"
 
 #include <iostream>
@@ -83,10 +84,15 @@ Tile &Level::get(int x, int y)
 	if (x >= 0 && y >= 0 && x < width && y < height)
 	{
 		Tile &t = getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
-		if (t.getSpawn() != "")
+		if (t.getSprite() != "none")
 		{
-			if (t.getSpawn() == "mummy")
-				ENV.sprites.push_back(new Mummy(x*BLOCK_WIDTH, y*BLOCK_HEIGHT));
+			if (t.getSprite() == "badguy")
+			{
+				std::string image = t.getImageName();
+				ENV.addSprite(new Badguy(
+					image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
+					t.getScripts()));
+			}
 			blocks[x][y] = -1;
 			return getAirTile();
 		}

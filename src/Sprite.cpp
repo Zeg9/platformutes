@@ -6,12 +6,13 @@
 #include "Level.h"
 #include "Environment.h"
 #include "Tile.h"
+#include "Image.h"
 #include "Sprite.h"
 
 #include <iostream>
 
-Sprite::Sprite(std::string _img, int x, int y, int w, int h) :
-	img(_img), state("stand_r"), p(x, y), v(0,0), s(w, h), physics(true)
+Sprite::Sprite(std::string _img, int x, int y) :
+	img(_img), state("stand_r"), p(x, y), v(0,0), physics(true)
 {}
 
 Sprite::~Sprite()
@@ -20,13 +21,16 @@ Sprite::~Sprite()
 }
 
 void Sprite::setImage(std::string _img) { img = _img; }
+Image *Sprite::getImage()
+{
+	return getResourceMgr().getImage("sprites/"+img+'/'+state);
+}
 void Sprite::setState(std::string _state) { state = _state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
 vec2 Sprite::getPos() { return p; }
 void Sprite::setVel(int x, int y) { v = vec2(x,y); }
 vec2 Sprite::getVel() { return v; }
-void Sprite::setSize(int x, int y) { s = vec2(x,y); }
-vec2 Sprite::getSize() { return s; }
+vec2 Sprite::getSize() { return getImage()->getSize(); }
 
 void Sprite::die()
 {
@@ -49,7 +53,7 @@ void Sprite::render()
 		dy = p.y;
 	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
 		dy = p.y - lh + d.getHeight();
-	d.drawImage(getResourceMgr().getImage("sprites/"+img+'/'+state),dx,dy);
+	d.drawImage(getImage(),dx,dy);
 }
 
 void Sprite::step()

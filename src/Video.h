@@ -17,7 +17,7 @@
 
 // SDL_FULLSCREEN if you want fullscreen,
 // 0 if you don't want it.
-#define VIDEO_SDL_FLAGS SDL_FULLSCREEN
+#define VIDEO_SDL_FLAGS 0
 
 // You can change the FPS here, but you shouldn't
 // If you set higher FPS all the game will be faster,

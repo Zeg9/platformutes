@@ -2,10 +2,12 @@
 #include "Image.h"
 #include "ResourceMgr.h"
 
-Tile::Tile() : img(""), spawn(""), light(0), hurt(0), solid(true), shading(false) {}
+Tile::Tile() : img(""), sprite("none"), light(0), hurt(0), solid(true), shading(false) {}
 
 Image *Tile::getImage() { return getResourceMgr().getImage("tiles/"+img); }
-std::string Tile::getSpawn() { return spawn; }
+std::string Tile::getImageName() { return img; }
+std::string Tile::getSprite() { return sprite; }
+std::map<std::string,std::string> &Tile::getScripts() { return scripts; }
 int Tile::getLighting() { return light; }
 int Tile::getHurt() { return hurt; }
 bool Tile::isSolid() { return solid; }
