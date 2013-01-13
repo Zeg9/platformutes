@@ -23,6 +23,8 @@ Sprite::~Sprite()
 	std::cout << "Removing sprite (" << img << ")..." << std::endl;
 }
 
+void Sprite::enablePhysics(bool b) { physics = b; }
+
 void Sprite::setImage(std::string _img) { img = _img; }
 Image *Sprite::getImage()
 {

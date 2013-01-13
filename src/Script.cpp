@@ -21,6 +21,7 @@ void checkArgs(std::string function, int argc)
 	expectedArgs["player.image"] = 1;
 	expectedArgs["player.die"] = 0;
 	expectedArgs["sprite.image"] = 1;
+	expectedArgs["sprite.state"] = 1;
 	expectedArgs["sprite.remove"] = 0;
 	expectedArgs["level.load"] = 1;
 	expectedArgs["level.load_next"] = 0;
@@ -87,6 +88,8 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 		else if (function == "endif") {}
 		else if (function == "sprite.image")
 			sprite->setImage(args[0]);
+		else if (function == "sprite.state")
+			sprite->setState(args[0]);
 		else if (function == "sprite.remove")
 			ENV.removeSprite(sprite);
 		else throw std::runtime_error("Unknown function: "+function);

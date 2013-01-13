@@ -12,6 +12,7 @@ class Sprite
 	public:
 		Sprite(std::string _img, int x, int y);
 		virtual ~Sprite();
+		void enablePhysics(bool b);
 		void setImage(std::string _img);
 		Image *getImage();
 		std::string getImageName();
