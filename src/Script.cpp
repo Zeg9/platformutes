@@ -8,6 +8,13 @@
 
 #include <iostream>
 
+std::string parseVar(std::string in)
+{
+	if (in == "$player.image")
+		return PLAYER->getImageName();
+	return in;
+}
+
 void checkArgs(std::string function, int argc)
 {
 	std::map<std::string,int> expectedArgs;
@@ -17,6 +24,8 @@ void checkArgs(std::string function, int argc)
 	expectedArgs["sprite.remove"] = 0;
 	expectedArgs["level.load"] = 1;
 	expectedArgs["level.load_next"] = 0;
+	expectedArgs["ifeq"] = 2;
+	expectedArgs["endif"] = 0;
 	if (argc != expectedArgs[function])
 		throw std::runtime_error("Excepted "+tostring(expectedArgs[function])
 			+" arguments to "+function);
@@ -25,6 +34,7 @@ void checkArgs(std::string function, int argc)
 void runScript(std::string script, Sprite *caller)
 {
 	std::vector<std::string> tokens = split(script,')');
+	bool isinif(false), ifok(false);
 	for (unsigned int i = 0; i < tokens.size(); i++)
 	{
 		std::vector<std::string> t = split(tokens[i],'(',2);
@@ -33,7 +43,12 @@ void runScript(std::string script, Sprite *caller)
 		std::vector<std::string> args;
 		if (t.size()>1) args = split(t[1],',');
 		checkArgs(function,args.size());
-		if (function == "player.image")
+		if (isinif && !ifok)
+		{
+			if (function == "endif")
+				isinif = false;
+		}
+		else if (function == "player.image")
 			PLAYER->setImage(args[0]);
 		else if (function == "player.die")
 			PLAYER->die();
@@ -55,6 +70,15 @@ void runScript(std::string script, Sprite *caller)
 			ENV.reset();
 			ENV.lvl.load_next();
 		}
+		else if (function == "ifeq")
+		{
+			isinif = true;
+			if (parseVar(args[0]) == parseVar(args[1]))
+				ifok = true;
+			else
+				ifok = false;
+		}
+		else if (function == "endif") {}
 		else throw std::runtime_error("Unknown function: "+function);
 	}
 }

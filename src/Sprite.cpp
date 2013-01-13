@@ -34,6 +34,7 @@ Image *Sprite::getImage()
 		"tilesets/"+getEnvironment().lvl.getTilesetName()
 		+"/sprites/"+img+'/'+state);
 }
+std::string Sprite::getImageName() { return img; }
 void Sprite::setState(std::string _state) { state = _state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
 vec2 Sprite::getPos() { return p; }

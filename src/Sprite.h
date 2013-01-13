@@ -14,6 +14,7 @@ class Sprite
 		virtual ~Sprite();
 		void setImage(std::string _img);
 		Image *getImage();
+		std::string getImageName();
 		void setState(std::string _state);
 		void setPos(int x, int y);
 		vec2 getPos();
