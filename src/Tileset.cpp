@@ -11,11 +11,16 @@ Tileset::Tileset(std::string filename)
 	std::cout << "== Loading tileset: " << filename << "..." << std::endl;
 	std::ifstream ifs(filename.c_str());
 	std::string l;
-	std::vector<std::string> ls;
+	std::string contents;
 	while (ifs.good())
 	{
 		getline(ifs, l);
-		ls = split(stripspaces(l),')',2);
+		contents += l;
+	}
+	std::vector<std::string> tokens = split(contents,'[');
+	for (unsigned int i = 0; i < tokens.size(); i++)
+	{
+		std::vector<std::string> ls = split(stripspaces(tokens[i]),']',2);
 		if (ls.size() != 2) continue;
 		int num = toint(ls[0]);
 		if (!num) continue;
