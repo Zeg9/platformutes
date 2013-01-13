@@ -14,7 +14,8 @@ class Level
 {
 	public:
 		Level();
-		void load(std::string _filename);
+		void load(std::string _name);
+		void load_next();
 		void reload();
 		Tile &get(int x, int y);
 		Image *getBackground();
@@ -25,7 +26,7 @@ class Level
 	protected:
 		std::string tileset;
 		std::string background;
-		std::string filename;
+		std::string name, next;
 		int width, height;
 		int ** blocks;
 };

@@ -15,19 +15,27 @@
 #include <iostream>
 
 Level::Level():
-	tileset(""), background(""), filename(""),
+	tileset(""), background(""), name(""),
 	width(0), height(0),
 	blocks(0)
 {}
-void Level::load(std::string _filename)
+void Level::load(std::string _name)
 {
-	filename = _filename;
+	name = _name;
+	reload();
+}
+void Level::load_next()
+{
+	if (next != "")
+		name = next;
 	reload();
 }
 void Level::reload()
 {
-	std::cout << "== Loading level: " << filename << "..." << std::endl;
-	std::ifstream ifs(filename.c_str());
+	std::cout << "== Loading level: " << name << "..." << std::endl;
+	width = height = 0;
+	tileset = background = next = "";
+	std::ifstream ifs(("../data/levels/"+name+".pmlvl").c_str());
 	std::string fl;
 	getline(ifs,fl);
 	std::vector<std::string> fls = split(stripspaces(fl),';');
@@ -40,9 +48,10 @@ void Level::reload()
 		if (key == "height") height = toint(value);
 		if (key == "tileset") tileset = value;
 		if (key == "background") background = value;
+		if (key == "next") next = value;
 	}
 	if (tileset == "" || width == 0 || height == 0)
-		throw std::runtime_error("Invalid level properties.");
+		throw std::runtime_error("Please specify a tileset, a width and a height.");
 	std::cout << "Tileset: " << tileset << std::endl;
 	std::cout << "Background: " << background << std::endl;
 	std::cout << "Size: " << width << "x" << height << std::endl;

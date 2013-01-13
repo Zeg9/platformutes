@@ -16,15 +16,15 @@ int main(int argc, char ** argv)
 {
 	if (argc > 2)
 	{
-		std::cerr << "Usage: " << argv[0] << " [<level>]" << std::endl;
+		std::cerr << "Usage: " << argv[0] << " [<level name>]" << std::endl;
 		return 1;
 	}
-	std::string lvlpath("../data/levels/pyramid.pmlvl");
+	std::string lvlname("pyramid");
 	if (argc == 2)
-		lvlpath = argv[1];
+		lvlname = argv[1];
 	Device &d = getDevice();
 	Level &lvl = getEnvironment().lvl;
-	lvl.load(lvlpath);
+	lvl.load(lvlname);
 	SDL_Event e;
 	while (d.run())
 	{

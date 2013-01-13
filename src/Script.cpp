@@ -15,6 +15,8 @@ void checkArgs(std::string function, int argc)
 	expectedArgs["player.die"] = 0;
 	expectedArgs["sprite.image"] = 1;
 	expectedArgs["sprite.remove"] = 0;
+	expectedArgs["level.load"] = 1;
+	expectedArgs["level.load_next"] = 0;
 	if (argc != expectedArgs[function])
 		throw std::runtime_error("Excepted "+tostring(expectedArgs[function])
 			+" arguments to "+function);
@@ -39,6 +41,20 @@ void runScript(std::string script, Sprite *caller)
 			caller->setImage(args[0]);
 		else if (function == "sprite.remove")
 			ENV.removeSprite(caller);
+		else if (function == "level.load")
+		{
+			PLAYER->setPos(32,64);
+			PLAYER->setImage("common.character");
+			ENV.reset();
+			ENV.lvl.load(args[0]);
+		}
+		else if (function == "level.load_next")
+		{
+			PLAYER->setPos(32,64);
+			PLAYER->setImage("common.character");
+			ENV.reset();
+			ENV.lvl.load_next();
+		}
 		else throw std::runtime_error("Unknown function: "+function);
 	}
 }

@@ -16,8 +16,7 @@
 // Default: 32
 #define VIDEO_BPP 32
 
-// SDL_FULLSCREEN if you want fullscreen,
-// 0 if you don't want it.
+// Optional SDL_FLAGS
 #define VIDEO_SDL_FLAGS 0
 
 // You can change the FPS here, but you shouldn't
@@ -37,6 +36,7 @@ class Device
 	public:
 		int getWidth();
 		int getHeight();
+		void toggleFullscreen();
 		void drawImage(Image *i, int x=0, int y=0);
 		void render();
 		bool run();
@@ -48,6 +48,7 @@ class Device
 		SDL_Surface *screen;
 		std::stack<SDL_Event> eventStack;
 		int lastticks; // last frame SDL_GetTicks()
+		bool fullscreen;
 		bool done; // When set to true, the application exits
 };
 Device &getDevice();
