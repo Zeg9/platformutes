@@ -13,6 +13,20 @@ Environment::~Environment()
 	delete player;
 }
 
+void Environment::reset()
+{
+	for (std::list<Sprite*>::iterator i = sprites.begin();
+		i != sprites.end(); i++)
+			s2r.push((*i));
+	while (!s2r.empty())
+	{
+		sprites.remove(s2r.top());
+		delete s2r.top();
+		s2r.pop();
+	}
+	lvl.reload();
+}
+
 void Environment::addSprite(Sprite *s) { sprites.push_back(s); }
 void Environment::removeSprite(Sprite *s)
 {

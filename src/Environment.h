@@ -19,6 +19,7 @@ class Environment
 	friend Environment &getEnvironment();
 	public:
 		Level lvl;
+		void reset();
 		void addSprite(Sprite *s);
 		void removeSprite(Sprite *s);
 		Player *player;

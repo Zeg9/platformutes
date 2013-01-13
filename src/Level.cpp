@@ -15,11 +15,16 @@
 #include <iostream>
 
 Level::Level():
-	tileset(""), background(""),
+	tileset(""), background(""), filename(""),
 	width(0), height(0),
 	blocks(0)
 {}
-void Level::load(std::string filename)
+void Level::load(std::string _filename)
+{
+	filename = _filename;
+	reload();
+}
+void Level::reload()
 {
 	std::cout << "== Loading level: " << filename << "..." << std::endl;
 	std::ifstream ifs(filename.c_str());

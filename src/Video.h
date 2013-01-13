@@ -7,6 +7,7 @@
 // You can change the resolution here
 // It is recommended to keep a relatively small one,
 // because the game become really laggy with higher ones.
+// You should keep multiples of 32 for both width and height.
 // Default: 640x480
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
