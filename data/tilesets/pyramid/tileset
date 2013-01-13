@@ -18,32 +18,36 @@
 		player.image(mummy)
 [20]
 	img: mummy-detector&idle;
+	solid: false;
 	sprite: scripted;
 	on_contact:
-		level.set_tile(2,-1,4)
 		level.set_tile(2,0,4)
+		level.set_tile(2,1,4)
 		ifeq($player.image, mummy)
-			level.set_tile(2,-1,0)
 			level.set_tile(2,0,0)
+			level.set_tile(2,1,0)
 		endif()
 [21]
 	img: mummy-detector&idle;
+	solid: false;
 	sprite: scripted;
 	on_contact:
-		level.set_tile(-2,-1,4)
 		level.set_tile(-2,0,4)
+		level.set_tile(-2,1,4)
 		ifeq($player.image, mummy)
-			level.set_tile(-2,-1,0)
 			level.set_tile(-2,0,0)
+			level.set_tile(-2,1,0)
 		endif()
 [23]
 	img: lever&off;
+	solid: false;
 	sprite: scripted;
 	on_contact:
 		sprite.state(on)
 		level.set_tile(-2,0,4)
 [24]
 	img: lever&off;
+	solid: false;
 	sprite: scripted;
 	on_contact:
 		sprite.state(on)
@@ -57,7 +61,7 @@
 [71]
 	img: tutorial&1;
 	sprite: scripted;
-	solid: 0;
+	solid: true;
 [100]
 	img: door&idle;
 	sprite: scripted;

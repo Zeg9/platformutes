@@ -118,6 +118,7 @@ Tile &Level::get(int x, int y)
 			{
 				if (tokens.size()==2)
 					s->setState(tokens[1]);
+				s->enablePhysics(t.isSolid());
 				ENV.addSprite(s);
 			}
 			blocks[x][y] = -1;
