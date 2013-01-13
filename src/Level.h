@@ -20,6 +20,7 @@ class Level
 		std::string getTilesetName();
 		int getWidth();
 		int getHeight();
+		void render();
 	protected:
 		std::string tileset;
 		std::string background;

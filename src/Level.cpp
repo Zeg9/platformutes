@@ -9,6 +9,7 @@
 #include "Sprite.h"
 #include "Badguy.h"
 #include "Image.h"
+#include "Video.h"
 #include "Level.h"
 
 #include <iostream>
@@ -121,4 +122,68 @@ Image *Level::getBackground()
 std::string Level::getTilesetName() { return tileset; }
 int Level::getWidth() { return width; }
 int Level::getHeight() { return height; }
+
+void Level::render()
+{
+	Device &d = getDevice();
+	for (int sx = 0; sx < d.getWidth()/BLOCK_WIDTH+1; sx++)
+	{
+		for (int sy = 0; sy < d.getHeight()/BLOCK_HEIGHT+1; sy++)
+		{
+			int x = sx - d.getWidth()/2/BLOCK_WIDTH+PPOS.x/BLOCK_WIDTH;
+			int y = sy - d.getHeight()/2/BLOCK_WIDTH+PPOS.y/BLOCK_HEIGHT;
+			int dx = sx*BLOCK_WIDTH-PPOS.x%BLOCK_WIDTH;
+			int dy = sy*BLOCK_HEIGHT-PPOS.y%BLOCK_HEIGHT;
+			if (PPOS.x < d.getWidth()/2)
+			{
+				x = sx;
+				dx = sx*BLOCK_WIDTH;
+			}
+			else if (PPOS.x > getWidth()*BLOCK_WIDTH-d.getWidth()/2)
+			{
+				x = getWidth()-d.getWidth()/BLOCK_WIDTH+sx;
+				dx = sx*BLOCK_WIDTH;
+			}
+			if (PPOS.y < d.getHeight()/2)
+			{
+				y = sy;
+				dy = sy*BLOCK_HEIGHT;
+			}
+			else if (PPOS.y+BLOCK_HEIGHT > getHeight()*BLOCK_HEIGHT-d.getHeight()/2)
+			{
+				y = getHeight()-d.getHeight()/BLOCK_HEIGHT+sy;
+				dy = sy*BLOCK_HEIGHT;
+			}
+			if (get(x,y).isAir()) continue;
+			d.drawImage(get(x,y).getImage(), dx, dy);
+			if (!get(x,y).hasShading()) continue;
+			bool t, b, l, r, tr, br, bl, tl;
+			int w = getWidth(), h = getHeight();
+			t = !get(x,y-1).hasShading();
+			b = !get(x,y+1).hasShading();
+			l = !get(x-1,y).hasShading();
+			r = !get(x+1,y).hasShading();
+			tr = !get(x+1,y-1).hasShading();
+			br = !get(x+1,y+1).hasShading();
+			bl = !get(x-1,y+1).hasShading();
+			tl = !get(x-1,y-1).hasShading();
+			if (y > 0 && t)
+				d.drawImage(getResourceMgr().getImage("common/shading/t"),dx,dy);
+			if (y < h-1 && b)
+				d.drawImage(getResourceMgr().getImage("common/shading/b"),dx,dy);
+			if (x > 0 && l)
+				d.drawImage(getResourceMgr().getImage("common/shading/l"),dx,dy);
+			if (x < w-1 && r)
+				d.drawImage(getResourceMgr().getImage("common/shading/r"),dx,dy);
+			if (tr && !(t || r))
+				d.drawImage(getResourceMgr().getImage("common/shading/tr"),dx,dy);
+			if (br && !(b || r))
+				d.drawImage(getResourceMgr().getImage("common/shading/br"),dx,dy);
+			if (bl && !(b || l))
+				d.drawImage(getResourceMgr().getImage("common/shading/bl"),dx,dy);
+			if (tl && !(t || l))
+				d.drawImage(getResourceMgr().getImage("common/shading/tl"),dx,dy);
+		}
+	}
+}
 

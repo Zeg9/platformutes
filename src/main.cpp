@@ -45,65 +45,7 @@ int main(int argc, char ** argv)
 		}
 		// draw tiles
 		// TODO move this ?
-		for (int sx = 0; sx < d.getWidth()/BW+1; sx++)
-		{
-			for (int sy = 0; sy < d.getHeight()/BH+1; sy++)
-			{
-				int x = sx - d.getWidth()/2/BW+PPOS.x/BW;
-				int y = sy - d.getHeight()/2/BW+PPOS.y/BH;
-				int dx = sx*BW-PPOS.x%BW;
-				int dy = sy*BH-PPOS.y%BH;
-				if (PPOS.x < d.getWidth()/2)
-				{
-					x = sx;
-					dx = sx*BW;
-				}
-				else if (PPOS.x > lvl.getWidth()*BW-d.getWidth()/2)
-				{
-					x = lvl.getWidth()-d.getWidth()/BW+sx;
-					dx = sx*BW;
-				}
-				if (PPOS.y < d.getHeight()/2)
-				{
-					y = sy;
-					dy = sy*BH;
-				}
-				else if (PPOS.y+BH > lvl.getHeight()*BH-d.getHeight()/2)
-				{
-					y = lvl.getHeight()-d.getHeight()/BH+sy;
-					dy = sy*BH;
-				}
-				if (lvl.get(x,y).isAir()) continue;
-				d.drawImage(lvl.get(x,y).getImage(), dx, dy);
-				if (!lvl.get(x,y).hasShading()) continue;
-				bool t, b, l, r, tr, br, bl, tl;
-				int w = lvl.getWidth(), h = lvl.getHeight();
-				t = !lvl.get(x,y-1).hasShading();
-				b = !lvl.get(x,y+1).hasShading();
-				l = !lvl.get(x-1,y).hasShading();
-				r = !lvl.get(x+1,y).hasShading();
-				tr = !lvl.get(x+1,y-1).hasShading();
-				br = !lvl.get(x+1,y+1).hasShading();
-				bl = !lvl.get(x-1,y+1).hasShading();
-				tl = !lvl.get(x-1,y-1).hasShading();
-				if (y > 0 && t)
-					d.drawImage(getResourceMgr().getImage("common/shading/t"),dx,dy);
-				if (y < h-1 && b)
-					d.drawImage(getResourceMgr().getImage("common/shading/b"),dx,dy);
-				if (x > 0 && l)
-					d.drawImage(getResourceMgr().getImage("common/shading/l"),dx,dy);
-				if (x < w-1 && r)
-					d.drawImage(getResourceMgr().getImage("common/shading/r"),dx,dy);
-				if (tr && !(t || r))
-					d.drawImage(getResourceMgr().getImage("common/shading/tr"),dx,dy);
-				if (br && !(b || r))
-					d.drawImage(getResourceMgr().getImage("common/shading/br"),dx,dy);
-				if (bl && !(b || l))
-					d.drawImage(getResourceMgr().getImage("common/shading/bl"),dx,dy);
-				if (tl && !(t || l))
-					d.drawImage(getResourceMgr().getImage("common/shading/tl"),dx,dy);
-			}
-		}
+		lvl.render();
 		// draw sprites and character
 		if (
 			PPOS.y > lvl.getHeight()*BH ||
