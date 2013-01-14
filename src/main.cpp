@@ -43,19 +43,11 @@ int main(int argc, char ** argv)
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
 		}
-		// draw tiles
-		// TODO move this ?
-		lvl.render();
-		// draw sprites and character
-		if (
-			PPOS.y > lvl.getHeight()*BH ||
-			lvl.get(PPOS.x/BW, (PPOS.y-1+BH*2)/BH).getHurt() ||
-			lvl.get(PPOS.x/BW+1, (PPOS.y-1+BH*2)/BH).getHurt()
-			)
-		{ getEnvironment().player->die(); }
+		// update everything
 		getEnvironment().step();
+		// render
 		getEnvironment().render();
-		// handle events (TODO move this too)
+		// handle events (TODO maybe this should be moved)
 		while(d.hasEvent())
 		{
 			e = d.nextEvent();

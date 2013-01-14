@@ -28,6 +28,7 @@ void Environment::removeSprite(Sprite *s)
 
 void Environment::render()
 {
+	lvl.render();
 	for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
 		(*i)->render();
