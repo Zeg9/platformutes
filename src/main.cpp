@@ -83,9 +83,6 @@ int main(int argc, char ** argv)
 						case SDLK_r:
 							PLAYER->die();
 							break;
-						case SDLK_BACKSPACE:
-							getEnvironment().player->die();
-							break;
 						default:
 							break;
 					}
