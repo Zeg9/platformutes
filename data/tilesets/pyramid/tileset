@@ -43,15 +43,19 @@
 	solid: false;
 	sprite: scripted;
 	on_contact:
-		sprite.state(on)
-		level.set_tile(-2,0,4)
+		ifeq($player.image, common.character)
+			sprite.state(on)
+			level.set_tile(-2,0,4)
+		endif()
 [24]
 	img: lever&off;
 	solid: false;
 	sprite: scripted;
 	on_contact:
-		sprite.state(on)
-		level.set_tile(0,1,0)
+		ifeq($player.image, common.character)
+			sprite.state(on)
+			level.set_tile(0,2,0)
+		endif()
 [40]
 	img: common.potion&idle;
 	sprite: scripted;

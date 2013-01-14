@@ -32,6 +32,7 @@ void Level::load_next()
 }
 void Level::reload()
 {
+	ENV.reset();
 	std::cout << "== Loading level: " << name << "..." << std::endl;
 	width = height = 0;
 	tileset = background = next = "";
