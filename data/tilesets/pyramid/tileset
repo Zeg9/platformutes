@@ -54,7 +54,7 @@
 	on_contact:
 		ifeq($player.image, common.character)
 			sprite.state(on)
-			level.set_tile(0,2,0)
+			level.set_tile(0,1,0)
 		endif()
 [40]
 	img: common.potion&idle;
