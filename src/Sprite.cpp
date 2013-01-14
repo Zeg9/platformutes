@@ -103,6 +103,7 @@ void Sprite::step()
 	else if (v.x < 0)
 		p.x = round(p.x,BLOCK_WIDTH);
 	if (v.x > 0 && !(
+		nx+getSize().x > lvl.getWidth()*BLOCK_WIDTH ||
 		lvl.get((nx-1)/BLOCK_WIDTH+1, p.y/BLOCK_HEIGHT).isSolid() ||
 		lvl.get((nx-1)/BLOCK_WIDTH+1, (p.y-1+BLOCK_HEIGHT)/BLOCK_HEIGHT).isSolid() ||
 		lvl.get((nx-1)/BLOCK_WIDTH+1, (p.y-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).isSolid()
