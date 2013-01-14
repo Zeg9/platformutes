@@ -72,8 +72,8 @@ int main(int argc, char ** argv)
 						case SDLK_p:
 							std::cout << PPOS.x << ',' << PPOS.y << std::endl;
 							break;
-						case SDLK_BACKSPACE:
-							getEnvironment().player->die();
+						case SDLK_r:
+							PLAYER->die();
 							break;
 						default:
 							break;
