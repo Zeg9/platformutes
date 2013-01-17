@@ -7,6 +7,7 @@
 #define DATA_PATH "../data/"
 
 class Image;
+class Sound;
 class Tileset;
 
 class ResourceMgr
@@ -14,11 +15,13 @@ class ResourceMgr
 	friend ResourceMgr &getResourceMgr();
 	public:
 		Image *getImage(std::string name);
+		Sound *getSound(std::string name);
 		Tileset *getTileset(std::string name);
 	private:
 		ResourceMgr();
 		~ResourceMgr();
 		std::map<std::string, Image*> images;
+		std::map<std::string, Sound*> sounds;
 		std::map<std::string, Tileset*> tilesets;
 };
 

@@ -1,5 +1,7 @@
 #include <sstream>
 #include <vector>
+#include "Environment.h"
+#include "Video.h"
 #include "tools.h"
 
 #include <iostream>
@@ -91,5 +93,25 @@ vec2::vec2(int _x, int _y) :
 bool operator==(vec2 const&a, vec2 const&b)
 {
 	return a.x == b.x && a.y == b.y;
+}
+
+vec2 getDrawPos(vec2 p)
+{
+	Device &d = getDevice();
+	vec2 dp (
+		p.x - PPOS.x + d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH,
+		p.y - PPOS.y + d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT
+	);
+	int lw = ENV.lvl.getWidth()*BLOCK_WIDTH,
+	    lh = ENV.lvl.getHeight()*BLOCK_HEIGHT;
+	if (PPOS.x < d.getWidth()/2)
+		dp.x = p.x;
+	else if (PPOS.x > lw-d.getWidth()/2)
+		dp.x = p.x - lw + d.getWidth();
+	if (PPOS.y < d.getHeight()/2)
+		dp.y = p.y;
+	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
+		dp.y = p.y - lh + d.getHeight();
+	return dp;
 }
 

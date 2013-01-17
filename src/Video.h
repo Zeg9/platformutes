@@ -2,7 +2,9 @@
 #define __VIDEO_H__
 
 #include <stack>
+#include <string>
 #include <SDL/SDL.h>
+#include "tools.h"
 
 // You can change the resolution here
 // It is recommended to keep a relatively small one,
@@ -12,7 +14,8 @@
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
 
-// Set this to 8 to get an old-school 8 bit style
+// Bits per pixel. Lowest is fastest.
+// Minimum: 8
 // Default: 32
 #define VIDEO_BPP 32
 
@@ -28,7 +31,18 @@
 #define TBF 1000/MAX_FPS // Time between frames
 
 
-class Image;
+class Image
+{
+	friend class Device;
+	public:
+		Image(std::string filename);
+		~Image();
+		int getWidth();
+		int getHeight();
+		vec2 getSize();
+	private:
+		SDL_Surface *surf;
+};
 
 class Device
 {
@@ -38,10 +52,12 @@ class Device
 		int getHeight();
 		void toggleFullscreen();
 		void drawImage(Image *i, int x=0, int y=0);
+		void drawImage(Image *i, vec2 p);
 		void render();
 		bool run();
 		bool hasEvent();
 		SDL_Event nextEvent();
+		void close(); // This closes the window faster
 	private:
 		Device();
 		~Device();

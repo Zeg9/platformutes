@@ -16,10 +16,12 @@ file(
 
 Find_Package(SDL REQUIRED)
 Find_Package(SDL_image REQUIRED)
+Find_Package(SDL_mixer REQUIRED)
 
 link_libraries (
    ${SDL_LIBRARY}
    ${SDLIMAGE_LIBRARY}
+   ${SDLMIXER_LIBRARY}
 )
 
 add_executable(

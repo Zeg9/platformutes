@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 
+// don't change this
 #define BLOCK_WIDTH 32
 #define BLOCK_HEIGHT 32
 

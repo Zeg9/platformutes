@@ -6,7 +6,7 @@
 	solid:0;
 [3]
 	img: spikes;
-	hurt:1;
+	on_contact: play_sound(spikes) player.die();
 	solid:0;
 [4]
 	img: sandstone;
@@ -15,11 +15,23 @@
 	sprite: badguy;
 	img: mummy;
 	on_contact:
-		player.image(mummy)
+		ifeq ($player.image, common.character)
+			play_sound(mummify)
+			player.image(mummy)
+		endif()
+[11]
+	sprite: badguy;
+	img: badmummy;
+	on_contact:
+		ifeq ($sprite.image, badmummy)
+			ifeq ($player.image, common.character)
+				play_sound(mummify)
+				sprite.image(common.character)
+				player.image(badmummy)
+		endif()
 [20]
-	img: mummy-detector&idle;
+	img: mummy_detector;
 	solid: false;
-	sprite: scripted;
 	on_contact:
 		level.set_tile(2,0,4)
 		level.set_tile(2,1,4)
@@ -28,9 +40,8 @@
 			level.set_tile(2,1,0)
 		endif()
 [21]
-	img: mummy-detector&idle;
+	img: mummy_detector;
 	solid: false;
-	sprite: scripted;
 	on_contact:
 		level.set_tile(-2,0,4)
 		level.set_tile(-2,1,4)
@@ -39,27 +50,64 @@
 			level.set_tile(-2,1,0)
 		endif()
 [23]
-	img: lever&off;
+	img: lever_off;
 	solid: false;
-	sprite: scripted;
 	on_contact:
 		ifeq($player.image, common.character)
-			sprite.state(on)
+			play_sound(lever)
+			level.set_tile(0,0,29)
 			level.set_tile(-2,0,4)
 		endif()
 [24]
-	img: lever&off;
+	img: lever_off;
 	solid: false;
-	sprite: scripted;
 	on_contact:
 		ifeq($player.image, common.character)
-			sprite.state(on)
+			play_sound(lever)
+			level.set_tile(0,0,29)
 			level.set_tile(0,2,0)
 		endif()
+	
+[29]
+	img: lever_on;
+	solid: false;
+[30]
+	img: plate;
+	solid: false;
+	on_contact:
+		level.set_tile(0,0,39)
+		level.set_tile(1,-3,10)
+		level.set_tile(2,-3,10)
+		level.set_tile(3,-3,10)
+		level.set_tile(4,-3,10)
+		level.set_tile(5,-3,10)
+[35]
+	img: plate;
+	solid: false;
+	on_contact:
+		level.set_tile(0,0,39)
+		level.set_tile(-11,1,0)
+		level.set_tile(-2,-5,11)
+[36]
+	img: plate;
+	solid: false;
+	on_contact:
+		level.set_tile(0,0,39)
+		level.set_tile(3,9,0)
+		level.set_tile(3,10,0)
+[38]
+	img: plate;
+	solid: false;
+	on_contact:
+		level.set_tile(0,0,39)
+[39]
+	img: plate_used;
+	solid: false;
 [40]
-	img: common.potion&idle;
+	img: potion&idle;
 	sprite: scripted;
 	on_contact:
+		play_sound(potion)
 		player.image(common.character)
 		sprite.remove()
 [71]
@@ -71,5 +119,6 @@
 	sprite: scripted;
 	on_contact:
 		ifeq ($player.image, common.character)
+			play_sound(leveldone)
 			level.load_next()
 		endif()

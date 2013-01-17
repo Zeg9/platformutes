@@ -1,16 +1,11 @@
 #include <iostream>
 #include <SDL/SDL.h>
 #include "Video.h"
-#include "Image.h"
+#include "Sound.h"
 #include "Level.h"
 #include "Tileset.h"
-#include "Sprite.h"
-#include "ResourceMgr.h"
 #include "Environment.h"
 #include "tools.h"
-
-#define BW BLOCK_WIDTH
-#define BH BLOCK_HEIGHT
 
 int main(int argc, char ** argv)
 {
@@ -23,6 +18,7 @@ int main(int argc, char ** argv)
 	if (argc == 2)
 		lvlname = argv[1];
 	Device &d = getDevice();
+	getSoundManager(); // init sound mgr
 	Level &lvl = getEnvironment().lvl;
 	lvl.load(lvlname);
 	SDL_Event e;
@@ -35,10 +31,10 @@ int main(int argc, char ** argv)
 			for (int y = 0; y <= d.getHeight();
 				y += lvl.getBackground()->getHeight())
 			{
-				int dx = x-PPOS.x%BW, dy = y-PPOS.y%BH;
-				if (PPOS.x < d.getWidth()/2 || PPOS.x > lvl.getWidth()*BW-d.getWidth()/2)
+				int dx = x-PPOS.x%BLOCK_WIDTH, dy = y-PPOS.y%BLOCK_HEIGHT;
+				if (PPOS.x < d.getWidth()/2 || PPOS.x > lvl.getWidth()*BLOCK_WIDTH-d.getWidth()/2)
 					dx = x;
-				if (PPOS.y < d.getHeight()/2 || PPOS.y+BH > lvl.getHeight()*BW-d.getHeight()/2)
+				if (PPOS.y < d.getHeight()/2 || PPOS.y+BLOCK_HEIGHT > lvl.getHeight()*BLOCK_WIDTH-d.getHeight()/2)
 					dy = y;
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
@@ -65,8 +61,8 @@ int main(int argc, char ** argv)
 							PLAYER->setState("stand_r");
 							break;
 						case SDLK_UP:
-							if (lvl.get(PPOS.x/BW,PPOS.y/BW+2).isSolid()
-							 || lvl.get((PPOS.x-1)/BW+1,PPOS.y/BW+2).isSolid())
+							if (lvl.get(PPOS.x/BLOCK_WIDTH,PPOS.y/BLOCK_WIDTH+2).isSolid()
+							 || lvl.get((PPOS.x-1)/BLOCK_WIDTH+1,PPOS.y/BLOCK_WIDTH+2).isSolid())
 								PLAYER->setVel(PLAYER->getVel().x,-10);
 							break;
 						case SDLK_p:
@@ -102,6 +98,7 @@ int main(int argc, char ** argv)
 		d.render();
 	}
 	// Bye !
+	getDevice().close();
 	return 0;
 }
 

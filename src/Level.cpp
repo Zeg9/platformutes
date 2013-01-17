@@ -8,7 +8,6 @@
 #include "Environment.h"
 #include "Sprite.h"
 #include "Badguy.h"
-#include "Image.h"
 #include "Video.h"
 #include "Level.h"
 
@@ -153,30 +152,17 @@ void Level::render()
 		{
 			int x = sx - d.getWidth()/2/BLOCK_WIDTH+PPOS.x/BLOCK_WIDTH;
 			int y = sy - d.getHeight()/2/BLOCK_WIDTH+PPOS.y/BLOCK_HEIGHT;
-			int dx = sx*BLOCK_WIDTH-PPOS.x%BLOCK_WIDTH;
-			int dy = sy*BLOCK_HEIGHT-PPOS.y%BLOCK_HEIGHT;
 			if (PPOS.x < d.getWidth()/2)
-			{
 				x = sx;
-				dx = sx*BLOCK_WIDTH;
-			}
 			else if (PPOS.x > getWidth()*BLOCK_WIDTH-d.getWidth()/2)
-			{
 				x = getWidth()-d.getWidth()/BLOCK_WIDTH+sx;
-				dx = sx*BLOCK_WIDTH;
-			}
 			if (PPOS.y < d.getHeight()/2)
-			{
 				y = sy;
-				dy = sy*BLOCK_HEIGHT;
-			}
 			else if (PPOS.y+BLOCK_HEIGHT > getHeight()*BLOCK_HEIGHT-d.getHeight()/2)
-			{
 				y = getHeight()-d.getHeight()/BLOCK_HEIGHT+sy;
-				dy = sy*BLOCK_HEIGHT;
-			}
 			if (get(x,y).isAir()) continue;
-			d.drawImage(get(x,y).getImage(), dx, dy);
+			vec2 dp = getDrawPos(vec2(x*BLOCK_WIDTH, y*BLOCK_HEIGHT));
+			d.drawImage(get(x,y).getImage(), dp);
 			if (!get(x,y).hasShading()) continue;
 			bool t, b, l, r, tr, br, bl, tl;
 			int w = getWidth(), h = getHeight();
@@ -189,21 +175,21 @@ void Level::render()
 			bl = !get(x-1,y+1).hasShading();
 			tl = !get(x-1,y-1).hasShading();
 			if (y > 0 && t)
-				d.drawImage(getResourceMgr().getImage("common/shading/t"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/t"),dp);
 			if (y < h-1 && b)
-				d.drawImage(getResourceMgr().getImage("common/shading/b"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/b"),dp);
 			if (x > 0 && l)
-				d.drawImage(getResourceMgr().getImage("common/shading/l"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/l"),dp);
 			if (x < w-1 && r)
-				d.drawImage(getResourceMgr().getImage("common/shading/r"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/r"),dp);
 			if (tr && !(t || r))
-				d.drawImage(getResourceMgr().getImage("common/shading/tr"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/tr"),dp);
 			if (br && !(b || r))
-				d.drawImage(getResourceMgr().getImage("common/shading/br"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/br"),dp);
 			if (bl && !(b || l))
-				d.drawImage(getResourceMgr().getImage("common/shading/bl"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/bl"),dp);
 			if (tl && !(t || l))
-				d.drawImage(getResourceMgr().getImage("common/shading/tl"),dx,dy);
+				d.drawImage(getResourceMgr().getImage("common/shading/tl"),dp);
 		}
 	}
 }

@@ -1,7 +1,36 @@
+#include <string>
+#include <stdexcept>
 #include <SDL/SDL.h>
-#include "Image.h"
+#include <SDL/SDL_image.h>
 #include "Video.h"
 #include "tools.h"
+
+Image::Image(std::string filename)
+{
+	surf = IMG_Load(filename.c_str());
+	if (!surf)
+		throw std::runtime_error("Couldn't load image: "+filename);
+}
+Image::~Image()
+{
+	SDL_FreeSurface(surf);
+}
+
+int Image::getWidth()
+{
+	return surf->w;
+}
+
+int Image::getHeight()
+{
+	return surf->h;
+}
+
+vec2 Image::getSize()
+{
+	return vec2(getWidth(), getHeight());
+}
+
 
 Device::Device() : lastticks(0), fullscreen(false), done(false)
 {
@@ -35,6 +64,10 @@ void Device::drawImage(Image *i, int x, int y)
 	dstrect.x = x; dstrect.y = y;
 	dstrect.w = dstrect.h = 0;
 	SDL_BlitSurface(i->surf, 0, screen, &dstrect);
+}
+void Device::drawImage(Image *i, vec2 p)
+{
+	drawImage(i, p.x, p.y);
 }
 
 void Device::render()
@@ -92,6 +125,12 @@ SDL_Event Device::nextEvent()
 	SDL_Event e = eventStack.top();
 	eventStack.pop();
 	return e;
+}
+
+void Device::close()
+{
+	// this is not necessary but will close the window faster
+	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 

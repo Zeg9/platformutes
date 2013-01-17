@@ -4,6 +4,8 @@
 #include "tools.h"
 #include "Sprite.h"
 #include "Environment.h"
+#include "Sound.h"
+#include "ResourceMgr.h"
 #include "Script.h"
 
 #include <iostream>
@@ -14,11 +16,15 @@ std::map<std::string, std::string> &getScriptVars()
 	return scriptVars;
 }
 
-std::string parseVar(std::string in)
+std::string parseVar(std::string in, Sprite* sprite=0)
 {
 	std::string scriptprefix = "$script.";
 	if (startswith(in, scriptprefix))
 		return getScriptVars()[in.substr(scriptprefix.size())];
+	if (startswith(in, "$sprite.") && !sprite)
+		return "";
+	if (in == "$sprite.image")
+		return sprite->getImageName();
 	if (in == "$player.image")
 		return PLAYER->getImageName();
 	return in;
@@ -34,6 +40,7 @@ int expectedArgs(std::string f)
 	if (f == "level.load")      return 1;
 	if (f == "level.load_next") return 0;
 	if (f == "level.set_tile")  return 3;
+	if (f == "play_sound")      return 1;
 	if (f == "set_var")         return 2;
 	if (f == "ifeq")            return 2;
 	if (f == "endif")           return 0;
@@ -54,7 +61,7 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 		
 		if (t.size()>1) args = split(t[1],',');
 		for (unsigned int i = 0; i < args.size(); i++)
-			args[i] = parseVar(args[i]);
+			args[i] = parseVar(args[i], sprite);
 		
 		int e = expectedArgs(function);
 		if (e == -1)
@@ -98,15 +105,16 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 				toint(args[1])+pos.y,
 				toint(args[2]));
 		}
+		else if (function == "play_sound")
+			getSoundManager().playSound(getResourceMgr().getSound(
+				"tilesets/"+ENV.lvl.getTilesetName()+"/sounds/"+args[0]));
 		else if (function == "set_var")
 			getScriptVars()[args[0]] = args[1];
 		else if (function == "ifeq")
 		{
+			ifok = (!isinif || ifok) && args[0] == args[1];
 			isinif = true;
-			if (args[0] == args[1])
-				ifok = true;
-			else
-				ifok = false;
+			// TODO implement an "if stack"
 		}
 		else if (function == "endif") {}
 		else if (function == "print") // debug purposes only

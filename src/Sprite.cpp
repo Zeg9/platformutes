@@ -5,7 +5,6 @@
 #include "Level.h"
 #include "Environment.h"
 #include "Tile.h"
-#include "Image.h"
 #include "Script.h"
 #include "Sprite.h"
 
@@ -51,21 +50,7 @@ void Sprite::die()
 
 void Sprite::render()
 {
-	Level &lvl = getEnvironment().lvl;
-	Device &d = getDevice();
-	int lw = lvl.getWidth()*BLOCK_WIDTH;
-	int lh = lvl.getHeight()*BLOCK_HEIGHT;
-	int dx = p.x - PPOS.x + d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH;
-	int dy = p.y - PPOS.y + d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT;
-	if (PPOS.x < d.getWidth()/2)
-		dx = p.x;
-	else if (PPOS.x > lw-d.getWidth()/2)
-		dx = p.x - lw + d.getWidth();
-	if (PPOS.y < d.getHeight()/2)
-		dy = p.y;
-	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
-		dy = p.y - lh + d.getHeight();
-	d.drawImage(getImage(),dx,dy);
+	getDevice().drawImage(getImage(),getDrawPos(p));
 }
 
 void Sprite::step()

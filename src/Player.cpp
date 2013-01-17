@@ -28,7 +28,7 @@ void Player::step()
 	// TODO maybe this needs some more work...
 	std::stack<vec2> tokeep;
 	for (int x = 0; x <= PSIZE.x; x += BLOCK_WIDTH)
-	for (int y = 0; y <= PSIZE.y; y += BLOCK_HEIGHT)
+	for (int y = 1; y <= PSIZE.y; y += BLOCK_HEIGHT)
 	{
 		vec2 t (
 			((x+PPOS.x)/BLOCK_WIDTH),
