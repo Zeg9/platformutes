@@ -17,6 +17,7 @@
 class Environment
 {
 	friend Environment &getEnvironment();
+	friend class Player;
 	public:
 		Level lvl;
 		void reset();

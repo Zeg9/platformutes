@@ -60,13 +60,12 @@ int main(int argc, char ** argv)
 							PLAYER->setVel(2,PLAYER->getVel().y);
 							PLAYER->setState("stand_r");
 							break;
-						case SDLK_UP:
-							if (lvl.get(PPOS.x/BLOCK_WIDTH,PPOS.y/BLOCK_WIDTH+2).isSolid()
-							 || lvl.get((PPOS.x-1)/BLOCK_WIDTH+1,PPOS.y/BLOCK_WIDTH+2).isSolid())
-								PLAYER->setVel(PLAYER->getVel().x,-10);
+						case SDLK_SPACE:
+							PLAYER->jump();
 							break;
-						case SDLK_p:
-							std::cout << PPOS.x << ',' << PPOS.y << std::endl;
+						case SDLK_LCTRL:
+						case SDLK_UP:
+							PLAYER->doHit();
 							break;
 						case SDLK_BACKSPACE:
 							getEnvironment().player->die();

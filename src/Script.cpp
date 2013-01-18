@@ -18,13 +18,15 @@ std::map<std::string, std::string> &getScriptVars()
 
 std::string parseVar(std::string in, Sprite* sprite=0)
 {
-	std::string scriptprefix = "$script.";
-	if (startswith(in, scriptprefix))
-		return getScriptVars()[in.substr(scriptprefix.size())];
+	std::string varp = "$script.";
+	if (startswith(in, varp))
+		return getScriptVars()[in.substr(varp.size())];
 	if (startswith(in, "$sprite.") && !sprite)
 		return "";
 	if (in == "$sprite.image")
 		return sprite->getImageName();
+	if (in == "$sprite.state")
+		return sprite->getState();
 	if (in == "$player.image")
 		return PLAYER->getImageName();
 	return in;
@@ -36,6 +38,7 @@ int expectedArgs(std::string f)
 	if (f == "player.die")      return 0;
 	if (f == "sprite.image")    return 1;
 	if (f == "sprite.state")    return 1;
+	if (f == "sprite.velocity") return 2;
 	if (f == "sprite.remove")   return 0;
 	if (f == "level.load")      return 1;
 	if (f == "level.load_next") return 0;
@@ -43,6 +46,8 @@ int expectedArgs(std::string f)
 	if (f == "play_sound")      return 1;
 	if (f == "set_var")         return 2;
 	if (f == "ifeq")            return 2;
+	if (f == "ifnoteq")         return 2;
+	if (f == "else")            return 0;
 	if (f == "endif")           return 0;
 	if (f == "print")           return -2;
 	return -1;
@@ -73,6 +78,8 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 			continue;
 		if (isinif && !ifok)
 		{
+			if (function == "else")
+				ifok = !ifok;
 			if (function == "endif")
 				isinif = false;
 		}
@@ -84,6 +91,8 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 			sprite->setImage(args[0]);
 		else if (function == "sprite.state")
 			sprite->setState(args[0]);
+		else if (function == "sprite.velocity")
+			sprite->setVel(toint(args[0]), toint(args[1]));
 		else if (function == "sprite.remove")
 			ENV.removeSprite(sprite);
 		else if (function == "level.load")
@@ -116,6 +125,13 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 			isinif = true;
 			// TODO implement an "if stack"
 		}
+		else if (function == "ifnoteq")
+		{
+			ifok = (!isinif || ifok) && args[0] != args[1];
+			isinif = true;
+		}
+		else if (function == "else")
+			ifok = !ifok;
 		else if (function == "endif") {}
 		else if (function == "print") // debug purposes only
 		{

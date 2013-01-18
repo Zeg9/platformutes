@@ -7,7 +7,7 @@ Sound::Sound(std::string filename)
 {
 	chunk = Mix_LoadWAV(filename.c_str());
 	if (!chunk)
-		std::cerr << Mix_GetError() << std::endl;
+		std::cerr << "[!] Error opening sound: " << Mix_GetError() << std::endl;
 }
 Sound::~Sound()
 {
@@ -16,7 +16,7 @@ Sound::~Sound()
 
 SoundManager::SoundManager()
 {
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 		std::cerr << "[!] Error opening audio: " << Mix_GetError() << std::endl;
 	Mix_AllocateChannels(10);
 }
@@ -27,7 +27,8 @@ SoundManager::~SoundManager()
 
 void SoundManager::playSound(Sound *s)
 {
-	Mix_PlayChannel(-1, s->chunk, 0);
+	if (Mix_PlayChannel(-1, s->chunk, 0) == -1)
+		std::cerr << "[!] Error playing sound: " << Mix_GetError() << std::endl;
 }
 
 SoundManager &getSoundManager()

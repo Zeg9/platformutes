@@ -9,6 +9,7 @@ class Player : public Sprite
 {
 	public:
 		Player();
+		virtual void doHit();
 		virtual void die();
 		virtual void step();
 	private:

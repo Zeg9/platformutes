@@ -42,8 +42,8 @@ bool Badguy::shouldGoLeft()
 }
 bool Badguy::shouldGoRight()
 {
-	return ENV.lvl.get(p.x/BLOCK_WIDTH+1,p.y/BLOCK_HEIGHT+2).isSolid()
-		&& !(ENV.lvl.get(p.x/BLOCK_WIDTH+1,p.y/BLOCK_HEIGHT+1).isSolid()
-			|| ENV.lvl.get(p.x/BLOCK_WIDTH+1,p.y/BLOCK_HEIGHT).isSolid());
+	return ENV.lvl.get((p.x+getSize().x)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT+2).isSolid()
+		&& !(ENV.lvl.get((p.x+getSize().x)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT+1).isSolid()
+			|| ENV.lvl.get((p.x+getSize().x)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT).isSolid());
 }
 

@@ -19,7 +19,6 @@ Sprite::Sprite(std::string _img, int x, int y) :
 
 Sprite::~Sprite()
 {
-	std::cout << "Removing sprite (" << img << ")..." << std::endl;
 }
 
 void Sprite::enablePhysics(bool b) { physics = b; }
@@ -37,11 +36,24 @@ Image *Sprite::getImage()
 }
 std::string Sprite::getImageName() { return img; }
 void Sprite::setState(std::string _state) { state = _state; }
+std::string Sprite::getState() { return state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
 vec2 Sprite::getPos() { return p; }
 void Sprite::setVel(int x, int y) { v = vec2(x,y); }
 vec2 Sprite::getVel() { return v; }
 vec2 Sprite::getSize() { return getImage()->getSize(); }
+
+void Sprite::jump()
+{
+	if (ENV.lvl.get(p.x/BLOCK_WIDTH,p.y/BLOCK_WIDTH+2).isSolid()
+	 || ENV.lvl.get((p.x-1)/BLOCK_WIDTH+1,p.y/BLOCK_WIDTH+2).isSolid())
+		setVel(getVel().x,-10);
+}
+
+void Sprite::hit()
+{
+	// When the player hits the sprite
+}
 
 void Sprite::die()
 {
@@ -103,10 +115,23 @@ void Sprite::step()
 ScriptedSprite::ScriptedSprite(std::string _img, int x, int y,
 	std::map<std::string, std::string> &_scripts):
 		Sprite(_img,x,y), scripts(_scripts), hasContact(false)
-{}
+{
+	runScript(scripts["on_spawn"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+}
+
+void ScriptedSprite::hit()
+{
+	runScript(scripts["on_hit"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+}
 
 void ScriptedSprite::step()
 {
+	if (SDL_GetTicks()/1000 != lastSecond)
+	{
+		lastSecond = SDL_GetTicks()/1000;
+		runScript(scripts["on_second"], this, vec2(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT));
+	}
+	runScript(scripts["on_step"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
 	if (p.x+getSize().x >= PPOS.x
 	 && p.x <= PPOS.x + PSIZE.x-1
 	 && p.y+getSize().y >= PPOS.y
@@ -120,6 +145,9 @@ void ScriptedSprite::step()
 	}
 	else if (hasContact)
 		hasContact = false;
+	int nx = p.x+v.x, ny = p.y+v.y;
 	Sprite::step();
+	if (p.x != nx || p.y != ny)
+		runScript(scripts["on_collision"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
 }
 

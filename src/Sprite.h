@@ -17,11 +17,14 @@ class Sprite
 		Image *getImage();
 		std::string getImageName();
 		void setState(std::string _state);
+		std::string getState();
 		void setPos(int x, int y);
 		vec2 getPos();
 		void setVel(int x, int y);
 		vec2 getVel();
 		vec2 getSize();
+		void jump();
+		virtual void hit();
 		virtual void die();
 		virtual void render();
 		virtual void step();
@@ -39,10 +42,12 @@ class ScriptedSprite : public Sprite
 	public:
 		ScriptedSprite(std::string _img, int x, int y,
 			std::map<std::string, std::string> &_scripts);
+		virtual void hit();
 		virtual void step();
 	private:
 		std::map<std::string, std::string> scripts;
 		bool hasContact;
+		unsigned int lastSecond;
 };
 
 #endif//__SPRITE_H__
