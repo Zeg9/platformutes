@@ -21,6 +21,7 @@ int main(int argc, char ** argv)
 	getSoundManager(); // init sound mgr
 	Level &lvl = getEnvironment().lvl;
 	lvl.load(lvlname);
+	bool pause;
 	SDL_Event e;
 	while (d.run())
 	{
@@ -40,7 +41,7 @@ int main(int argc, char ** argv)
 			}
 		}
 		// update everything
-		getEnvironment().step();
+		if (!pause) getEnvironment().step();
 		// render
 		getEnvironment().render();
 		// handle events (TODO maybe this should be moved)
@@ -51,6 +52,15 @@ int main(int argc, char ** argv)
 			{
 				case SDL_KEYDOWN:
 					switch (e.key.keysym.sym)
+					{
+						case SDLK_ESCAPE:
+						case SDLK_RETURN:
+							pause = !pause;
+							break;
+						default:
+							break;
+					}
+					if (!pause) switch (e.key.keysym.sym)
 					{
 						case SDLK_LEFT:
 							PLAYER->setVel(-2,PLAYER->getVel().y);

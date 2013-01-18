@@ -39,7 +39,7 @@ void Environment::step()
 {
 	for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
-		(*i)->step();
+			(*i)->step();
 	player->step();
 	while (!s2r.empty())
 	{

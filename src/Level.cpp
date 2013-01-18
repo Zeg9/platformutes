@@ -13,6 +13,30 @@
 
 #include <iostream>
 
+void spriteFromTile (int x, int y, Tile&t)
+{
+	std::string image = t.getImageName();
+	std::vector<std::string> tokens = split(image,'&',2);
+	if (tokens.size()==2)
+		image = tokens[0];
+	Sprite * s = 0;
+	if(t.getSprite() == "badguy")
+		s = new Badguy(
+			image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
+			t.getScripts());
+	else if (t.getSprite() == "scripted")
+		s = new ScriptedSprite(
+			image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
+			t.getScripts());
+	if (s != 0)
+	{
+		if (tokens.size()==2)
+			s->setState(tokens[1]);
+		s->enablePhysics(t.isSolid());
+		ENV.addSprite(s);
+	}
+}
+
 Level::Level():
 	tileset(""), background(""), name(""),
 	width(0), height(0),
@@ -101,26 +125,7 @@ Tile &Level::get(int x, int y)
 		Tile &t = getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
 		if (t.getSprite() != "none")
 		{
-			std::string image = t.getImageName();
-			std::vector<std::string> tokens = split(image,'&',2);
-			if (tokens.size()==2)
-				image = tokens[0];
-			Sprite * s = 0;
-			if(t.getSprite() == "badguy")
-				s = new Badguy(
-					image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
-					t.getScripts());
-			else if (t.getSprite() == "scripted")
-				s = new ScriptedSprite(
-					image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
-					t.getScripts());
-			if (s != 0)
-			{
-				if (tokens.size()==2)
-					s->setState(tokens[1]);
-				s->enablePhysics(t.isSolid());
-				ENV.addSprite(s);
-			}
+			spriteFromTile(x,y,t);
 			blocks[x][y] = -1;
 			return getAirTile();
 		}
@@ -130,7 +135,11 @@ Tile &Level::get(int x, int y)
 }
 void Level::set(int x, int y, int tile)
 {
-	if (x >= 0 && x < getWidth() && y >= 0 && y < getHeight())
+	if (!(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())) return;
+	Tile &t = getResourceMgr().getTileset(tileset)->get(tile);
+	if (t.getSprite() != "none")
+		spriteFromTile(x,y,t);
+	else
 		blocks[x][y] = tile;
 }
 
