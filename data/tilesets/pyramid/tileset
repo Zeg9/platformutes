@@ -157,9 +157,11 @@
 	img: potion&idle;
 	sprite: scripted;
 	on_hit:
-		play_sound(potion)
-		player.image(common.character)
-		sprite.remove()
+		ifeq($sprite.state, idle)
+			play_sound(potion)
+			player.image(common.character)
+			sprite.state(empty)
+		endif()
 [71]
 	img: tutorial&1;
 	sprite: scripted;
