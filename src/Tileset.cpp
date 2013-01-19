@@ -38,14 +38,22 @@ Tileset::Tileset(std::string filename)
 			if (key == "shading") tiles[num].shading = tobool(value);
 			if (startswith(key,"on_")) tiles[num].scripts[key] = value;
 		}
-		std::cout << "Loaded tile " << num << " with image " << tiles[num].img << std::endl;
+		//std::cout << "Loaded tile " << num << " with image " << tiles[num].img << std::endl;
 	}
-	std::cout << "== Tileset loaded !" << std::endl;
+	//std::cout << "== Tileset loaded !" << std::endl;
 }
 
 Tile &Tileset::get(int num)
 {
 	if (num >0 && tiles.find(num)!=tiles.end()) return tiles[num];
 	return getAirTile();
+}
+
+std::vector<int> Tileset::getValidTiles()
+{
+	std::vector<int> r;
+	for (std::map<int, Tile>::iterator i = tiles.begin(); i != tiles.end(); i++)
+		r.push_back(i->first);
+	return r;
 }
 

@@ -14,7 +14,7 @@
 #define VIDEO_WIDTH 640
 #define VIDEO_HEIGHT 480
 
-// Bits per pixel. Lowest is fastest.
+// Bits per pixel
 // Minimum: 8
 // Default: 32
 #define VIDEO_BPP 32
@@ -24,7 +24,7 @@
 
 // You can change the FPS here, but you shouldn't
 // If you set higher FPS all the game will be faster,
-// even the character, ennemies etc. and your CPU needs to handle it.
+// sprites (character, badguys, ...) too
 #define MAX_FPS 60
 
 // You shouldn't modify this.

@@ -76,9 +76,9 @@ void Level::reload()
 	}
 	if (tileset == "" || width == 0 || height == 0)
 		throw std::runtime_error("Please specify a tileset, a width and a height.");
-	std::cout << "Tileset: " << tileset << std::endl;
+	/*std::cout << "Tileset: " << tileset << std::endl;
 	std::cout << "Background: " << background << std::endl;
-	std::cout << "Size: " << width << "x" << height << std::endl;
+	std::cout << "Size: " << width << "x" << height << std::endl;*/
 	blocks = new int*[width];
 	for (int x = 0; x < width; x++)
 	{
@@ -115,14 +115,14 @@ void Level::reload()
 		else
 			b += c;
 	}
-	std::cout << "== Level loaded !" << std::endl;
+	//std::cout << "== Level loaded !" << std::endl;
 }
 
 Tile &Level::get(int x, int y)
 {
 	if (x >= 0 && y >= 0 && x < width && y < height)
 	{
-		Tile &t = getResourceMgr().getTileset(tileset)->get(blocks[x][y]);
+		Tile &t = getTileset()->get(blocks[x][y]);
 		if (t.getSprite() != "none")
 		{
 			spriteFromTile(x,y,t);
@@ -136,7 +136,7 @@ Tile &Level::get(int x, int y)
 void Level::set(int x, int y, int tile)
 {
 	if (!(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())) return;
-	Tile &t = getResourceMgr().getTileset(tileset)->get(tile);
+	Tile &t = getTileset()->get(tile);
 	if (t.getSprite() != "none")
 		spriteFromTile(x,y,t);
 	else
@@ -147,7 +147,10 @@ Image *Level::getBackground()
 {
 	return getResourceMgr().getImage("tilesets/"+tileset+"/background");
 }
-
+Tileset *Level::getTileset()
+{
+	return getResourceMgr().getTileset(tileset);
+}
 std::string Level::getTilesetName() { return tileset; }
 int Level::getWidth() { return width; }
 int Level::getHeight() { return height; }

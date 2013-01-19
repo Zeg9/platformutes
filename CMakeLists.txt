@@ -29,7 +29,7 @@ add_executable(
 	${source_files}
 )
 
-add_definitions(-Wall -Wextra -pedantic)
+#add_definitions(-Wall -Wextra -pedantic)
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/platformutes DESTINATION bin)
 install(DIRECTORY data/images DESTINATION share)

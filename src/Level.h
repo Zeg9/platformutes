@@ -9,6 +9,7 @@
 #define BLOCK_HEIGHT 32
 
 class Tile;
+class Tileset;
 class Image;
 
 class Level
@@ -21,6 +22,7 @@ class Level
 		Tile &get(int x, int y);
 		void set(int x, int y, int tile);
 		Image *getBackground();
+		Tileset *getTileset();
 		std::string getTilesetName();
 		int getWidth();
 		int getHeight();

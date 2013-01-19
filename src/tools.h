@@ -24,5 +24,6 @@ struct vec2
 bool operator==(vec2 const&a, vec2 const&b);
 
 vec2 getDrawPos(vec2 realPos);
+vec2 getRealPos(vec2 drawPos);
 
 #endif//__TOOLS_H__

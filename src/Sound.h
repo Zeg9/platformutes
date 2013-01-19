@@ -11,7 +11,7 @@ class Sound
 		Sound(std::string filename);
 		~Sound();
 	private:
-		Mix_Chunk *chunk;
+		Mix_Chunk*chunk;
 };
 
 class SoundManager

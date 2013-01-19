@@ -115,3 +115,23 @@ vec2 getDrawPos(vec2 p)
 	return dp;
 }
 
+vec2 getRealPos(vec2 dp)
+{
+	Device &d = getDevice();
+	vec2 p (
+		dp.x + PPOS.x - d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH,
+		dp.y + PPOS.y - d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT
+	);
+	int lw = ENV.lvl.getWidth()*BLOCK_WIDTH,
+	    lh = ENV.lvl.getHeight()*BLOCK_HEIGHT;
+	if (PPOS.x < d.getWidth()/2)
+		p.x = dp.x;
+	else if (PPOS.x > lw-d.getWidth()/2)
+		p.x = dp.x + lw - d.getWidth();
+	if (PPOS.y < d.getHeight()/2)
+		p.y = dp.y;
+	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
+		p.y = dp.y + lh - d.getHeight();
+	return p;
+}
+
