@@ -29,7 +29,7 @@ Image *ResourceMgr::getImage(std::string name)
 Sound *ResourceMgr::getSound(std::string name)
 {
 	if (sounds.find(name) == sounds.end())
-		sounds[name] = new Sound(DATA_PATH+name+".wav");
+		sounds[name] = new Sound(DATA_PATH+name+".ogg");
 	return sounds[name];
 }
 
