@@ -13,16 +13,16 @@ Player::Player() : Sprite("common.character", 32, 64) {}
 
 void Player::doHit()
 {
-	for (int x = 0; x <= PSIZE.x; x += BLOCK_WIDTH)
-	for (int y = 0; y <= PSIZE.y; y += BLOCK_HEIGHT)
+	for (int x = 0; x <= PSIZE.x; x += TILE_WIDTH)
+	for (int y = 0; y <= PSIZE.y; y += TILE_HEIGHT)
 	{
 		vec2 t (
-			((x+PPOS.x)/BLOCK_WIDTH),
-			((y+PPOS.y)/BLOCK_HEIGHT));
-		if (!(t.x*BLOCK_WIDTH+getSize().x >= p.x
-		 && t.x*BLOCK_WIDTH <= p.x + getSize().x-1
-		 && t.y*BLOCK_HEIGHT+getSize().y >= p.y
-		 && t.y*BLOCK_HEIGHT <= p.y + getSize().y-1)) continue;
+			((x+PPOS.x)/TILE_WIDTH),
+			((y+PPOS.y)/TILE_HEIGHT));
+		if (!(t.x*TILE_WIDTH+getSize().x >= p.x
+		 && t.x*TILE_WIDTH <= p.x + getSize().x-1
+		 && t.y*TILE_HEIGHT+getSize().y >= p.y
+		 && t.y*TILE_HEIGHT <= p.y + getSize().y-1)) continue;
 		runScript(ENV.lvl.get(t.x,t.y).getScripts()["on_hit"],0,t);
 	}
 	for (std::list<Sprite*>::iterator i = ENV.sprites.begin();
@@ -47,24 +47,24 @@ void Player::step()
 	if (!physics) { Sprite::step(); return; }
 	// check if player shall die
 	if (
-		PPOS.y > ENV.lvl.getHeight()*BLOCK_HEIGHT ||
-		ENV.lvl.get(PPOS.x/BLOCK_WIDTH, (PPOS.y-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).getHurt() ||
-		ENV.lvl.get(PPOS.x/BLOCK_WIDTH+1, (PPOS.y-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).getHurt()
+		PPOS.y > ENV.lvl.getHeight()*TILE_HEIGHT ||
+		ENV.lvl.get(PPOS.x/TILE_WIDTH, (PPOS.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).getHurt() ||
+		ENV.lvl.get(PPOS.x/TILE_WIDTH+1, (PPOS.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).getHurt()
 		)
 			die();
 	// run tiles on_contact scripts
 	// TODO maybe this needs some more work...
 	std::stack<vec2> tokeep;
-	for (int x = 0; x <= PSIZE.x; x += BLOCK_WIDTH)
-	for (int y = 0; y <= PSIZE.y; y += BLOCK_HEIGHT)
+	for (int x = 0; x <= PSIZE.x; x += TILE_WIDTH)
+	for (int y = 0; y <= PSIZE.y; y += TILE_HEIGHT)
 	{
 		vec2 t (
-			((x+PPOS.x)/BLOCK_WIDTH),
-			((y+PPOS.y)/BLOCK_HEIGHT));
-		if (!(t.x*BLOCK_WIDTH+getSize().x >= p.x
-		 && t.x*BLOCK_WIDTH <= p.x + getSize().x-1
-		 && t.y*BLOCK_HEIGHT+getSize().y >= p.y
-		 && t.y*BLOCK_HEIGHT <= p.y + getSize().y-1)) continue;
+			((x+PPOS.x)/TILE_WIDTH),
+			((y+PPOS.y)/TILE_HEIGHT));
+		if (!(t.x*TILE_WIDTH+getSize().x >= p.x
+		 && t.x*TILE_WIDTH <= p.x + getSize().x-1
+		 && t.y*TILE_HEIGHT+getSize().y >= p.y
+		 && t.y*TILE_HEIGHT <= p.y + getSize().y-1)) continue;
 		bool c = false;
 		for (std::list<vec2>::iterator i = contact.begin(); i != contact.end(); i++)
 			if ((*i) == t)

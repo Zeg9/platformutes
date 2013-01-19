@@ -36,14 +36,14 @@ bool Badguy::isGoingRight()
 
 bool Badguy::shouldGoLeft()
 {
-	return ENV.lvl.get(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT+2).isSolid()
-		&& !(ENV.lvl.get((p.x-1)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT+1).isSolid()
-			|| ENV.lvl.get((p.x-1)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT).isSolid());
+	return ENV.lvl.get(p.x/TILE_WIDTH,p.y/TILE_HEIGHT+2).isSolid()
+		&& !(ENV.lvl.get((p.x-1)/TILE_WIDTH,p.y/TILE_HEIGHT+1).isSolid()
+			|| ENV.lvl.get((p.x-1)/TILE_WIDTH,p.y/TILE_HEIGHT).isSolid());
 }
 bool Badguy::shouldGoRight()
 {
-	return ENV.lvl.get((p.x+getSize().x)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT+2).isSolid()
-		&& !(ENV.lvl.get((p.x+getSize().x)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT+1).isSolid()
-			|| ENV.lvl.get((p.x+getSize().x)/BLOCK_WIDTH,p.y/BLOCK_HEIGHT).isSolid());
+	return ENV.lvl.get((p.x+getSize().x)/TILE_WIDTH,p.y/TILE_HEIGHT+2).isSolid()
+		&& !(ENV.lvl.get((p.x+getSize().x)/TILE_WIDTH,p.y/TILE_HEIGHT+1).isSolid()
+			|| ENV.lvl.get((p.x+getSize().x)/TILE_WIDTH,p.y/TILE_HEIGHT).isSolid());
 }
 

@@ -99,18 +99,18 @@ vec2 getDrawPos(vec2 p)
 {
 	Device &d = getDevice();
 	vec2 dp (
-		p.x - PPOS.x + d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH,
-		p.y - PPOS.y + d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT
+		p.x - PPOS.x + d.getWidth()/2/TILE_WIDTH*TILE_WIDTH,
+		p.y - PPOS.y + d.getHeight()/2/TILE_HEIGHT*TILE_HEIGHT
 	);
-	int lw = ENV.lvl.getWidth()*BLOCK_WIDTH,
-	    lh = ENV.lvl.getHeight()*BLOCK_HEIGHT;
+	int lw = ENV.lvl.getWidth()*TILE_WIDTH,
+	    lh = ENV.lvl.getHeight()*TILE_HEIGHT;
 	if (PPOS.x < d.getWidth()/2)
 		dp.x = p.x;
 	else if (PPOS.x > lw-d.getWidth()/2)
 		dp.x = p.x - lw + d.getWidth();
 	if (PPOS.y < d.getHeight()/2)
 		dp.y = p.y;
-	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
+	else if (PPOS.y+TILE_HEIGHT > lh-d.getHeight()/2)
 		dp.y = p.y - lh + d.getHeight();
 	return dp;
 }
@@ -119,18 +119,18 @@ vec2 getRealPos(vec2 dp)
 {
 	Device &d = getDevice();
 	vec2 p (
-		dp.x + PPOS.x - d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH,
-		dp.y + PPOS.y - d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT
+		dp.x + PPOS.x - d.getWidth()/2/TILE_WIDTH*TILE_WIDTH,
+		dp.y + PPOS.y - d.getHeight()/2/TILE_HEIGHT*TILE_HEIGHT
 	);
-	int lw = ENV.lvl.getWidth()*BLOCK_WIDTH,
-	    lh = ENV.lvl.getHeight()*BLOCK_HEIGHT;
+	int lw = ENV.lvl.getWidth()*TILE_WIDTH,
+	    lh = ENV.lvl.getHeight()*TILE_HEIGHT;
 	if (PPOS.x < d.getWidth()/2)
 		p.x = dp.x;
 	else if (PPOS.x > lw-d.getWidth()/2)
 		p.x = dp.x + lw - d.getWidth();
 	if (PPOS.y < d.getHeight()/2)
 		p.y = dp.y;
-	else if (PPOS.y+BLOCK_HEIGHT > lh-d.getHeight()/2)
+	else if (PPOS.y+TILE_HEIGHT > lh-d.getHeight()/2)
 		p.y = dp.y + lh - d.getHeight();
 	return p;
 }

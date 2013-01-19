@@ -22,11 +22,11 @@ void spriteFromTile (int x, int y, Tile&t)
 	Sprite * s = 0;
 	if(t.getSprite() == "badguy")
 		s = new Badguy(
-			image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
+			image, x*TILE_WIDTH, y*TILE_HEIGHT,
 			t.getScripts());
 	else if (t.getSprite() == "scripted")
 		s = new ScriptedSprite(
-			image, x*BLOCK_WIDTH, y*BLOCK_HEIGHT,
+			image, x*TILE_WIDTH, y*TILE_HEIGHT,
 			t.getScripts());
 	if (s != 0)
 	{
@@ -153,20 +153,20 @@ int Level::getHeight() { return height; }
 void Level::render()
 {
 	Device &d = getDevice();
-	for (int sx = 0; sx < d.getWidth()/BLOCK_WIDTH+1; sx++)
+	for (int sx = 0; sx < d.getWidth()/TILE_WIDTH+1; sx++)
 	{
-		for (int sy = 0; sy < d.getHeight()/BLOCK_HEIGHT+1; sy++)
+		for (int sy = 0; sy < d.getHeight()/TILE_HEIGHT+1; sy++)
 		{
-			int x = sx - d.getWidth()/2/BLOCK_WIDTH+PPOS.x/BLOCK_WIDTH;
-			int y = sy - d.getHeight()/2/BLOCK_WIDTH+PPOS.y/BLOCK_HEIGHT;
+			int x = sx - d.getWidth()/2/TILE_WIDTH+PPOS.x/TILE_WIDTH;
+			int y = sy - d.getHeight()/2/TILE_WIDTH+PPOS.y/TILE_HEIGHT;
 			if (PPOS.x < d.getWidth()/2)
 				x = sx;
-			else if (PPOS.x > getWidth()*BLOCK_WIDTH-d.getWidth()/2)
-				x = getWidth()-d.getWidth()/BLOCK_WIDTH+sx;
+			else if (PPOS.x > getWidth()*TILE_WIDTH-d.getWidth()/2)
+				x = getWidth()-d.getWidth()/TILE_WIDTH+sx;
 			if (PPOS.y < d.getHeight()/2)
 				y = sy;
-			else if (PPOS.y+BLOCK_HEIGHT > getHeight()*BLOCK_HEIGHT-d.getHeight()/2)
-				y = getHeight()-d.getHeight()/BLOCK_HEIGHT+sy;
+			else if (PPOS.y+TILE_HEIGHT > getHeight()*TILE_HEIGHT-d.getHeight()/2)
+				y = getHeight()-d.getHeight()/TILE_HEIGHT+sy;
 			if (get(x,y).isAir()) continue;
 			
 			if (ENV.allowSprites && get(x,y).getSprite() != "none")
@@ -175,7 +175,7 @@ void Level::render()
 				blocks[x][y] = -1;
 				continue;
 			}
-			vec2 dp = getDrawPos(vec2(x*BLOCK_WIDTH, y*BLOCK_HEIGHT));
+			vec2 dp = getDrawPos(vec2(x*TILE_WIDTH, y*TILE_HEIGHT));
 			d.drawImage(get(x,y).getImage(), dp);
 			if (!get(x,y).hasShading()) continue;
 			bool t, b, l, r, tr, br, bl, tl;

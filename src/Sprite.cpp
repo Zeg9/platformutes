@@ -45,8 +45,8 @@ vec2 Sprite::getSize() { return getImage()->getSize(); }
 
 void Sprite::jump()
 {
-	if (ENV.lvl.get(p.x/BLOCK_WIDTH,p.y/BLOCK_WIDTH+2).isSolid()
-	 || ENV.lvl.get((p.x-1)/BLOCK_WIDTH+1,p.y/BLOCK_WIDTH+2).isSolid())
+	if (ENV.lvl.get(p.x/TILE_WIDTH,p.y/TILE_WIDTH+2).isSolid()
+	 || ENV.lvl.get((p.x-1)/TILE_WIDTH+1,p.y/TILE_WIDTH+2).isSolid())
 		setVel(getVel().x,-10);
 }
 
@@ -75,43 +75,43 @@ void Sprite::step()
 		return;
 	}
 	if (v.y < 0 && !(
-		lvl.get(p.x/BLOCK_WIDTH,ny/BLOCK_HEIGHT).isSolid() ||
-		lvl.get((p.x-1)/BLOCK_WIDTH+1,ny/BLOCK_HEIGHT).isSolid()
+		lvl.get(p.x/TILE_WIDTH,ny/TILE_HEIGHT).isSolid() ||
+		lvl.get((p.x-1)/TILE_WIDTH+1,ny/TILE_HEIGHT).isSolid()
 		))
 		p.y = ny;
 	else if (v.y < 0)
 	{
-		p.y = round(p.y,BLOCK_HEIGHT);
+		p.y = round(p.y,TILE_HEIGHT);
 		v.y = 0;
 	}
 	if (v.y > 0 && !(
-		lvl.get(p.x/BLOCK_WIDTH,(ny-1+H)/BLOCK_HEIGHT).isSolid() ||
-		lvl.get((p.x-1)/BLOCK_WIDTH+1,(ny-1+H)/BLOCK_HEIGHT).isSolid()
+		lvl.get(p.x/TILE_WIDTH,(ny-1+H)/TILE_HEIGHT).isSolid() ||
+		lvl.get((p.x-1)/TILE_WIDTH+1,(ny-1+H)/TILE_HEIGHT).isSolid()
 		))
 		p.y = ny;
 	else if (v.y > 0)
 	{
-		p.y = round(p.y,BLOCK_HEIGHT);
+		p.y = round(p.y,TILE_HEIGHT);
 		v.y = 0;
 	}
 	if (v.x < 0 && !(
 		nx < 0 ||
-		lvl.get(nx/BLOCK_WIDTH, p.y/BLOCK_HEIGHT).isSolid() ||
-		lvl.get(nx/BLOCK_WIDTH, (p.y-1+BLOCK_HEIGHT)/BLOCK_HEIGHT).isSolid() ||
-		lvl.get(nx/BLOCK_WIDTH, (p.y-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).isSolid()
+		lvl.get(nx/TILE_WIDTH, p.y/TILE_HEIGHT).isSolid() ||
+		lvl.get(nx/TILE_WIDTH, (p.y-1+TILE_HEIGHT)/TILE_HEIGHT).isSolid() ||
+		lvl.get(nx/TILE_WIDTH, (p.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).isSolid()
 		))
 		p.x = nx;
 	else if (v.x < 0)
-		p.x = round(p.x,BLOCK_WIDTH);
+		p.x = round(p.x,TILE_WIDTH);
 	if (v.x > 0 && !(
-		nx+getSize().x > lvl.getWidth()*BLOCK_WIDTH ||
-		lvl.get((nx-1)/BLOCK_WIDTH+1, p.y/BLOCK_HEIGHT).isSolid() ||
-		lvl.get((nx-1)/BLOCK_WIDTH+1, (p.y-1+BLOCK_HEIGHT)/BLOCK_HEIGHT).isSolid() ||
-		lvl.get((nx-1)/BLOCK_WIDTH+1, (p.y-1+BLOCK_HEIGHT*2)/BLOCK_HEIGHT).isSolid()
+		nx+getSize().x > lvl.getWidth()*TILE_WIDTH ||
+		lvl.get((nx-1)/TILE_WIDTH+1, p.y/TILE_HEIGHT).isSolid() ||
+		lvl.get((nx-1)/TILE_WIDTH+1, (p.y-1+TILE_HEIGHT)/TILE_HEIGHT).isSolid() ||
+		lvl.get((nx-1)/TILE_WIDTH+1, (p.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).isSolid()
 		))
 		p.x = nx;
 	else if (v.x > 0)
-		p.x = round(p.x,BLOCK_WIDTH);
+		p.x = round(p.x,TILE_WIDTH);
 	if (v.y < 5)
 		v.y += 1;
 }
@@ -120,12 +120,12 @@ ScriptedSprite::ScriptedSprite(std::string _img, int x, int y,
 	std::map<std::string, std::string> &_scripts):
 		Sprite(_img,x,y), scripts(_scripts), hasContact(false)
 {
-	runScript(scripts["on_spawn"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+	runScript(scripts["on_spawn"], this, vec2(p.x/TILE_WIDTH,p.y/TILE_HEIGHT));
 }
 
 void ScriptedSprite::hit()
 {
-	runScript(scripts["on_hit"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+	runScript(scripts["on_hit"], this, vec2(p.x/TILE_WIDTH,p.y/TILE_HEIGHT));
 }
 
 void ScriptedSprite::step()
@@ -133,9 +133,9 @@ void ScriptedSprite::step()
 	if (SDL_GetTicks()/1000 != lastSecond)
 	{
 		lastSecond = SDL_GetTicks()/1000;
-		runScript(scripts["on_second"], this, vec2(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT));
+		runScript(scripts["on_second"], this, vec2(p.x/TILE_WIDTH, p.y/TILE_HEIGHT));
 	}
-	runScript(scripts["on_step"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+	runScript(scripts["on_step"], this, vec2(p.x/TILE_WIDTH,p.y/TILE_HEIGHT));
 	if (p.x+getSize().x >= PPOS.x
 	 && p.x <= PPOS.x + PSIZE.x-1
 	 && p.y+getSize().y >= PPOS.y
@@ -143,7 +143,7 @@ void ScriptedSprite::step()
 	{
 		if (!hasContact)
 		{
-			runScript(scripts["on_contact"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+			runScript(scripts["on_contact"], this, vec2(p.x/TILE_WIDTH,p.y/TILE_HEIGHT));
 			hasContact = true;
 		}
 	}
@@ -152,6 +152,6 @@ void ScriptedSprite::step()
 	int nx = p.x+v.x, ny = p.y+v.y;
 	Sprite::step();
 	if (p.x != nx || p.y != ny)
-		runScript(scripts["on_collision"], this, vec2(p.x/BLOCK_WIDTH,p.y/BLOCK_HEIGHT));
+		runScript(scripts["on_collision"], this, vec2(p.x/TILE_WIDTH,p.y/TILE_HEIGHT));
 }
 

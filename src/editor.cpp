@@ -14,7 +14,7 @@
 void startEditor()
 {
 	Device &d = getDevice();
-	unsigned int editor_currenttile(0), editor_fade(BLOCK_WIDTH), editor_fadetime(0);
+	unsigned int editor_currenttile(0), editor_fade(TILE_WIDTH), editor_fadetime(0);
 	PLAYER->enablePhysics(false);
 	ENV.allowSprites = false;
 	Level &lvl = ENV.lvl;
@@ -30,10 +30,10 @@ void startEditor()
 			for (int y = 0; y <= d.getHeight();
 				y += lvl.getBackground()->getHeight())
 			{
-				int dx = x-PPOS.x%BLOCK_WIDTH, dy = y-PPOS.y%BLOCK_HEIGHT;
-				if (PPOS.x < d.getWidth()/2 || PPOS.x > lvl.getWidth()*BLOCK_WIDTH-d.getWidth()/2)
+				int dx = x-PPOS.x%TILE_WIDTH, dy = y-PPOS.y%TILE_HEIGHT;
+				if (PPOS.x < d.getWidth()/2 || PPOS.x > lvl.getWidth()*TILE_WIDTH-d.getWidth()/2)
 					dx = x;
-				if (PPOS.y < d.getHeight()/2 || PPOS.y+BLOCK_HEIGHT > lvl.getHeight()*BLOCK_WIDTH-d.getHeight()/2)
+				if (PPOS.y < d.getHeight()/2 || PPOS.y+TILE_HEIGHT > lvl.getHeight()*TILE_WIDTH-d.getHeight()/2)
 					dy = y;
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
@@ -41,11 +41,11 @@ void startEditor()
 		// update player position
 		ENV.step();
 		vec2 min (
-			d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH,
-			d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT);
+			d.getWidth()/2/TILE_WIDTH*TILE_WIDTH,
+			d.getHeight()/2/TILE_HEIGHT*TILE_HEIGHT);
 		vec2 max (
-			lvl.getWidth()*BLOCK_WIDTH-d.getWidth()/2/BLOCK_WIDTH*BLOCK_WIDTH,
-			lvl.getHeight()*BLOCK_HEIGHT-d.getHeight()/2/BLOCK_HEIGHT*BLOCK_HEIGHT);
+			lvl.getWidth()*TILE_WIDTH-d.getWidth()/2/TILE_WIDTH*TILE_WIDTH,
+			lvl.getHeight()*TILE_HEIGHT-d.getHeight()/2/TILE_HEIGHT*TILE_HEIGHT);
 		if (PPOS.x < min.x) PLAYER->setPos(min.x, PPOS.y);
 		if (PPOS.x > max.x) PLAYER->setPos(max.x, PPOS.y);
 		if (PPOS.y < min.y) PLAYER->setPos(PPOS.x, min.y);
@@ -57,8 +57,8 @@ void startEditor()
 		for (int i = -5; i <= 5; i++)
 		{
 			d.drawImage(getResourceMgr().getImage("common/editor/slot"),
-				d.getWidth()-BLOCK_WIDTH+editor_fade,
-				d.getHeight()/2-BLOCK_HEIGHT/2+i*BLOCK_HEIGHT);
+				d.getWidth()-TILE_WIDTH+editor_fade,
+				d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT);
 			int ci = (int)editor_currenttile + i;
 			if (ci < 0) ci = tiles.size()+ci;
 			if (ci >= (int)tiles.size()) ci = ci%tiles.size();
@@ -66,19 +66,19 @@ void startEditor()
 			if (!t.isAir())
 			{
 				d.drawImage(t.getImage(),
-					d.getWidth()-BLOCK_WIDTH+editor_fade,
-					d.getHeight()/2-BLOCK_HEIGHT/2+i*BLOCK_HEIGHT,
-					0,0, BLOCK_WIDTH, BLOCK_HEIGHT);
+					d.getWidth()-TILE_WIDTH+editor_fade,
+					d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT,
+					0,0, TILE_WIDTH, TILE_HEIGHT);
 			}
 		}
 		d.drawImage(getResourceMgr().getImage("common/editor/select"),
-			d.getWidth()-BLOCK_WIDTH+editor_fade,
-			d.getHeight()/2-BLOCK_HEIGHT/2);
-		if (SDL_GetTicks() > editor_fadetime && editor_fade < BLOCK_WIDTH)
+			d.getWidth()-TILE_WIDTH+editor_fade,
+			d.getHeight()/2-TILE_HEIGHT/2);
+		if (SDL_GetTicks() > editor_fadetime && editor_fade < TILE_WIDTH)
 			editor_fade+=2;
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		d.drawImage(lvl.getTileset()->get(tiles[editor_currenttile]).getImage(), x-BLOCK_WIDTH/2, y-BLOCK_HEIGHT/2);
+		d.drawImage(lvl.getTileset()->get(tiles[editor_currenttile]).getImage(), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
 		// we're done, let's render
 		d.render();
 		// handle events
@@ -93,11 +93,11 @@ void startEditor()
 					switch (e.button.button)
 					{
 						case SDL_BUTTON_LEFT:
-							lvl.set(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT,
+							lvl.set(p.x/TILE_WIDTH, p.y/TILE_HEIGHT,
 								lvl.getTileset()->getValidTiles()[editor_currenttile]);
 							break;
 						case SDL_BUTTON_RIGHT:
-							lvl.set(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT, 0);
+							lvl.set(p.x/TILE_WIDTH, p.y/TILE_HEIGHT, 0);
 							break;
 						case SDL_BUTTON_WHEELUP:
 							EDITOR_TILE_PREV
@@ -110,7 +110,7 @@ void startEditor()
 						case SDL_BUTTON_MIDDLE:
 							for (unsigned int i = 0; i < tiles.size(); i++)
 							{
-								if (tiles[i]==lvl.getId(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT))
+								if (tiles[i]==lvl.getId(p.x/TILE_WIDTH, p.y/TILE_HEIGHT))
 								{
 									if (i == editor_currenttile) break;
 									editor_currenttile = i;
