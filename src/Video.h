@@ -51,12 +51,17 @@ class Device
 		int getWidth();
 		int getHeight();
 		void toggleFullscreen();
+		// draw image by position
 		void drawImage(Image *i, int x=0, int y=0);
 		void drawImage(Image *i, vec2 p);
+		// draw image by position and a clipping rect
+		void drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch);
+		// call this when the scene is drawn
 		void render();
 		bool run();
 		bool hasEvent();
 		SDL_Event nextEvent();
+		void quit(); // done = true
 		void close(); // This closes the window faster
 	private:
 		Device();

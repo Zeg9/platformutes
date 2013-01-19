@@ -7,8 +7,24 @@ Tile::Tile() : img(""), sprite("none"), light(0), hurt(0), solid(true), shading(
 
 Image *Tile::getImage()
 {
-	return getResourceMgr().getImage(
-		"tilesets/"+ENV.lvl.getTilesetName()+"/tiles/"+split(img,'&')[0]);
+	try {
+		return getResourceMgr().getImage(
+			"tilesets/"+ENV.lvl.getTilesetName()+"/tiles/"+split(img,'&')[0]);
+	} catch(...) {
+		try {
+			return getResourceMgr().getImage(
+				"tilesets/"+ENV.lvl.getTilesetName()+"/sprites/"+img+"/stand_r");
+		} catch(...) {
+			try {
+				std::vector<std::string> is = split(img,'&',2);
+				return getResourceMgr().getImage(
+					"tilesets/"+ENV.lvl.getTilesetName()+"/sprites/"+is[0]+'/'+is[1]);
+			} catch(...) {
+				return 0;
+			}
+		}
+	}
+	return 0;
 }
 std::string Tile::getImageName() { return img; }
 std::string Tile::getSprite() { return sprite; }

@@ -19,6 +19,9 @@ void Environment::reset()
 	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
 			s2r.push((*i));
+	PLAYER->setPos(32,64);
+	PLAYER->setVel(0,0);
+	PLAYER->setImage("common.character");
 }
 
 void Environment::addSprite(Sprite *s) {
@@ -33,7 +36,8 @@ void Environment::removeSprite(Sprite *s)
 void Environment::render()
 {
 	lvl.render();
-	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
+	if (!allowSprites) return;
+	for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
 		(*i)->render();
 	player->render();

@@ -70,6 +70,16 @@ void Device::drawImage(Image *i, vec2 p)
 {
 	drawImage(i, p.x, p.y);
 }
+void Device::drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch)
+{
+	SDL_Rect dstrect;
+	dstrect.x = x; dstrect.y = y;
+	dstrect.w = dstrect.h = 0;
+	SDL_Rect srcrect;
+	srcrect.x = cx; srcrect.y = cy;
+	srcrect.w = cw; srcrect.h = ch;
+	SDL_BlitSurface(i->surf, &srcrect, screen, &dstrect);
+}
 
 void Device::render()
 {
@@ -128,9 +138,12 @@ SDL_Event Device::nextEvent()
 	return e;
 }
 
+void Device::quit()
+{
+	done = true;
+}
 void Device::close()
 {
-	// this is not necessary but will close the window faster
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 

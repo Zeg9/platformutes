@@ -4,6 +4,9 @@
 #include <vector>
 #include <string>
 
+// TODO find some way for this to not be hard coded
+#define FIRST_LEVEL "pyramid/lvl1"
+
 // don't change this
 #define BLOCK_WIDTH 32
 #define BLOCK_HEIGHT 32

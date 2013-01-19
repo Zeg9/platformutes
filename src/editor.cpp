@@ -1,5 +1,4 @@
 #include "Video.h"
-#include "Sound.h"
 #include "Level.h"
 #include "Tileset.h"
 #include "Environment.h"
@@ -19,8 +18,10 @@ void startEditor()
 	PLAYER->enablePhysics(false);
 	ENV.allowSprites = false;
 	Level &lvl = ENV.lvl;
+	lvl.load(FIRST_LEVEL);
 	SDL_Event e;
-	while (d.run())
+	bool end(false);
+	while (d.run() && !end)
 	{
 		// draw background
 		for (int x = 0; x <= d.getWidth();
@@ -50,7 +51,7 @@ void startEditor()
 		if (PPOS.y < min.y) PLAYER->setPos(PPOS.x, min.y);
 		if (PPOS.y > max.y) PLAYER->setPos(PPOS.x, max.y);
 		// render
-		ENV.lvl.render();
+		ENV.render();
 		// level editor
 		std::vector<int> tiles = lvl.getTileset()->getValidTiles();
 		for (int i = -5; i <= 5; i++)
@@ -66,7 +67,8 @@ void startEditor()
 			{
 				d.drawImage(t.getImage(),
 					d.getWidth()-BLOCK_WIDTH+editor_fade,
-					d.getHeight()/2-BLOCK_HEIGHT/2+i*BLOCK_HEIGHT);
+					d.getHeight()/2-BLOCK_HEIGHT/2+i*BLOCK_HEIGHT,
+					0,0, BLOCK_WIDTH, BLOCK_HEIGHT);
 			}
 		}
 		d.drawImage(getResourceMgr().getImage("common/editor/select"),
@@ -106,10 +108,15 @@ void startEditor()
 							EDITOR_FADE_RESET
 							break;
 						case SDL_BUTTON_MIDDLE:
-							for (int i = 0; i < tiles.size(); i++)
+							for (unsigned int i = 0; i < tiles.size(); i++)
 							{
 								if (tiles[i]==lvl.getId(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT))
+								{
+									if (i == editor_currenttile) break;
 									editor_currenttile = i;
+									EDITOR_FADE_RESET
+									break;
+								}
 							}
 							break;
 						default:
@@ -119,6 +126,9 @@ void startEditor()
 				case SDL_KEYDOWN:
 					switch (e.key.keysym.sym)
 					{
+						case SDLK_ESCAPE:
+							end = true;
+							break;
 						case SDLK_LEFT:
 							PLAYER->setVel(-5,PLAYER->getVel().y);
 							break;
@@ -176,4 +186,6 @@ void startEditor()
 			}
 		}
 	}
+	PLAYER->die();
 }
+
