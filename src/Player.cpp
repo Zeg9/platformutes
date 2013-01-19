@@ -46,6 +46,7 @@ void Player::die()
 
 void Player::step()
 {
+	if (!physics) { Sprite::step(); return; }
 	// check if player shall die
 	if (
 		PPOS.y > ENV.lvl.getHeight()*BLOCK_HEIGHT ||

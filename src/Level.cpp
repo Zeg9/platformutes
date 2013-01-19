@@ -118,26 +118,21 @@ void Level::reload()
 	//std::cout << "== Level loaded !" << std::endl;
 }
 
-Tile &Level::get(int x, int y)
+int Level::getId(int x, int y)
 {
 	if (x >= 0 && y >= 0 && x < width && y < height)
-	{
-		Tile &t = getTileset()->get(blocks[x][y]);
-		if (t.getSprite() != "none")
-		{
-			spriteFromTile(x,y,t);
-			blocks[x][y] = -1;
-			return getAirTile();
-		}
-		return t;
-	}
-	return getAirTile();
+		return blocks[x][y];
+	return 0;
+}
+Tile &Level::get(int x, int y)
+{
+	return getTileset()->get(getId(x,y));
 }
 void Level::set(int x, int y, int tile)
 {
 	if (!(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())) return;
 	Tile &t = getTileset()->get(tile);
-	if (t.getSprite() != "none")
+	if (ENV.allowSprites && t.getSprite() != "none")
 		spriteFromTile(x,y,t);
 	else
 		blocks[x][y] = tile;
@@ -173,6 +168,13 @@ void Level::render()
 			else if (PPOS.y+BLOCK_HEIGHT > getHeight()*BLOCK_HEIGHT-d.getHeight()/2)
 				y = getHeight()-d.getHeight()/BLOCK_HEIGHT+sy;
 			if (get(x,y).isAir()) continue;
+			
+			if (ENV.allowSprites && get(x,y).getSprite() != "none")
+			{
+				spriteFromTile(x,y,get(x,y));
+				blocks[x][y] = -1;
+				continue;
+			}
 			vec2 dp = getDrawPos(vec2(x*BLOCK_WIDTH, y*BLOCK_HEIGHT));
 			d.drawImage(get(x,y).getImage(), dp);
 			if (!get(x,y).hasShading()) continue;

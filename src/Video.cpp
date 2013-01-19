@@ -35,6 +35,7 @@ vec2 Image::getSize()
 Device::Device() : lastticks(0), fullscreen(false), done(false)
 {
 	SDL_Init(SDL_INIT_VIDEO);
+	SDL_ShowCursor(false);
 	SDL_WM_SetCaption("Platformutes",0);
 	screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
 		VIDEO_BPP,VIDEO_SDL_FLAGS);

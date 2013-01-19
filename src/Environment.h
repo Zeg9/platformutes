@@ -21,6 +21,7 @@ class Environment
 	public:
 		Level lvl;
 		void reset();
+		bool allowSprites;
 		void addSprite(Sprite *s);
 		void removeSprite(Sprite *s);
 		Player *player;

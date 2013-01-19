@@ -16,7 +16,7 @@ Sound::~Sound()
 
 SoundManager::SoundManager()
 {
-	if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
+	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
 		std::cerr << "[!] Error opening audio: " << Mix_GetError() << std::endl;
 	Mix_AllocateChannels(10);
 }

@@ -3,6 +3,7 @@
 #include "Environment.h"
 
 Environment::Environment() :
+	allowSprites(true),
 	player(new Player())
 {}
 Environment::~Environment()
@@ -15,12 +16,15 @@ Environment::~Environment()
 
 void Environment::reset()
 {
-	for (std::list<Sprite*>::iterator i = sprites.begin();
+	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
 			s2r.push((*i));
 }
 
-void Environment::addSprite(Sprite *s) { sprites.push_back(s); }
+void Environment::addSprite(Sprite *s) {
+	if (allowSprites)
+		sprites.push_back(s);
+}
 void Environment::removeSprite(Sprite *s)
 {
 	s2r.push(s);
@@ -29,7 +33,7 @@ void Environment::removeSprite(Sprite *s)
 void Environment::render()
 {
 	lvl.render();
-	for (std::list<Sprite*>::iterator i = sprites.begin();
+	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
 		(*i)->render();
 	player->render();
@@ -37,11 +41,11 @@ void Environment::render()
 
 void Environment::step()
 {
-	for (std::list<Sprite*>::iterator i = sprites.begin();
+	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
 			(*i)->step();
 	player->step();
-	while (!s2r.empty())
+	if (allowSprites) while (!s2r.empty())
 	{
 		sprites.remove(s2r.top());
 		delete s2r.top();

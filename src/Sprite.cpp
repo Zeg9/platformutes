@@ -67,9 +67,13 @@ void Sprite::render()
 
 void Sprite::step()
 {
-	if (!physics) return;
 	Level &lvl = getEnvironment().lvl;
 	int nx = p.x+v.x, ny = p.y+v.y;
+	if (!physics)
+	{
+		p.x = nx; p.y = ny;
+		return;
+	}
 	if (v.y < 0 && !(
 		lvl.get(p.x/BLOCK_WIDTH,ny/BLOCK_HEIGHT).isSolid() ||
 		lvl.get((p.x-1)/BLOCK_WIDTH+1,ny/BLOCK_HEIGHT).isSolid()

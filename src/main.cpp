@@ -5,6 +5,7 @@
 #include "Level.h"
 #include "Tileset.h"
 #include "Environment.h"
+#include "editor.h"
 #include "tools.h"
 
 #include "ResourceMgr.h"
@@ -17,11 +18,63 @@ int main(int argc, char ** argv)
 		lvlname = argv[1];
 	Device &d = getDevice();
 	getSoundManager(); // init sound mgr
+	bool menu=true;
+	std::vector<std::string> menulist;
+	menulist.push_back("game");
+	menulist.push_back("editor");
+	menulist.push_back("options");
+	int menuselect=0;
+	SDL_Event e;
+	while (d.run() && menu)
+	{
+		d.drawImage(getResourceMgr().getImage("common/title"));
+		int starty = d.getHeight()/2 - (40*menulist.size())/2+4;
+		for (unsigned int i = 0; i < menulist.size(); i++)
+		{
+			d.drawImage(getResourceMgr().getImage("common/menu/"+menulist[i]),
+				d.getWidth()/2-128, starty+i*40);
+			if (menuselect == i)
+				d.drawImage(getResourceMgr().getImage("common/menu/select"),
+					d.getWidth()/2-128, starty+i*40);
+		}
+		d.render();
+		while(d.hasEvent())
+		{
+			e = d.nextEvent();
+			switch (e.type)
+			{
+				case SDL_KEYDOWN:
+					switch (e.key.keysym.sym)
+					{
+						case SDLK_RETURN:
+						case SDLK_KP_ENTER:
+							menu = false;
+							break;
+						case SDLK_DOWN:
+							if (menuselect < menulist.size()-1)
+								menuselect++;
+							else menuselect = 0;
+							break;
+						case SDLK_UP:
+							if (menuselect > 0)
+								menuselect--;
+							else menuselect = menulist.size()-1;
+							break;
+						default:
+							break;
+					}
+					break;
+				case SDL_MOUSEMOTION:
+					menuselect = e.motion.y/32%menulist.size();
+					break;
+			}
+		}
+	}
 	Level &lvl = getEnvironment().lvl;
 	lvl.load(lvlname);
+	if (menulist[menuselect] == "editor") startEditor();
+	// TODO move this ↓ to game.cpp
 	bool pause;
-	unsigned int editor_currenttile(0), editor_fade(BLOCK_WIDTH), editor_fadetime(0); // level editor TODO move this
-	SDL_Event e;
 	while (d.run())
 	{
 		// draw background
@@ -43,65 +96,14 @@ int main(int argc, char ** argv)
 		if (!pause) getEnvironment().step();
 		// render
 		getEnvironment().render();
-		// level editor (TODO move)
-		std::vector<int> tiles = lvl.getTileset()->getValidTiles();
-		for (int i = -5; i <= 5; i++)
-		{
-			d.drawImage(getResourceMgr().getImage("common/editor/slot"),
-				d.getWidth()-BLOCK_WIDTH+editor_fade,
-				d.getHeight()/2-BLOCK_HEIGHT/2+i*BLOCK_HEIGHT);
-			int ci = (int)editor_currenttile + i;
-			if (ci >= (int)tiles.size()) continue;
-			Tile &t = lvl.getTileset()->get(tiles[ci]);
-			if (!t.isAir())
-			{
-				d.drawImage(t.getImage(),
-					d.getWidth()-BLOCK_WIDTH+editor_fade,
-					d.getHeight()/2-BLOCK_HEIGHT/2+i*BLOCK_HEIGHT);
-			}
-		}
-		d.drawImage(getResourceMgr().getImage("common/editor/select"),
-			d.getWidth()-BLOCK_WIDTH+editor_fade,
-			d.getHeight()/2-BLOCK_HEIGHT/2);
-		if (SDL_GetTicks() > editor_fadetime && editor_fade < BLOCK_WIDTH)
-			editor_fade+=2;
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		d.drawImage(lvl.getTileset()->get(tiles[editor_currenttile]).getImage(), x-BLOCK_WIDTH/2, y-BLOCK_HEIGHT/2);
-		// handle events (TODO maybe this should be moved)
+		// we're done, let's render
+		d.render();
+		// handle events
 		while(d.hasEvent())
 		{
 			e = d.nextEvent();
 			switch(e.type)
 			{
-				case SDL_MOUSEBUTTONDOWN:
-				{
-					vec2 p = getRealPos(vec2(e.button.x, e.button.y));
-					switch (e.button.button)
-					{
-						case SDL_BUTTON_LEFT:
-							lvl.set(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT,
-								lvl.getTileset()->getValidTiles()[editor_currenttile]);
-							break;
-						case SDL_BUTTON_RIGHT:
-							lvl.set(p.x/BLOCK_WIDTH, p.y/BLOCK_HEIGHT, 0);
-							break;
-						case SDL_BUTTON_WHEELUP:
-							if (editor_currenttile > 0)
-								editor_currenttile --;
-							editor_fade = 0;
-							editor_fadetime = SDL_GetTicks()+1000;
-							break;
-						case SDL_BUTTON_WHEELDOWN:
-							if (editor_currenttile < tiles.size()-1)
-								editor_currenttile ++;
-							editor_fade = 0;
-							editor_fadetime = SDL_GetTicks()+1000;
-							break;
-						default:
-							break;
-					}
-				} break;
 				case SDL_KEYDOWN:
 					switch (e.key.keysym.sym)
 					{
@@ -155,8 +157,6 @@ int main(int argc, char ** argv)
 					break;
 			}
 		}
-		// we're done, let's render
-		d.render();
 	}
 	// Bye !
 	getDevice().close();
