@@ -19,6 +19,7 @@
 #ifndef __TOOLS_H__
 #define __TOOLS_H__
 
+#include <string>
 #include <vector>
 
 std::string tostring(int i);
@@ -33,6 +34,8 @@ std::string stripspaces(std::string in);
 std::string lowercase(std::string in);
 
 bool startswith(std::string s, std::string what);
+
+bool exists(std::string fn);
 
 struct vec2
 {

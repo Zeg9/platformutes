@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 2.6)
 		
-project(Platformutes)
+project(platformutes)
 
 # We have some custom .cmake scripts not in the official distribution.
-SET(CMAKE_MODULE_PATH "${Platformutes_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+SET(CMAKE_MODULE_PATH "${platformutes_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
 
 file(
 	GLOB_RECURSE
@@ -40,5 +40,4 @@ add_executable(
 add_definitions(-Wall -Wextra -pedantic -g)
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/platformutes DESTINATION bin)
-install(DIRECTORY data/images DESTINATION share)
-
+install(DIRECTORY data/common data/levels data/tilesets DESTINATION share/${PROJECT_NAME})

@@ -17,10 +17,17 @@
 */
 
 #include <string>
+#include <stdexcept>
 #include "Video.h"
 #include "Sound.h"
 #include "Tileset.h"
 #include "ResourceMgr.h"
+
+#define DATA_PATH "../data/"
+
+#define TRY_PATH(P) if (exists(P)) { std::cout << P << std::endl; return P; }
+
+#include <iostream>
 
 ResourceMgr::ResourceMgr() {}
 
@@ -37,24 +44,35 @@ ResourceMgr::~ResourceMgr()
 			delete i->second;
 }
 
+std::string ResourceMgr::getPath(std::string needle)
+{
+	TRY_PATH("./data/"+needle)
+	TRY_PATH("../data/"+needle)
+	#ifdef __unix__
+	TRY_PATH("/usr/share/platformutes/"+needle)
+	TRY_PATH("/usr/local/share/platformutes/"+needle)
+	#endif
+	throw std::runtime_error("Couldn't find resource: "+needle);
+}
+
 Image *ResourceMgr::getImage(std::string name)
 {
 	if (images.find(name) == images.end())
-		images[name] = new Image(DATA_PATH+name+".png");
+		images[name] = new Image(getPath(name+".png"));
 	return images[name];
 }
 
 Sound *ResourceMgr::getSound(std::string name)
 {
 	if (sounds.find(name) == sounds.end())
-		sounds[name] = new Sound(DATA_PATH+name+".ogg");
+		sounds[name] = new Sound(getPath(name+".ogg"));
 	return sounds[name];
 }
 
 Tileset *ResourceMgr::getTileset(std::string name)
 {
 	if (tilesets.find(name) == tilesets.end())
-		tilesets[name] = new Tileset(DATA_PATH"tilesets/"+name+"/tileset");
+		tilesets[name] = new Tileset(getPath("tilesets/"+name+"/tileset"));
 	return tilesets[name];
 }
 

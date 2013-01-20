@@ -22,14 +22,6 @@
 #include <map>
 #include <string>
 
-#define DATA_PATH "../data/"
-/* TODO better data path handling
-Check for:
-1) /usr/share/
-2) /usr/local/share/
-3) ./
-*/
-
 class Image;
 class Sound;
 class Tileset;
@@ -38,6 +30,7 @@ class ResourceMgr
 {
 	friend ResourceMgr &getResourceMgr();
 	public:
+		std::string getPath(std::string needle);
 		Image *getImage(std::string name);
 		Sound *getSound(std::string name);
 		Tileset *getTileset(std::string name);

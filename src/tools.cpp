@@ -17,6 +17,8 @@
 */
 
 #include <sstream>
+#include <fstream>
+#include <string>
 #include <vector>
 #include "Environment.h"
 #include "Video.h"
@@ -102,6 +104,12 @@ bool startswith(std::string s, std::string what)
 	if (s.size() < what.size()) return false;
 	if (s.substr(0,what.size()) == what) return true;
 	return false;
+}
+
+bool exists(std::string fn)
+{
+	std::ifstream s (fn.c_str());
+	return s;
 }
 
 vec2::vec2(int _x, int _y) :

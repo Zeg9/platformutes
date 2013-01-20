@@ -77,7 +77,7 @@ void Level::reload()
 	std::cout << "== Loading level: " << name << "..." << std::endl;
 	width = height = 0;
 	tileset = background = next = "";
-	std::ifstream ifs(("../data/levels/"+name+".pmlvl").c_str());
+	std::ifstream ifs((getResourceMgr().getPath("levels/"+name+".pmlvl")).c_str());
 	std::string fl;
 	getline(ifs,fl);
 	std::vector<std::string> fls = split(stripspaces(fl),';');
