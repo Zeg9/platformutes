@@ -27,6 +27,7 @@
 void startGame()
 {
 	Device &d = getDevice();
+	d.showCursor(false);
 	PLAYER->enablePhysics(true);
 	ENV.allowSprites = true;
 	Level &lvl = ENV.lvl;

@@ -32,6 +32,7 @@
 void startEditor()
 {
 	Device &d = getDevice();
+	d.showCursor(true);
 	unsigned int editor_currenttile(0), editor_fade(TILE_WIDTH), editor_fadetime(0);
 	PLAYER->enablePhysics(false);
 	ENV.allowSprites = false;
@@ -96,7 +97,9 @@ void startEditor()
 			editor_fade+=2;
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		d.drawImage(lvl.getTileset()->get(tiles[editor_currenttile]).getImage(), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+		d.drawImage(lvl.getTileset()->get(tiles[editor_currenttile]).getImage(),
+			x-TILE_WIDTH/2,
+			y-TILE_HEIGHT/2);
 		// we're done, let's render
 		d.render();
 		// handle events

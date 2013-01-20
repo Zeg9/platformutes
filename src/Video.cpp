@@ -20,8 +20,9 @@
 #include <stdexcept>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
-#include "Video.h"
 #include "tools.h"
+#include "ResourceMgr.h"
+#include "Video.h"
 
 Image::Image(std::string filename)
 {
@@ -50,7 +51,7 @@ vec2 Image::getSize()
 }
 
 
-Device::Device() : lastticks(0), fullscreen(false), done(false)
+Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	SDL_ShowCursor(false);
@@ -75,6 +76,10 @@ void Device::toggleFullscreen()
 	else
 		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
 			VIDEO_BPP,VIDEO_SDL_FLAGS);
+}
+void Device::showCursor(bool show)
+{
+	cursor = show;
 }
 
 void Device::drawImage(Image *i, int x, int y)
@@ -101,8 +106,12 @@ void Device::drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch)
 
 void Device::render()
 {
+	if (cursor)
+	{
+		int x, y; SDL_GetMouseState(&x, &y);
+		drawImage(getResourceMgr().getImage("common/cursor"), x, y);
+	}
 	SDL_Flip(screen);
-	SDL_FillRect(screen, 0, SDL_MapRGB(screen->format,0,0,0));
 }
 
 bool Device::run()

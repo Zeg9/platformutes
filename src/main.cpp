@@ -80,20 +80,34 @@ int main(int argc, char ** argv)
 							break;
 					}
 					break;
-				/*case SDL_MOUSEMOTION:
-					menuselect = e.motion.y/32%menulist.size();
-					break;*/
+				case SDL_MOUSEMOTION:
+					if (e.motion.y > starty && e.motion.y < starty+menulist.size()*40
+					 && e.motion.x > d.getWidth()/2-128 && e.motion.x < d.getWidth()/2+128)
+					{
+						int n = (e.motion.y-starty)/40;
+						if (n >= 0 && n < (int)menulist.size())
+							menuselect = n;
+					} else menuselect = -1;
+					break;
+				case SDL_MOUSEBUTTONDOWN:
+					if (e.button.button == SDL_BUTTON_LEFT)
+						menuaccept = true;
+					break;
+				default:
+					break;
 			}
 		}
 		if (menuaccept)
 		{
 			menuaccept = false;
+			if (menuselect == -1) continue;
 			if (menulist[menuselect] == "game")
 				startGame();
 			else if (menulist[menuselect] == "editor")
 				startEditor();
 			else if (menulist[menuselect] == "quit")
 				getDevice().quit();
+			d.showCursor(true);
 		}
 	}
 	// Bye !

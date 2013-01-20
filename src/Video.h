@@ -69,6 +69,7 @@ class Device
 		int getWidth();
 		int getHeight();
 		void toggleFullscreen();
+		void showCursor(bool show);
 		// draw image by position
 		void drawImage(Image *i, int x=0, int y=0);
 		void drawImage(Image *i, vec2 p);
@@ -88,6 +89,7 @@ class Device
 		std::stack<SDL_Event> eventStack;
 		int lastticks; // last frame SDL_GetTicks()
 		bool fullscreen;
+		bool cursor;
 		bool done; // When set to true, the application exits
 };
 Device &getDevice();
