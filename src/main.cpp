@@ -19,6 +19,7 @@
 #include <iostream>
 #include <SDL/SDL.h>
 #include "Video.h"
+#include "Font.h"
 #include "Sound.h"
 #include "Level.h"
 #include "Tileset.h"
@@ -29,29 +30,38 @@
 
 #include "ResourceMgr.h"
 
-int main(int argc, char ** argv)
+struct menuentry {
+	menuentry(std::string r, std::string d) :
+		real(r), display(d) {}
+	std::string real;
+	std::string display;
+};
+
+void mainMenu()
 {
-	Device &d = getDevice();
-	getSoundManager(); // init sound system
+	Device &d=getDevice();
 	bool menuaccept=false;
-	std::vector<std::string> menulist;
-	menulist.push_back("game");
-	menulist.push_back("editor");
-	menulist.push_back("options");
-	menulist.push_back("quit");
+	std::vector<menuentry> menulist;
+	menulist.push_back(menuentry("game","Start game"));
+	menulist.push_back(menuentry("editor","Level editor [no saving]"));
+	menulist.push_back(menuentry("options","Options"));
+	menulist.push_back(menuentry("quit","Exit :("));
 	int menuselect=0;
 	SDL_Event e;
 	while (d.run())
 	{
 		d.drawImage(getResourceMgr().getImage("common/title"));
-		int starty = d.getHeight()/2 - (40*menulist.size())/2+4;
+		int menux = d.getWidth()/2;
+		int menuy = d.getHeight()/2 - (40*menulist.size())/2;
 		for (unsigned int i = 0; i < menulist.size(); i++)
 		{
-			d.drawImage(getResourceMgr().getImage("common/menu/"+menulist[i]),
-				d.getWidth()/2-128, starty+i*40);
+			Image *t = getResourceMgr().getFont("common/FreeSans&16")->render(menulist[i].display);
+			d.drawImage(t,menux-t->getWidth()/2, menuy+i*40+16-t->getHeight()/2);
+			delete t;
+			// TODO: Store the generated images somewhere
 			if (menuselect == (int)i)
 				d.drawImage(getResourceMgr().getImage("common/menu/select"),
-					d.getWidth()/2-128, starty+i*40);
+					menux-128, menuy+i*40);
 		}
 		d.render();
 		while(d.hasEvent())
@@ -81,10 +91,10 @@ int main(int argc, char ** argv)
 					}
 					break;
 				case SDL_MOUSEMOTION:
-					if (e.motion.y > starty && e.motion.y < starty+menulist.size()*40
-					 && e.motion.x > d.getWidth()/2-128 && e.motion.x < d.getWidth()/2+128)
+					if (e.motion.y > menuy && e.motion.y < menuy+menulist.size()*40
+					 && e.motion.x > menux-128 && e.motion.x < menux+128)
 					{
-						int n = (e.motion.y-starty)/40;
+						int n = (e.motion.y-menuy)/40;
 						if (n >= 0 && n < (int)menulist.size())
 							menuselect = n;
 					} else menuselect = -1;
@@ -101,17 +111,28 @@ int main(int argc, char ** argv)
 		{
 			menuaccept = false;
 			if (menuselect == -1) continue;
-			if (menulist[menuselect] == "game")
+			if (menulist[menuselect].real == "game")
 				startGame();
-			else if (menulist[menuselect] == "editor")
+			else if (menulist[menuselect].real == "editor")
 				startEditor();
-			else if (menulist[menuselect] == "quit")
+			else if (menulist[menuselect].real == "quit")
 				getDevice().quit();
 			d.showCursor(true);
 		}
 	}
 	// Bye !
 	getDevice().close();
+}
+
+int main(int argc, char ** argv)
+{
+	getDevice(); // init video
+	getSoundManager(); // init sound system
+	try {
+		mainMenu();
+	} catch (std::exception &e) {
+		std::cerr << "There was an error..." << std::endl << e.what() << std::endl;
+	}
 	return 0;
 }
 

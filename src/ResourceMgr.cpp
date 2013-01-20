@@ -19,6 +19,7 @@
 #include <string>
 #include <stdexcept>
 #include "Video.h"
+#include "Font.h"
 #include "Sound.h"
 #include "Tileset.h"
 #include "ResourceMgr.h"
@@ -27,25 +28,41 @@
 
 #define TRY_PATH(P) if (exists(P)) { std::cout << P << std::endl; return P; }
 
+#define GET_RESOURCE(FUNCTION, MAP, TYPE, PRE, SUF)\
+	TYPE* ResourceMgr::FUNCTION(std::string name)\
+	{\
+		if (MAP.find(name) == MAP.end())\
+		{\
+			std::vector<std::string> toks = split(name,'&',2);\
+			if (toks.size()==1)\
+				MAP[name] = new TYPE(getPath(PRE+name+SUF));\
+			else if (toks.size()==2)\
+				MAP[name] = new TYPE(getPath(PRE+toks[0]+SUF)+'&'+toks[1]);\
+			else\
+				throw std::runtime_error("Error parsing resource name: "+name);\
+		}\
+		return MAP[name];\
+	}
+
+#define DEL_RESOURCE(MAP,TYPE)\
+	for (std::map<std::string,TYPE*>::iterator i = MAP.begin(); i != MAP.end(); i++)\
+		delete i->second;
+
 #include <iostream>
 
 ResourceMgr::ResourceMgr() {}
 
 ResourceMgr::~ResourceMgr()
 {
-	for(std::map<std::string,Image*>::iterator i = images.begin();
-		i != images.end(); i++)
-			delete i->second;
-	for(std::map<std::string,Sound*>::iterator i = sounds.begin();
-		i != sounds.end(); i++)
-			delete i->second;
-	for(std::map<std::string,Tileset*>::iterator i = tilesets.begin();
-		i != tilesets.end(); i++) 
-			delete i->second;
+	DEL_RESOURCE(images,Image)
+	DEL_RESOURCE(fonts,Font)
+	DEL_RESOURCE(sounds,Sound)
+	DEL_RESOURCE(tilesets,Tileset)
 }
 
 std::string ResourceMgr::getPath(std::string needle)
 {
+	TRY_PATH("./"+needle)
 	TRY_PATH("./data/"+needle)
 	TRY_PATH("../data/"+needle)
 	#ifdef __unix__
@@ -55,27 +72,11 @@ std::string ResourceMgr::getPath(std::string needle)
 	throw std::runtime_error("Couldn't find resource: "+needle);
 }
 
-Image *ResourceMgr::getImage(std::string name)
-{
-	if (images.find(name) == images.end())
-		images[name] = new Image(getPath(name+".png"));
-	return images[name];
-}
 
-Sound *ResourceMgr::getSound(std::string name)
-{
-	if (sounds.find(name) == sounds.end())
-		sounds[name] = new Sound(getPath(name+".ogg"));
-	return sounds[name];
-}
-
-Tileset *ResourceMgr::getTileset(std::string name)
-{
-	if (tilesets.find(name) == tilesets.end())
-		tilesets[name] = new Tileset(getPath("tilesets/"+name+"/tileset"));
-	return tilesets[name];
-}
-
+GET_RESOURCE(getImage,images,Image,"",".png")
+GET_RESOURCE(getFont,fonts,Font,"",".otf")
+GET_RESOURCE(getSound,sounds,Sound,"",".ogg")
+GET_RESOURCE(getTileset,tilesets,Tileset,"tilesets/","/tileset")
 
 ResourceMgr &getResourceMgr()
 {

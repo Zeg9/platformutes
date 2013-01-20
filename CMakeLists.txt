@@ -19,6 +19,7 @@ file(
 
 Find_Package(SDL REQUIRED)
 Find_Package(SDL_image REQUIRED)
+Find_Package(SDL_ttf REQUIRED)
 Find_Package(OpenAL REQUIRED)
 Find_Package(ALUT REQUIRED)
 Find_Package(VorbisFile REQUIRED)
@@ -26,7 +27,7 @@ Find_Package(VorbisFile REQUIRED)
 link_libraries (
    ${SDL_LIBRARY}
    ${SDLIMAGE_LIBRARY}
-   ${SDLMIXER_LIBRARY}
+   ${SDLTTF_LIBRARY}
    ${OPENAL_LIBRARY}
    ${ALUT_LIBRARY}
    ${VORBISFILE_LIBRARY}

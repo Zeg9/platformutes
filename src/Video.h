@@ -54,6 +54,7 @@ class Image
 	friend class Device;
 	public:
 		Image(std::string filename);
+		Image(SDL_Surface *_surf);
 		~Image();
 		int getWidth();
 		int getHeight();

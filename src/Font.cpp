@@ -16,35 +16,31 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __RESOURCEMGR_H__
-#define __RESOURCEMGR_H__
-
-#include <map>
+#include <vector>
 #include <string>
+#include "tools.h"
+#include "Video.h"
+#include "Font.h"
 
-class Image;
-class Font;
-class Sound;
-class Tileset;
+#include <iostream>
 
-class ResourceMgr
+Font::Font(std::string def) : font(0)
 {
-	friend ResourceMgr &getResourceMgr();
-	public:
-		std::string getPath(std::string needle);
-		Image *getImage(std::string name);
-		Font *getFont(std::string name);
-		Sound *getSound(std::string name);
-		Tileset *getTileset(std::string name);
-	private:
-		ResourceMgr();
-		~ResourceMgr();
-		std::map<std::string, Image*> images;
-		std::map<std::string, Font*> fonts;
-		std::map<std::string, Sound*> sounds;
-		std::map<std::string, Tileset*> tilesets;
-};
+	std::vector<std::string> toks = split(def,'&',2);
+	std::string filename = toks[0];
+	int size(16);
+	if (toks.size()==2) size=toint(toks[1]);
+	font = TTF_OpenFont(filename.c_str(),size);
+}
 
-ResourceMgr &getResourceMgr();
+Font::~Font()
+{
+	TTF_CloseFont(font);
+}
 
-#endif//__RESOURCEMSG_H__
+Image *Font::render(std::string text, Uint8 r, Uint8 g, Uint8 b)
+{
+	SDL_Color color; color.r = r; color.g = g; color.b = b;
+	return new Image(TTF_RenderText_Blended(font, text.c_str(), color));
+}
+

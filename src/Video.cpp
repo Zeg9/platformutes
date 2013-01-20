@@ -20,6 +20,7 @@
 #include <stdexcept>
 #include <SDL/SDL.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_ttf.h>
 #include "tools.h"
 #include "ResourceMgr.h"
 #include "Video.h"
@@ -30,6 +31,8 @@ Image::Image(std::string filename)
 	if (!surf)
 		throw std::runtime_error("Couldn't load image: "+filename);
 }
+Image::Image(SDL_Surface *_surf) : surf(_surf)
+{}
 Image::~Image()
 {
 	SDL_FreeSurface(surf);
@@ -54,6 +57,7 @@ vec2 Image::getSize()
 Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 {
 	SDL_Init(SDL_INIT_VIDEO);
+	TTF_Init();
 	SDL_ShowCursor(false);
 	SDL_WM_SetCaption("Platformutes",0);
 	screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
@@ -61,6 +65,7 @@ Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 }
 Device::~Device()
 {
+	TTF_Quit();
 	SDL_Quit();
 }
 

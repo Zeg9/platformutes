@@ -16,35 +16,21 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __RESOURCEMGR_H__
-#define __RESOURCEMGR_H__
+#ifndef __FONT_H__
+#define __FONT_H__
 
-#include <map>
 #include <string>
+#include <SDL/SDL_ttf.h>
 
-class Image;
-class Font;
-class Sound;
-class Tileset;
-
-class ResourceMgr
+class Font
 {
-	friend ResourceMgr &getResourceMgr();
 	public:
-		std::string getPath(std::string needle);
-		Image *getImage(std::string name);
-		Font *getFont(std::string name);
-		Sound *getSound(std::string name);
-		Tileset *getTileset(std::string name);
+		Font(std::string def);
+		~Font();
+		Image *render(std::string text,
+			Uint8 r=0, Uint8 g=0, Uint8 b=0);
 	private:
-		ResourceMgr();
-		~ResourceMgr();
-		std::map<std::string, Image*> images;
-		std::map<std::string, Font*> fonts;
-		std::map<std::string, Sound*> sounds;
-		std::map<std::string, Tileset*> tilesets;
+		TTF_Font *font;
 };
 
-ResourceMgr &getResourceMgr();
-
-#endif//__RESOURCEMSG_H__
+#endif//__FONT_H__
