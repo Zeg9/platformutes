@@ -16,37 +16,73 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <SDL/SDL_mixer.h>
+//#include <SDL/SDL_mixer.h>
+#include <stdexcept>
+#include <AL/al.h>
+#include <AL/alut.h>
+#include <SDL/SDL.h>
+#include <vorbis/vorbisfile.h>
 #include "Sound.h"
 
 #include <iostream>
 
-Sound::Sound(std::string filename)
+#define BUFFER_SIZE 32768 // 32 KB
+
+Sound::Sound(std::string filename) : buffer()
 {
-	chunk = Mix_LoadWAV(filename.c_str());
-	if (!chunk)
-		std::cerr << "[!] Error opening sound: " << Mix_GetError() << std::endl;
+	// Decode the ogg file
+	int bitStream;
+	long bytes;
+	char array[BUFFER_SIZE];
+	vorbis_info *pInfo;
+	OggVorbis_File oggFile;
+	if (ov_fopen(filename.c_str(), &oggFile) != 0)
+		throw std::runtime_error("Error opening sound: "+filename);
+	pInfo = ov_info(&oggFile, -1);
+	if (pInfo->channels == 1)
+		format = AL_FORMAT_MONO16;
+	else
+		format = AL_FORMAT_STEREO16;
+	freq = pInfo->rate;
+	do {
+		bytes = ov_read(&oggFile, array, BUFFER_SIZE, 0, 2, 1, &bitStream);
+		if (bytes < 0)
+		{
+			ov_clear(&oggFile);
+			throw std::runtime_error("Error decoding "+filename);
+		}
+		buffer.insert(buffer.end(), array, array + bytes);
+	} while (bytes > 0);
+	ov_clear(&oggFile);
+	
+	// Upload data to openal
+	alGenBuffers(1,&bufferID);
+	alBufferData(bufferID, format, &buffer[0], buffer.size(), freq);
+	
+	alGenSources(1,&sourceID);
+	alSourcei(sourceID, AL_BUFFER, bufferID);
+	// TODO maybe positional sound
+	alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+	alSource3f(sourceID, AL_POSITION, 0.0f, 0.0f, 0.0f);
 }
 Sound::~Sound()
 {
-	Mix_FreeChunk(chunk);
+	alDeleteBuffers(1, &bufferID);
+	alDeleteSources(1, &sourceID);
 }
 
 SoundManager::SoundManager()
 {
-	if (Mix_OpenAudio(MIX_DEFAULT_FREQUENCY, MIX_DEFAULT_FORMAT, MIX_DEFAULT_CHANNELS, 1024) == -1)
-		std::cerr << "[!] Error opening audio: " << Mix_GetError() << std::endl;
-	Mix_AllocateChannels(10);
+	alutInit(0,0); // TODO pass argc and argv
 }
 SoundManager::~SoundManager()
 {
-	Mix_CloseAudio();
+	alutExit();
 }
 
 void SoundManager::playSound(Sound *s)
 {
-	if (Mix_PlayChannel(-1, s->chunk, 0) == -1)
-		std::cerr << "[!] Error playing sound: " << Mix_GetError() << std::endl;
+	alSourcePlay(s->sourceID);
 }
 
 SoundManager &getSoundManager()

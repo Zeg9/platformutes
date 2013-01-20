@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 2.6)
 		
 project(Platformutes)
 
+# We have some custom .cmake scripts not in the official distribution.
+SET(CMAKE_MODULE_PATH "${Platformutes_SOURCE_DIR}/CMakeModules;${CMAKE_MODULE_PATH}")
+
 file(
 	GLOB_RECURSE
 	source_files
@@ -16,12 +19,17 @@ file(
 
 Find_Package(SDL REQUIRED)
 Find_Package(SDL_image REQUIRED)
-Find_Package(SDL_mixer REQUIRED)
+Find_Package(OpenAL REQUIRED)
+Find_Package(ALUT REQUIRED)
+Find_Package(VorbisFile REQUIRED)
 
 link_libraries (
    ${SDL_LIBRARY}
    ${SDLIMAGE_LIBRARY}
    ${SDLMIXER_LIBRARY}
+   ${OPENAL_LIBRARY}
+   ${ALUT_LIBRARY}
+   ${VORBISFILE_LIBRARY}
 )
 
 add_executable(

@@ -20,7 +20,9 @@
 #define __SOUND_H__
 
 #include <string>
-#include <SDL/SDL_mixer.h>
+#include <vector>
+//#include <SDL/SDL_mixer.h>
+#include <AL/al.h>
 
 class Sound
 {
@@ -29,7 +31,12 @@ class Sound
 		Sound(std::string filename);
 		~Sound();
 	private:
-		Mix_Chunk*chunk;
+		//Mix_Chunk*chunk;
+		ALenum format;
+		ALsizei freq;
+		ALuint bufferID;
+		ALuint sourceID;
+		std::vector<char> buffer;
 };
 
 class SoundManager
