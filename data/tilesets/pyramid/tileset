@@ -174,3 +174,5 @@
 			play_sound(leveldone)
 			level.load_next()
 		endif()
+	;
+

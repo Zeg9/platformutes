@@ -59,7 +59,7 @@ void startEditor()
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
 		}
-		// update player position
+		// update position
 		ENV.step();
 		vec2 min (
 			d.getWidth()/2/TILE_WIDTH*TILE_WIDTH,
@@ -74,6 +74,7 @@ void startEditor()
 		// render
 		ENV.render();
 		// level editor
+		d.drawImage(getResourceMgr().getImage("common/editor/spawn"),getDrawPos(vec2(32,64)));
 		std::vector<int> tiles = lvl.getTileset()->getValidTiles();
 		if (editor_fade < TILE_WIDTH)
 		{
