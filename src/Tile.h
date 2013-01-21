@@ -29,6 +29,8 @@ class Tile
 	friend class Tileset;
 	public:
 		Tile();
+		void parse(std::string in);
+		std::string getRawData();
 		Image *getImage();
 		std::string getImageName();
 		std::string getSprite();
@@ -39,6 +41,7 @@ class Tile
 		bool hasShading();
 		virtual bool isAir();
 	protected:
+		std::string raw;
 		std::string img, sprite;
 		std::map<std::string,std::string> scripts;
 		int light, hurt;

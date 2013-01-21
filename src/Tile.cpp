@@ -16,12 +16,37 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "tools.h"
 #include "Tile.h"
 #include "Video.h"
 #include "ResourceMgr.h"
 #include "Environment.h"
 
 Tile::Tile() : img(""), sprite("none"), light(0), hurt(0), solid(true), shading(false) {}
+
+void Tile::parse(std::string in)
+{
+	raw = in;
+	std::vector<std::string> toks = split(raw,';');
+	for (unsigned int i = 0; i < toks.size(); i++)
+	{
+		std::vector<std::string> kv = split(stripspaces(toks[i]),':',2);
+		if (kv.size() != 2) continue;
+		std::string key = kv[0], value = kv[1];
+		if (key == "img") img = value;
+		if (key == "sprite") sprite = value;
+		if (key == "light") light = toint(value);
+		if (key == "hurt") hurt = toint(value);
+		if (key == "solid") solid = tobool(value);
+		if (key == "shading") shading = tobool(value);
+		if (startswith(key,"on_")) scripts[key] = value;
+	}
+}
+
+std::string Tile::getRawData()
+{
+	return raw;
+}
 
 Image *Tile::getImage()
 {

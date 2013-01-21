@@ -23,6 +23,7 @@ Find_Package(SDL_ttf REQUIRED)
 Find_Package(OpenAL REQUIRED)
 Find_Package(ALUT REQUIRED)
 Find_Package(VorbisFile REQUIRED)
+Find_Package(Boost COMPONENTS system filesystem REQUIRED)
 
 link_libraries (
    ${SDL_LIBRARY}
@@ -31,6 +32,7 @@ link_libraries (
    ${OPENAL_LIBRARY}
    ${ALUT_LIBRARY}
    ${VORBISFILE_LIBRARY}
+   ${Boost_LIBRARIES}
 )
 
 add_executable(

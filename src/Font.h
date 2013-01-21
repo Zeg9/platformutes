@@ -22,13 +22,25 @@
 #include <string>
 #include <SDL/SDL_ttf.h>
 
+enum Align {
+	ALIGN_LEFT,
+	ALIGN_CENTER,
+	ALIGN_RIGHT
+};
+enum VAlign {
+	ALIGN_TOP,
+	ALIGN_MIDDLE,
+	ALIGN_BOTTOM
+};
+
 class Font
 {
 	public:
 		Font(std::string def);
 		~Font();
-		Image *render(std::string text,
-			Uint8 r=0, Uint8 g=0, Uint8 b=0);
+		void render(std::string text,
+			Uint8 r=0, Uint8 g=0, Uint8 b=0,
+			int x=0, int y=0, Align a=ALIGN_LEFT, VAlign v=ALIGN_TOP);
 	private:
 		TTF_Font *font;
 };

@@ -22,7 +22,6 @@
 #include "Video.h"
 #include "Font.h"
 
-#include <iostream>
 
 Font::Font(std::string def) : font(0)
 {
@@ -38,9 +37,25 @@ Font::~Font()
 	TTF_CloseFont(font);
 }
 
-Image *Font::render(std::string text, Uint8 r, Uint8 g, Uint8 b)
+void Font::render(std::string text,
+	Uint8 r, Uint8 g, Uint8 b,
+	int x, int y, Align a, VAlign v)
 {
 	SDL_Color color; color.r = r; color.g = g; color.b = b;
-	return new Image(TTF_RenderText_Blended(font, text.c_str(), color));
+	int cx, cy;
+	Image *t(0);
+	std::vector<std::string> stext = split(text,"\n\r");
+	for (unsigned int i = 0; i < stext.size(); i++)
+	{
+		t=new Image(TTF_RenderText_Blended(font, stext[i].c_str(), color));
+		if (a==ALIGN_LEFT) cx = x;
+		else if (a==ALIGN_CENTER) cx = x-t->getWidth()/2;
+		else if (a==ALIGN_RIGHT) cx = x-t->getWidth(); // TODO Vertical alignment
+		if (v==ALIGN_TOP) cy = y;
+		else if (v==ALIGN_MIDDLE) cy = y-t->getHeight()/2;
+		else if (v==ALIGN_BOTTOM) cy = y-t->getHeight();
+		getDevice().drawImage(t,cx,cy+i*TTF_FontHeight(font));
+		delete t;
+	}
 }
 

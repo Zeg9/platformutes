@@ -20,6 +20,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <boost/filesystem.hpp>
 #include "Environment.h"
 #include "Video.h"
 #include "tools.h"
@@ -55,13 +56,13 @@ int round(int i, int f)
 	return (i/f)*f;
 }
 
-std::vector<std::string> split(std::string in, char sep, unsigned int max)
+std::vector<std::string> split(std::string in, std::string seps, unsigned int max)
 {
 	std::vector<std::string> r;
 	std::string current("");
 	for (unsigned int i = 0; i < in.size(); i++)
 	{
-		if (in[i] == sep && (max==0 || r.size()+1 < max))
+		if (seps.find(in[i]) != seps.npos && (max==0 || r.size()+1 < max))
 		{
 			if (current != "")
 				r.push_back(current);
@@ -73,6 +74,12 @@ std::vector<std::string> split(std::string in, char sep, unsigned int max)
 	if (current != "")
 		r.push_back(current);
 	return r;
+}
+std::vector<std::string> split(std::string in, char sep, unsigned int max)
+{
+	std::string seps("");
+	seps += sep;
+	return split(in, seps, max);
 }
 
 std::string strip(std::string in, std::string what)
@@ -110,6 +117,20 @@ bool exists(std::string fn)
 {
 	std::ifstream s (fn.c_str());
 	return s;
+}
+bool canwrite(std::string fn)
+{
+	std::cout << "==== Trying to write: " << fn << std::endl;
+	using namespace boost::filesystem;
+	try {
+		path p (fn);
+		create_directories(p.parent_path());
+		std::ofstream s (fn.c_str(),std::ios::ate);
+		if (s.is_open())
+			return true;
+	} catch (...) {}
+	std::cout << "====> Failed" << std::endl;
+	return false;
 }
 
 vec2::vec2(int _x, int _y) :

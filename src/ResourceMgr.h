@@ -32,6 +32,7 @@ class ResourceMgr
 	friend ResourceMgr &getResourceMgr();
 	public:
 		std::string getPath(std::string needle);
+		std::string getWritePath(std::string needle);
 		Image *getImage(std::string name);
 		Font *getFont(std::string name);
 		Sound *getSound(std::string name);

@@ -135,6 +135,33 @@ void Level::reload()
 	}
 	//std::cout << "== Level loaded !" << std::endl;
 }
+void Level::save()
+{
+	if (ENV.allowSprites)
+		throw std::runtime_error("Can't save levels without disabling sprites !");
+	std::ofstream out (getResourceMgr().getWritePath("levels/"+name+".pmlvl").c_str());
+	out << "width: " << width << "; ";
+	out << "height: " << height << "; ";
+	out << "tileset: " << tileset << "; ";
+	out << "background: " << background << "; ";
+	out << "next: " << next << "; ";
+	out << '\n';
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			out << getId(x, y);
+			if (x < width-1)
+			{
+				for (unsigned int i = 0; i < 3-tostring(getId(x,y)).size(); i++)
+					out << ' ';
+				out << ' ';
+			}
+		}
+		out << '\n';
+	}
+	out << std::flush;
+}
 
 int Level::getId(int x, int y)
 {

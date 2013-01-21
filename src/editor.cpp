@@ -17,6 +17,7 @@
 */
 
 #include "Video.h"
+#include "Font.h"
 #include "Level.h"
 #include "Tileset.h"
 #include "Environment.h"
@@ -34,6 +35,7 @@ void startEditor()
 	Device &d = getDevice();
 	d.showCursor(true);
 	unsigned int editor_currenttile(0), editor_fade(TILE_WIDTH), editor_fadetime(0);
+	bool showRaw = false;
 	PLAYER->enablePhysics(false);
 	ENV.allowSprites = false;
 	Level &lvl = ENV.lvl;
@@ -73,33 +75,50 @@ void startEditor()
 		ENV.render();
 		// level editor
 		std::vector<int> tiles = lvl.getTileset()->getValidTiles();
-		for (int i = -5; i <= 5; i++)
+		if (editor_fade < TILE_WIDTH)
 		{
-			d.drawImage(getResourceMgr().getImage("common/editor/slot"),
-				d.getWidth()-TILE_WIDTH+editor_fade,
-				d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT);
-			int ci = (int)editor_currenttile + i;
-			if (ci < 0) ci = tiles.size()+ci;
-			if (ci >= (int)tiles.size()) ci = ci%tiles.size();
-			Tile &t = lvl.getTileset()->get(tiles[ci]);
-			if (!t.isAir())
+			for (int i = -5; i <= 5; i++)
 			{
-				d.drawImage(t.getImage(),
+				d.drawImage(getResourceMgr().getImage("common/editor/slot"),
 					d.getWidth()-TILE_WIDTH+editor_fade,
-					d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT,
-					0,0, TILE_WIDTH, TILE_HEIGHT);
+					d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT);
+				int ci = (int)editor_currenttile + i;
+				if (ci < 0) ci = tiles.size()+ci;
+				if (ci >= (int)tiles.size()) ci = ci%tiles.size();
+				Tile &t = lvl.getTileset()->get(tiles[ci]);
+				if (!t.isAir())
+				{
+					d.drawImage(t.getImage(),
+						d.getWidth()-TILE_WIDTH+editor_fade,
+						d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT,
+						0,0, TILE_WIDTH, TILE_HEIGHT);
+				}
 			}
+			d.drawImage(getResourceMgr().getImage("common/editor/select"),
+				d.getWidth()-TILE_WIDTH+editor_fade,
+				d.getHeight()/2-TILE_HEIGHT/2);
+			if (SDL_GetTicks() > editor_fadetime)
+				editor_fade+=2;
 		}
-		d.drawImage(getResourceMgr().getImage("common/editor/select"),
-			d.getWidth()-TILE_WIDTH+editor_fade,
-			d.getHeight()/2-TILE_HEIGHT/2);
-		if (SDL_GetTicks() > editor_fadetime && editor_fade < TILE_WIDTH)
-			editor_fade+=2;
 		int x, y;
 		SDL_GetMouseState(&x, &y);
-		d.drawImage(lvl.getTileset()->get(tiles[editor_currenttile]).getImage(),
-			x-TILE_WIDTH/2,
-			y-TILE_HEIGHT/2);
+		Tile &tile = lvl.getTileset()->get(tiles[editor_currenttile]);
+		d.drawImage(tile.getImage(), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+		if (tile.hasShading())
+		{
+			d.drawImage(getResourceMgr().getImage("common/shading/t"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+			d.drawImage(getResourceMgr().getImage("common/shading/b"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+			d.drawImage(getResourceMgr().getImage("common/shading/l"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+			d.drawImage(getResourceMgr().getImage("common/shading/r"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+		}
+		getResourceMgr().getFont("common/FreeMono&16")->render(
+			tostring(tiles[editor_currenttile]),255,255,255,
+			x-TILE_WIDTH/2, y-TILE_HEIGHT/2, ALIGN_LEFT, ALIGN_BOTTOM);
+		if (showRaw)
+		{
+			getResourceMgr().getFont("common/FreeMono&16")->render(
+				lvl.getTileset()->get(tiles[editor_currenttile]).getRawData(),255,255,255);
+		}
 		// we're done, let's render
 		d.render();
 		// handle events
@@ -174,6 +193,12 @@ void startEditor()
 						case SDLK_KP_PLUS:
 							EDITOR_TILE_NEXT
 							EDITOR_FADE_RESET
+							break;
+						case SDLK_i:
+							showRaw = !showRaw;
+							break;
+						case SDLK_s:
+							lvl.save();
 							break;
 						default:
 							break;

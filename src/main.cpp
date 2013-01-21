@@ -43,8 +43,8 @@ void mainMenu()
 	bool menuaccept=false;
 	std::vector<menuentry> menulist;
 	menulist.push_back(menuentry("game","Start game"));
-	menulist.push_back(menuentry("editor","Level editor [no saving]"));
-	menulist.push_back(menuentry("options","Options"));
+	menulist.push_back(menuentry("editor","Level editor"));
+	menulist.push_back(menuentry("fullscreen","Toggle fullscreen"));
 	menulist.push_back(menuentry("quit","Exit :("));
 	int menuselect=0;
 	SDL_Event e;
@@ -55,13 +55,14 @@ void mainMenu()
 		int menuy = d.getHeight()/2 - (40*menulist.size())/2;
 		for (unsigned int i = 0; i < menulist.size(); i++)
 		{
-			Image *t = getResourceMgr().getFont("common/FreeSans&16")->render(menulist[i].display);
-			d.drawImage(t,menux-t->getWidth()/2, menuy+i*40+16-t->getHeight()/2);
-			delete t;
-			// TODO: Store the generated images somewhere
+			uint8_t grey = 128;
 			if (menuselect == (int)i)
-				d.drawImage(getResourceMgr().getImage("common/menu/select"),
-					menux-128, menuy+i*40);
+				grey = 255;
+			getResourceMgr().getFont("common/FreeSans&16")->render(
+				menulist[i].display, grey,grey,grey,
+				menux, menuy+i*40+16,
+				ALIGN_CENTER, ALIGN_MIDDLE);
+			// TODO: Store the generated text images somewhere
 		}
 		d.render();
 		while(d.hasEvent())
@@ -115,6 +116,8 @@ void mainMenu()
 				startGame();
 			else if (menulist[menuselect].real == "editor")
 				startEditor();
+			else if (menulist[menuselect].real == "fullscreen")
+				d.toggleFullscreen();
 			else if (menulist[menuselect].real == "quit")
 				getDevice().quit();
 			d.showCursor(true);

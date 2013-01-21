@@ -40,6 +40,7 @@ class Level
 		void load(std::string _name);
 		void load_next();
 		void reload();
+		void save();
 		int getId(int x, int y);
 		Tile &get(int x, int y);
 		void set(int x, int y, int tile);

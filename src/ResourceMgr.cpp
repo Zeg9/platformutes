@@ -26,7 +26,8 @@
 
 #define DATA_PATH "../data/"
 
-#define TRY_PATH(P) if (exists(P)) { std::cout << P << std::endl; return P; }
+#define TRY_PATH(P) if (exists(P)) { return P; }
+#define TRY_WRITE(P) if (canwrite(P)) { return P; }
 
 #define GET_RESOURCE(FUNCTION, MAP, TYPE, PRE, SUF)\
 	TYPE* ResourceMgr::FUNCTION(std::string name)\
@@ -62,6 +63,14 @@ ResourceMgr::~ResourceMgr()
 
 std::string ResourceMgr::getPath(std::string needle)
 {
+	#ifdef __unix__
+	if (getenv("HOME"))
+		TRY_PATH(std::string(getenv("HOME"))+"/.platformutes/"+needle)
+	#endif
+	#ifdef WIN32
+	if (getenv("APPDATA"))
+		TRY_PATH(std::string(getenv("APPDATA"))+"/Platformutes/"+needle)
+	#endif
 	TRY_PATH("./"+needle)
 	TRY_PATH("./data/"+needle)
 	TRY_PATH("../data/"+needle)
@@ -70,6 +79,22 @@ std::string ResourceMgr::getPath(std::string needle)
 	TRY_PATH("/usr/local/share/platformutes/"+needle)
 	#endif
 	throw std::runtime_error("Couldn't find resource: "+needle);
+}
+std::string ResourceMgr::getWritePath(std::string needle)
+{
+	#ifdef __unix__
+	if (getenv("HOME"))
+		TRY_WRITE(std::string(getenv("HOME"))+"/.platformutes/"+needle)
+	#endif
+	#ifdef WIN32
+	if (getenv("APPDATA"))
+		TRY_WRITE(std::string(getenv("APPDATA"))+"/Platformutes/"+needle)
+	#endif
+	TRY_WRITE(getPath(needle));
+	TRY_WRITE("./"+needle)
+	TRY_WRITE("./data/"+needle)
+	TRY_WRITE("../data/"+needle)
+	throw std::runtime_error("Couldn't write: "+needle);
 }
 
 
