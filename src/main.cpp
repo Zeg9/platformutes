@@ -100,7 +100,7 @@ void mainMenu()
 							menuselect = n;
 					} else menuselect = -1;
 					break;
-				case SDL_MOUSEBUTTONDOWN:
+				case SDL_MOUSEBUTTONUP:
 					if (e.button.button == SDL_BUTTON_LEFT)
 						menuaccept = true;
 					break;

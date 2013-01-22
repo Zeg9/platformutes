@@ -24,14 +24,15 @@
 
 #include "game.h"
 
-void startGame()
+void startGame(bool loadLevel)
 {
 	Device &d = getDevice();
 	d.showCursor(false);
 	PLAYER->enablePhysics(true);
 	ENV.allowSprites = true;
 	Level &lvl = ENV.lvl;
-	lvl.load(FIRST_LEVEL);
+	if (loadLevel)
+		lvl.load(FIRST_LEVEL);
 	SDL_Event e;
 	bool pause(false), end(false);
 	while (d.run() && !end)

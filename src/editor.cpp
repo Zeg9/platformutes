@@ -24,6 +24,8 @@
 #include "tools.h"
 #include "ResourceMgr.h"
 
+#include "game.h" // for testing levels
+
 #include "editor.h"
 
 #define EDITOR_FADE_RESET editor_fade = 0; editor_fadetime = SDL_GetTicks()+1000;
@@ -123,6 +125,13 @@ void startEditor()
 		// we're done, let's render
 		d.render();
 		// handle events
+		Uint8 buttons = SDL_GetMouseState(&x,&y);
+		vec2 p = getRealPos(vec2(x,y));
+		if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))
+			lvl.set(p.x/TILE_WIDTH, p.y/TILE_HEIGHT,
+				lvl.getTileset()->getValidTiles()[editor_currenttile]);
+		if (buttons & SDL_BUTTON(SDL_BUTTON_RIGHT))
+			lvl.set(p.x/TILE_WIDTH, p.y/TILE_HEIGHT, 0);
 		while(d.hasEvent())
 		{
 			e = d.nextEvent();
@@ -200,6 +209,17 @@ void startEditor()
 							break;
 						case SDLK_s:
 							lvl.save();
+							break;
+						case SDLK_r:
+							lvl.reload();
+							break;
+						case SDLK_p:
+							PLAYER->die();
+							startGame(false);
+							d.showCursor(true);
+							PLAYER->enablePhysics(false);
+							PLAYER->die();
+							ENV.allowSprites = false;
 							break;
 						default:
 							break;

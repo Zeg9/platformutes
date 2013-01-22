@@ -22,9 +22,6 @@
 #include <vector>
 #include <string>
 
-// TODO find some way for this to not be hard coded
-#define FIRST_LEVEL "pyramid/lvl1"
-
 // don't change this
 #define TILE_WIDTH 32
 #define TILE_HEIGHT 32

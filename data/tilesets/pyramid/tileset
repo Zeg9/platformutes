@@ -95,6 +95,15 @@
 			level.set_tile(-2,0,4)
 			level.set_tile(-2,1,4)
 		endif()
+[22]
+	img: lever_off;
+	solid: false;
+	on_hit:
+		ifeq($player.image, common.character)
+			play_sound(lever)
+			level.set_tile(0,0,29)
+			level.set_tile(2,0,4)
+		endif()
 [23]
 	img: lever_off;
 	solid: false;
@@ -128,6 +137,13 @@
 		level.set_tile(3,-3,10)
 		level.set_tile(4,-3,10)
 		level.set_tile(5,-3,10)
+[31]
+	img: plate;
+	solid: false;
+	on_contact:
+		play_sound(lever)
+		level.set_tile(0,0,39)
+		level.set_tile(0,-4,40)
 [35]
 	img: plate;
 	solid: false;

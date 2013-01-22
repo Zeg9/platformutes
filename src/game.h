@@ -19,6 +19,9 @@
 #ifndef __GAME_H__
 #define __GAME_H__
 
-void startGame();
+// TODO find some way for this to not be hard coded
+#define FIRST_LEVEL "pyramid/lvl1"
+
+void startGame(bool loadLevel=true);
 
 #endif//__GAME_H__
