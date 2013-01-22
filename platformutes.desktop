@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Platformutes
+GenericName=Platform game
+Comment=A simple platform games
+TryExec=platformutes
+Icon=platformutes
+Exec=platformutes
+Categories=Game;ArcadeGame;

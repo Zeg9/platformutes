@@ -17,6 +17,11 @@ file(
 	data/*
 )
 
+if (WIN32)
+	set(CMAKE_RC_COMPILE_OBJECT "${CMAKE_RC_COMPILER} -i <SOURCE> -o <OBJECT>")
+	set(source_files icon.rc ${source_files})
+endif()
+
 Find_Package(SDL REQUIRED)
 Find_Package(SDL_image REQUIRED)
 Find_Package(SDL_ttf REQUIRED)
@@ -44,3 +49,5 @@ add_definitions(-Wall -Wextra -pedantic -g)
 
 install(PROGRAMS ${CMAKE_BINARY_DIR}/platformutes DESTINATION bin)
 install(DIRECTORY data/common data/levels data/tilesets DESTINATION share/${PROJECT_NAME})
+install(FILES platformutes.desktop DESTINATION share/applications)
+install(FILES platformutes.png DESTINATION share/icons/hicolor/48x48/apps)
