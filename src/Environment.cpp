@@ -16,6 +16,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <algorithm>
 #include "Sprite.h"
 #include "Player.h"
 #include "Environment.h"
@@ -69,6 +70,11 @@ void Environment::step()
 	player->step();
 	if (allowSprites) while (!s2r.empty())
 	{
+		if (std::find(sprites.begin(), sprites.end(), s2r.top()) == sprites.end())
+		{
+			s2r.pop();
+			continue;
+		}
 		sprites.remove(s2r.top());
 		delete s2r.top();
 		s2r.pop();

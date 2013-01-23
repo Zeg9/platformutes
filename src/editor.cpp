@@ -42,6 +42,7 @@ void startEditor()
 	ENV.allowSprites = false;
 	Level &lvl = ENV.lvl;
 	lvl.load(FIRST_LEVEL);
+	PLAYER->die();
 	SDL_Event e;
 	bool end(false);
 	while (d.run() && !end)
@@ -214,6 +215,7 @@ void startEditor()
 							lvl.reload();
 							break;
 						case SDLK_p:
+							ENV.allowSprites = true;
 							PLAYER->die();
 							startGame(false);
 							d.showCursor(true);
@@ -253,6 +255,5 @@ void startEditor()
 			}
 		}
 	}
-	PLAYER->die();
 }
 

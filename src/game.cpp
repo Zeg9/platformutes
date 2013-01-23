@@ -33,6 +33,7 @@ void startGame(bool loadLevel)
 	Level &lvl = ENV.lvl;
 	if (loadLevel)
 		lvl.load(FIRST_LEVEL);
+	PLAYER->die();
 	SDL_Event e;
 	bool pause(false), end(false);
 	while (d.run() && !end)
