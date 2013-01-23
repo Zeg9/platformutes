@@ -134,7 +134,8 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 		}
 		else if (function == "play_sound")
 			getSoundManager().playSound(getResourceMgr().getSound(
-				"tilesets/"+ENV.lvl.getTilesetName()+"/sounds/"+args[0]));
+				"tilesets/"+ENV.lvl.getTilesetName()+"/sounds/"+args[0]),
+				pos.x*TILE_WIDTH-PPOS.x, pos.y*TILE_HEIGHT-PPOS.y);
 		else if (function == "set_var")
 			getScriptVars()[args[0]] = args[1];
 		else if (function == "ifeq")

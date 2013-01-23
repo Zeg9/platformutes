@@ -16,12 +16,12 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-//#include <SDL/SDL_mixer.h>
 #include <stdexcept>
 #include <AL/al.h>
 #include <AL/alut.h>
 #include <SDL/SDL.h>
 #include <vorbis/vorbisfile.h>
+#include "Environment.h"
 #include "Sound.h"
 
 #include <iostream>
@@ -61,8 +61,6 @@ Sound::Sound(std::string filename) : buffer()
 	
 	alGenSources(1,&sourceID);
 	alSourcei(sourceID, AL_BUFFER, bufferID);
-	// TODO maybe positional sound
-	alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
 	alSource3f(sourceID, AL_POSITION, 0.0f, 0.0f, 0.0f);
 }
 Sound::~Sound()
@@ -73,15 +71,22 @@ Sound::~Sound()
 
 SoundManager::SoundManager()
 {
-	alutInit(0,0); // TODO pass argc and argv
+	alutInit(0,0);
+	alListener3f(AL_POSITION, 0.0f, 0.0f, 0.0f);
+	alListener3f(AL_VELOCITY, 0.f, 0.f, 0.f);
+	ALfloat orientation[] = {0.f, 0.f, -1.f, 0.f, 1.f, 0.f};
+	alListenerfv(AL_ORIENTATION, orientation);
 }
 SoundManager::~SoundManager()
 {
 	alutExit();
 }
 
-void SoundManager::playSound(Sound *s)
+void SoundManager::playSound(Sound *s, int _x, int _y)
 {
+	float x = _x/TILE_WIDTH/4,
+	      y = _y/TILE_HEIGHT/4;
+	alSource3f(s->sourceID, AL_POSITION, x, y, 0);
 	alSourcePlay(s->sourceID);
 }
 

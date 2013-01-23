@@ -21,7 +21,6 @@
 
 #include <string>
 #include <vector>
-//#include <SDL/SDL_mixer.h>
 #include <AL/al.h>
 
 class Sound
@@ -31,7 +30,6 @@ class Sound
 		Sound(std::string filename);
 		~Sound();
 	private:
-		//Mix_Chunk*chunk;
 		ALenum format;
 		ALsizei freq;
 		ALuint bufferID;
@@ -43,7 +41,7 @@ class SoundManager
 {
 	friend SoundManager &getSoundManager();
 	public:
-		void playSound(Sound *s);
+		void playSound(Sound *s, int x=0, int y=0);
 	private:
 		SoundManager();
 		~SoundManager();
