@@ -78,6 +78,7 @@ class Device
 		void drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch);
 		// call this when the scene is drawn
 		void render();
+		void clear();
 		bool run();
 		bool hasEvent();
 		SDL_Event nextEvent();

@@ -47,7 +47,8 @@
 
 #define DEL_RESOURCE(MAP,TYPE)\
 	for (std::map<std::string,TYPE*>::iterator i = MAP.begin(); i != MAP.end(); i++)\
-		delete i->second;
+		delete i->second;\
+	MAP.clear();
 
 #include <iostream>
 
@@ -55,10 +56,7 @@ ResourceMgr::ResourceMgr() {}
 
 ResourceMgr::~ResourceMgr()
 {
-	DEL_RESOURCE(images,Image)
-	DEL_RESOURCE(fonts,Font)
-	DEL_RESOURCE(sounds,Sound)
-	DEL_RESOURCE(tilesets,Tileset)
+	unloadAll();
 }
 
 std::string ResourceMgr::getPath(std::string needle)
@@ -102,6 +100,14 @@ GET_RESOURCE(getImage,images,Image,"",".png")
 GET_RESOURCE(getFont,fonts,Font,"",".otf")
 GET_RESOURCE(getSound,sounds,Sound,"",".ogg")
 GET_RESOURCE(getTileset,tilesets,Tileset,"tilesets/","/tileset")
+
+void ResourceMgr::unloadAll()
+{
+	DEL_RESOURCE(tilesets,Tileset)
+	DEL_RESOURCE(fonts,Font)
+	DEL_RESOURCE(images,Image)
+	DEL_RESOURCE(sounds,Sound)
+}
 
 ResourceMgr &getResourceMgr()
 {

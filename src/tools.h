@@ -24,6 +24,7 @@
 
 std::string tostring(int i);
 int toint(std::string s);
+std::string tostring(bool b);
 bool tobool(std::string s);
 
 int round(int i, int f);

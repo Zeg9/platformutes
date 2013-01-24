@@ -20,6 +20,7 @@
 #include "Level.h"
 #include "Tileset.h"
 #include "Environment.h"
+#include "Config.h"
 #include "tools.h"
 
 #include "game.h"
@@ -32,7 +33,13 @@ void startGame(bool loadLevel)
 	ENV.allowSprites = true;
 	Level &lvl = ENV.lvl;
 	if (loadLevel)
-		lvl.load(FIRST_LEVEL);
+	{
+		getConfig().setBool("_ingame",true);
+		if (getConfig().getString("current_level")!="")
+			lvl.load(getConfig().getString("current_level"));
+		else
+			lvl.load(FIRST_LEVEL);
+	}
 	PLAYER->die();
 	SDL_Event e;
 	bool pause(false), end(false);

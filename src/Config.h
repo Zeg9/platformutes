@@ -16,37 +16,26 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef __RESOURCEMGR_H__
-#define __RESOURCEMGR_H__
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
 #include <map>
 #include <string>
 
-class Image;
-class Font;
-class Sound;
-class Tileset;
-
-class ResourceMgr
+class Config
 {
-	friend ResourceMgr &getResourceMgr();
+	friend Config& getConfig();
 	public:
-		std::string getPath(std::string needle);
-		std::string getWritePath(std::string needle);
-		Image *getImage(std::string name);
-		Font *getFont(std::string name);
-		Sound *getSound(std::string name);
-		Tileset *getTileset(std::string name);
-		void unloadAll();
+		bool getBool(std::string key);
+		void setBool(std::string key, bool value);
+		std::string getString(std::string key);
+		void setString(std::string key, std::string value);
 	private:
-		ResourceMgr();
-		~ResourceMgr();
-		std::map<std::string, Image*> images;
-		std::map<std::string, Font*> fonts;
-		std::map<std::string, Sound*> sounds;
-		std::map<std::string, Tileset*> tilesets;
+		Config();
+		~Config();
+		std::map<std::string, std::string> settings;
 };
 
-ResourceMgr &getResourceMgr();
+Config& getConfig();
 
-#endif//__RESOURCEMSG_H__
+#endif//__CONFIG_H__

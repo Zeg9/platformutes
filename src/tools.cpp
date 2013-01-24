@@ -42,6 +42,13 @@ int toint(std::string s)
 	return i;
 }
 
+std::string tostring(bool b)
+{
+	if (b)
+		return "true";
+	return "false";
+}
+
 bool tobool(std::string s)
 {
 	if (toint(s)) return true;

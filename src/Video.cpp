@@ -23,6 +23,7 @@
 #include <SDL/SDL_ttf.h>
 #include "tools.h"
 #include "ResourceMgr.h"
+#include "Config.h"
 #include "Video.h"
 
 Image::Image(std::string filename)
@@ -60,8 +61,13 @@ Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 	TTF_Init();
 	SDL_ShowCursor(false);
 	SDL_WM_SetCaption("Platformutes",0);
-	screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
-		VIDEO_BPP,VIDEO_SDL_FLAGS);
+	fullscreen = getConfig().getBool("fullscreen");
+	if (fullscreen)
+		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
+			VIDEO_BPP,VIDEO_SDL_FLAGS|SDL_FULLSCREEN);
+	else
+		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
+			VIDEO_BPP,VIDEO_SDL_FLAGS);
 }
 Device::~Device()
 {
@@ -75,6 +81,7 @@ int Device::getHeight() { return screen->h; }
 void Device::toggleFullscreen()
 {
 	fullscreen = !fullscreen;
+	getConfig().setBool("fullscreen",fullscreen);
 	if (fullscreen)
 		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
 			VIDEO_BPP,VIDEO_SDL_FLAGS|SDL_FULLSCREEN);
@@ -119,13 +126,18 @@ void Device::render()
 	SDL_Flip(screen);
 }
 
+void Device::clear()
+{
+	SDL_FillRect(screen,0,SDL_MapRGB(screen->format,0,0,0));
+}
+
 bool Device::run()
 {
 	int ticks = SDL_GetTicks();
 	if (ticks - lastticks < TBF)
 		SDL_Delay(TBF-(ticks-lastticks));
 	SDL_WM_SetCaption(("Platformutes [FPS="+
-		tostring(1000/(SDL_GetTicks()-lastticks))+"]").c_str(),
+		tostring(1000/(int)(SDL_GetTicks()-lastticks))+"]").c_str(),
 		"Platformutes");
 	lastticks = ticks;
 	SDL_Event e;
@@ -177,6 +189,7 @@ void Device::quit()
 void Device::close()
 {
 	SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	SDL_Quit();
 }
 
 

@@ -50,10 +50,10 @@ void Font::render(std::string text,
 		t=new Image(TTF_RenderText_Blended(font, stext[i].c_str(), color));
 		if (a==ALIGN_LEFT) cx = x;
 		else if (a==ALIGN_CENTER) cx = x-t->getWidth()/2;
-		else if (a==ALIGN_RIGHT) cx = x-t->getWidth(); // TODO Vertical alignment
+		else if (a==ALIGN_RIGHT) cx = x-t->getWidth();
 		if (v==ALIGN_TOP) cy = y;
-		else if (v==ALIGN_MIDDLE) cy = y-t->getHeight()/2;
-		else if (v==ALIGN_BOTTOM) cy = y-t->getHeight();
+		else if (v==ALIGN_MIDDLE) cy = y-t->getHeight()*stext.size()/2;
+		else if (v==ALIGN_BOTTOM) cy = y-t->getHeight()*stext.size();
 		getDevice().drawImage(t,cx,cy+i*TTF_FontHeight(font));
 		delete t;
 	}

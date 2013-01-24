@@ -27,6 +27,7 @@
 #include "Sprite.h"
 #include "Badguy.h"
 #include "Video.h"
+#include "Config.h"
 #include "Level.h"
 
 #include <iostream>
@@ -74,6 +75,8 @@ void Level::load_next()
 void Level::reload()
 {
 	ENV.reset();
+	if (getConfig().getBool("_ingame"))
+		getConfig().setString("current_level",name);
 	std::cout << "== Loading level: " << name << "..." << std::endl;
 	width = height = 0;
 	tileset = background = next = "";

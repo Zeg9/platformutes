@@ -24,6 +24,7 @@
 #include "Level.h"
 #include "Tileset.h"
 #include "Environment.h"
+#include "Config.h"
 #include "game.h"
 #include "editor.h"
 #include "tools.h"
@@ -44,6 +45,7 @@ void mainMenu()
 	std::vector<menuentry> menulist;
 	menulist.push_back(menuentry("game","Start game"));
 	menulist.push_back(menuentry("editor","Level editor"));
+	menulist.push_back(menuentry("erase","Erase my progress"));
 	menulist.push_back(menuentry("fullscreen","Toggle fullscreen"));
 	menulist.push_back(menuentry("quit","Exit :("));
 	int menuselect=0;
@@ -116,19 +118,87 @@ void mainMenu()
 				startGame();
 			else if (menulist[menuselect].real == "editor")
 				startEditor();
+			else if (menulist[menuselect].real == "erase")
+			{
+				Font*font = getResourceMgr().getFont("common/FreeMono&20");
+				bool done=false;
+				while(d.run() &&!done)
+				{
+					d.clear();
+					font->render(
+					"Press Y to erase your progress\n"
+					"Warning: you can't revert this action !\n"
+					"Press any other key to cancel.\n",
+					255,255,255,d.getWidth()/2,d.getHeight()/2,ALIGN_CENTER,ALIGN_MIDDLE);
+					d.render();
+					while (d.hasEvent())
+					{
+						e = d.nextEvent();
+						if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_y)
+						{
+							getConfig().setString("current_level","");
+							while (d.run() && !done)
+							{
+								d.clear();
+								font->render(
+								"Progress deleted.\n"
+								"You'll go back to first level.\n"
+								"Press any key to continue.\n",
+								255,255,255,d.getWidth()/2,d.getHeight()/2,ALIGN_CENTER,ALIGN_MIDDLE);
+								d.render();
+								while (d.hasEvent())
+								{
+									e = d.nextEvent();
+									if (e.type == SDL_KEYDOWN
+									 || e.type == SDL_MOUSEBUTTONUP)
+										done = true;
+								}
+							}
+						}
+						else if (e.type == SDL_KEYDOWN
+						      || e.type == SDL_MOUSEBUTTONUP)
+						{
+							while (d.run() && !done)
+							{
+								d.clear();
+								font->render(
+								"Canceled.\n"
+								"Press any key to continue.\n",
+								255,255,255,d.getWidth()/2,d.getHeight()/2,ALIGN_CENTER,ALIGN_MIDDLE);
+								d.render();
+								while (d.hasEvent())
+								{
+									e = d.nextEvent();
+									if (e.type == SDL_KEYDOWN
+									 || e.type == SDL_MOUSEBUTTONUP)
+										done = true;
+								}
+							}
+						}
+					}
+				}
+			}
 			else if (menulist[menuselect].real == "fullscreen")
 				d.toggleFullscreen();
 			else if (menulist[menuselect].real == "quit")
-				getDevice().quit();
+				d.quit();
+			getConfig().setBool("_ingame",false);
 			d.showCursor(true);
 		}
 	}
-	// Bye !
-	getDevice().close();
 }
 
 int main(int argc, char ** argv)
 {
+	std::cout <<
+	" _____   _       _____   _____   _____   _____   _____\n"
+	"|  _  | | |     |  _  | |_   _| |  ___| |  _  | |  _  |\n"
+	"| |_| | | |     | |_| |   | |   | |_    | | | | | |_| |\n"
+	"|  ___| | |     |  _  |   | |   |  _|   | | | | |  _  |\n"
+	"| |     | |___  | | | |   | |   | |     | |_| | | || |\n"
+	"|_|     |_____| |_| |_|   |_|   |_|     |_____| |_| |_|\n" //TODO finish that lol
+	<< std::flush;
+	getConfig(); // load settings
 	getDevice(); // init video
 	getSoundManager(); // init sound system
 	try {
@@ -136,6 +206,8 @@ int main(int argc, char ** argv)
 	} catch (std::exception &e) {
 		std::cerr << "There was an error..." << std::endl << e.what() << std::endl;
 	}
+	getResourceMgr().unloadAll();
+	getDevice().close();
 	return 0;
 }
 
