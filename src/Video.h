@@ -82,6 +82,7 @@ class Device
 		bool run();
 		bool hasEvent();
 		SDL_Event nextEvent();
+		int getDTime();
 		void quit(); // done = true
 		void close(); // This closes the window faster
 	private:

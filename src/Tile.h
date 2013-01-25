@@ -35,8 +35,8 @@ class Tile
 		std::string getImageName();
 		std::string getSprite();
 		std::map<std::string,std::string> &getScripts();
-		int getLighting();
-		int getHurt();
+		bool canJump();
+		vec2 getSlowness();
 		bool isSolid();
 		bool hasShading();
 		virtual bool isAir();
@@ -44,8 +44,8 @@ class Tile
 		std::string raw;
 		std::string img, sprite;
 		std::map<std::string,std::string> scripts;
-		int light, hurt;
-		bool solid, shading;
+		vec2 slowness;
+		bool jumping, solid, shading;
 };
 class AirTile : public Tile
 {

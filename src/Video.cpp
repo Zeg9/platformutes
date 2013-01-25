@@ -137,7 +137,7 @@ bool Device::run()
 	if (ticks - lastticks < TBF)
 		SDL_Delay(TBF-(ticks-lastticks));
 	SDL_WM_SetCaption(("Platformutes [FPS="+
-		tostring(1000/(int)(SDL_GetTicks()-lastticks))+"]").c_str(),
+		tostring(1000/getDTime())+"]").c_str(),
 		"Platformutes");
 	lastticks = ticks;
 	SDL_Event e;
@@ -180,6 +180,11 @@ SDL_Event Device::nextEvent()
 	SDL_Event e = eventStack.top();
 	eventStack.pop();
 	return e;
+}
+
+int Device::getDTime()
+{
+	return SDL_GetTicks()-lastticks;
 }
 
 void Device::quit()

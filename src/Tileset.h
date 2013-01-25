@@ -30,6 +30,7 @@ class Tileset
 		Tileset(std::string filename);
 		Tile &get(int num);
 		std::vector<int> getValidTiles();
+		std::map<std::string, std::string> scripts;
 	private:
 		std::map<int, Tile> tiles;
 };

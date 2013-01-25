@@ -64,12 +64,8 @@ void Player::step()
 {
 	if (!physics) { Sprite::step(); return; }
 	// check if player shall die
-	if (
-		PPOS.y > ENV.lvl.getHeight()*TILE_HEIGHT ||
-		ENV.lvl.get(PPOS.x/TILE_WIDTH, (PPOS.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).getHurt() ||
-		ENV.lvl.get(PPOS.x/TILE_WIDTH+1, (PPOS.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).getHurt()
-		)
-			die();
+	if (PPOS.y > ENV.lvl.getHeight()*TILE_HEIGHT)
+		die();
 	// run tiles on_contact scripts
 	// TODO maybe this needs some more work...
 	std::stack<vec2> tokeep;

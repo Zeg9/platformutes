@@ -63,8 +63,8 @@ vec2 Sprite::getSize() { return getImage()->getSize(); }
 
 void Sprite::jump()
 {
-	if (ENV.lvl.get(p.x/TILE_WIDTH,p.y/TILE_WIDTH+2).isSolid()
-	 || ENV.lvl.get((p.x-1)/TILE_WIDTH+1,p.y/TILE_WIDTH+2).isSolid())
+	if (ENV.lvl.get(p.x/TILE_WIDTH,p.y/TILE_WIDTH+2).canJump()
+	 || ENV.lvl.get((p.x-1)/TILE_WIDTH+1,p.y/TILE_WIDTH+2).canJump())
 		setVel(getVel().x,-10);
 }
 
@@ -86,12 +86,14 @@ void Sprite::render()
 void Sprite::step()
 {
 	Level &lvl = getEnvironment().lvl;
-	int nx = p.x+v.x, ny = p.y+v.y;
+	vec2 slowness = lvl.get(p.x/TILE_WIDTH,p.y/TILE_HEIGHT+1).getSlowness();
 	if (!physics)
 	{
-		p.x = nx; p.y = ny;
+		p.x += v.x; p.y += v.y;
 		return;
 	}
+	int nx = p.x+(v.x/slowness.x),
+	    ny = p.y+(v.y/slowness.y);
 	if (v.y < 0 && !(
 		lvl.get(p.x/TILE_WIDTH,ny/TILE_HEIGHT).isSolid() ||
 		lvl.get((p.x-1)/TILE_WIDTH+1,ny/TILE_HEIGHT).isSolid()

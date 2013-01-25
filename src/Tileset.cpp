@@ -36,12 +36,22 @@ Tileset::Tileset(std::string filename)
 	{
 		std::vector<std::string> ls = split(tokens[i],']',2);
 		if (ls.size() != 2) continue;
-		int num = toint(stripspaces(ls[0]));
-		if (!num) continue;
-		tiles[num].parse(ls[1]);
-		//std::cout << "Loaded tile " << num << " with image " << tiles[num].img << std::endl;
+		if (stripspaces(ls[0])=="tileset")
+		{
+			std::vector<std::string> toks = split(ls[1],';');
+			for (unsigned int i = 0; i < toks.size(); i++)
+			{
+				std::vector<std::string> kv = split(stripspaces(toks[i]),':',2);
+				if (kv.size() != 2) continue;
+				std::string key = kv[0], value = kv[1];
+				if (startswith(key,"on_")) scripts[key] = value;
+			}
+		} else {
+			int num = toint(stripspaces(ls[0]));
+			if (!num) continue;
+			tiles[num].parse(ls[1]);
+		}
 	}
-	//std::cout << "== Tileset loaded !" << std::endl;
 }
 
 Tile &Tileset::get(int num)

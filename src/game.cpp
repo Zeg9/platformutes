@@ -25,6 +25,8 @@
 
 #include "game.h"
 
+#include <iostream>
+
 void startGame(bool loadLevel)
 {
 	Device &d = getDevice();
@@ -60,8 +62,6 @@ void startGame(bool loadLevel)
 				d.drawImage(lvl.getBackground(),dx,dy);
 			}
 		}
-		// update everything
-		if (!pause) getEnvironment().step();
 		// render
 		getEnvironment().render();
 		// we're done, let's render
@@ -126,6 +126,12 @@ void startGame(bool loadLevel)
 				default:
 					break;
 			}
+		}
+		// update everything
+		if (!pause){
+			int i;
+			for (i = 0; i <= d.getDTime()/(TBF); i++)
+				getEnvironment().step();
 		}
 	}
 }

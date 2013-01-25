@@ -22,7 +22,9 @@
 #include "ResourceMgr.h"
 #include "Environment.h"
 
-Tile::Tile() : img(""), sprite("none"), light(0), hurt(0), solid(true), shading(false) {}
+Tile::Tile() :
+	img(""), sprite("none"), slowness(1,1),
+	jumping(false), solid(true), shading(false) {}
 
 void Tile::parse(std::string in)
 {
@@ -35,8 +37,12 @@ void Tile::parse(std::string in)
 		std::string key = kv[0], value = kv[1];
 		if (key == "img") img = value;
 		if (key == "sprite") sprite = value;
-		if (key == "light") light = toint(value);
-		if (key == "hurt") hurt = toint(value);
+		if (key == "slowness"){
+			std::vector<std::string> toks = split(value,',');
+			if (toks.size() != 2) continue;
+			slowness = vec2(toint(toks[0]),toint(toks[1]));
+		}
+		if (key == "jumping") jumping = tobool(value);
 		if (key == "solid") solid = tobool(value);
 		if (key == "shading") shading = tobool(value);
 		if (startswith(key,"on_")) scripts[key] = value;
@@ -72,8 +78,8 @@ Image *Tile::getImage()
 std::string Tile::getImageName() { return img; }
 std::string Tile::getSprite() { return sprite; }
 std::map<std::string,std::string> &Tile::getScripts() { return scripts; }
-int Tile::getLighting() { return light; }
-int Tile::getHurt() { return hurt; }
+bool Tile::canJump() { return solid || jumping; }
+vec2 Tile::getSlowness() { return slowness; }
 bool Tile::isSolid() { return solid; }
 bool Tile::hasShading() { return shading; }
 bool Tile::isAir() { return false; }

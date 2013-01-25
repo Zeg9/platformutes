@@ -28,6 +28,7 @@
 #include "Badguy.h"
 #include "Video.h"
 #include "Config.h"
+#include "Script.h"
 #include "Level.h"
 
 #include <iostream>
@@ -136,6 +137,7 @@ void Level::reload()
 		else
 			b += c;
 	}
+	runScript(getTileset()->scripts["on_level_load"]);
 	//std::cout << "== Level loaded !" << std::endl;
 }
 void Level::save()

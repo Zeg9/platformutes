@@ -52,6 +52,7 @@ void mainMenu()
 	SDL_Event e;
 	while (d.run())
 	{
+		d.clear();
 		d.drawImage(getResourceMgr().getImage("common/title"));
 		int menux = d.getWidth()/2;
 		int menuy = d.getHeight()/2 - (40*menulist.size())/2;
@@ -191,12 +192,19 @@ void mainMenu()
 int main(int argc, char ** argv)
 {
 	std::cout <<
-	" _____   _       _____   _____   _____   _____   _____\n"
+	" _____   _       _____   _____   _____   _____   _____ \n"
 	"|  _  | | |     |  _  | |_   _| |  ___| |  _  | |  _  |\n"
 	"| |_| | | |     | |_| |   | |   | |_    | | | | | |_| |\n"
 	"|  ___| | |     |  _  |   | |   |  _|   | | | | |  _  |\n"
-	"| |     | |___  | | | |   | |   | |     | |_| | | || |\n"
+	"| |     | |___  | | | |   | |   | |     | |_| | | || | \n"
 	"|_|     |_____| |_| |_|   |_|   |_|     |_____| |_| |_|\n" //TODO finish that lol
+	"         _   _   _   _   _____   _____   _____\n"
+	"        | |_| | | | | | |_   _| |  ___| |  ___|\n"
+	"        |  _  | | | | |   | |   | |_    | |___\n"
+	"        | | | | | | | |   | |   |  _|   |___  |\n"
+	"        | | | | | |_| |   | |   | |___   ___| |\n"
+	"        |_| |_| |_____|   |_|   |_____| |_____|\n"
+	"                                                    0.1\n"
 	<< std::flush;
 	getConfig(); // load settings
 	getDevice(); // init video

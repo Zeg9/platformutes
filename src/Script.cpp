@@ -36,18 +36,19 @@ std::map<std::string, std::string> &getScriptVars()
 
 std::string parseVar(std::string in, Sprite* sprite=0)
 {
+	std::string c=in;
 	std::string varp = "$script.";
 	if (startswith(in, varp))
-		return getScriptVars()[in.substr(varp.size())];
-	if (startswith(in, "$sprite.") && !sprite)
-		return "";
-	if (in == "$sprite.image")
-		return sprite->getImageName();
-	if (in == "$sprite.state")
-		return sprite->getState();
-	if (in == "$player.image")
-		return PLAYER->getImageName();
-	return in;
+		c = getScriptVars()[in.substr(varp.size())];
+	else if (startswith(in, "$sprite.") && !sprite)
+		c = "";
+	else if (in == "$sprite.image")
+		c = sprite->getImageName();
+	else if (in == "$sprite.state")
+		c = sprite->getState();
+	else if (in == "$player.image")
+		c = PLAYER->getImageName();
+	return c;
 }
 
 int expectedArgs(std::string f)
@@ -63,8 +64,11 @@ int expectedArgs(std::string f)
 	if (f == "level.set_tile")  return 3;
 	if (f == "play_sound")      return 1;
 	if (f == "set_var")         return 2;
+	if (f == "add")             return 2;
+	if (f == "remove")          return 2;
 	if (f == "ifeq")            return 2;
 	if (f == "ifnoteq")         return 2;
+	if (f == "ifempty")         return 1;
 	if (f == "else")            return 0;
 	if (f == "endif")           return 0;
 	if (f == "print")           return -2;
@@ -138,6 +142,10 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 				pos.x*TILE_WIDTH-PPOS.x, pos.y*TILE_HEIGHT-PPOS.y);
 		else if (function == "set_var")
 			getScriptVars()[args[0]] = args[1];
+		else if (function == "add")
+			getScriptVars()[args[0]] = tostring(toint(getScriptVars()[args[0]]) + toint(args[1]));
+		else if (function == "remove")
+			getScriptVars()[args[0]] = tostring(toint(getScriptVars()[args[0]]) - toint(args[1]));
 		else if (function == "ifeq")
 		{
 			ifok = (!isinif || ifok) && args[0] == args[1];
@@ -147,6 +155,11 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 		else if (function == "ifnoteq")
 		{
 			ifok = (!isinif || ifok) && args[0] != args[1];
+			isinif = true;
+		}
+		else if (function == "ifempty")
+		{
+			ifok = (!isinif || ifok) && args[0] == "";
 			isinif = true;
 		}
 		else if (function == "else")
