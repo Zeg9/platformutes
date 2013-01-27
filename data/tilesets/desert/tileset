@@ -1,0 +1,23 @@
+[tileset]
+	on_level_load:
+		set_var(health, 5)
+	;
+[1]
+	img: sand;
+[2]
+	img: cactus;
+	solid: false;
+[3]
+	img: cactus_top;
+	solid: false;
+[4]
+	img: wet_sand;
+	solid: false;
+	jumping: true;
+	slowness: 2,4;
+[50]
+	img: sandstone;
+	shading: true;
+[51]
+	img: sandstone_bg;
+	solid: false;

@@ -12,7 +12,11 @@
 	solid:0;
 [4]
 	img: sandstone;
-	shading: false;
+[5]
+	img: rope;
+	solid: false;
+	jumping: true;
+	slowness: 1,2;
 [10]
 	sprite: badguy;
 	img: mummy;
@@ -143,7 +147,14 @@
 	on_contact:
 		play_sound(lever)
 		level.set_tile(0,0,39)
-		level.set_tile(0,-4,40)
+		level.set_tile(0,-2,40)
+[32]
+	img: plate;
+	solid: false;
+	on_contact:
+		play_sound(lever)
+		level.set_tile(0,0,39)
+		level.set_tile(0,-2,10)
 [35]
 	img: plate;
 	solid: false;
