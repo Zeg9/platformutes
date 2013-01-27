@@ -166,7 +166,7 @@ int main(int argc, char ** argv)
 	"        | | | | | | | |   | |   |  _|   |___  |\n"
 	"        | | | | | |_| |   | |   | |___   ___| |\n"
 	"        |_| |_| |_____|   |_|   |_____| |_____|\n"
-	"                                                    0.1\n"
+	"                                                  0.1.2\n"
 	<< std::flush;
 	getConfig(); // load settings
 	getDevice(); // init video
