@@ -60,13 +60,24 @@ Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	SDL_ShowCursor(false);
+	SDL_EnableKeyRepeat(100,100);
 	SDL_WM_SetCaption("Platformutes",0);
 	fullscreen = getConfig().getBool("fullscreen");
+	int width = getConfig().getInt("width"),
+	    height = getConfig().getInt("height");
+	if (width==0) {
+		width = VIDEO_WIDTH;
+		getConfig().setInt("width", width);
+	}
+	if (height==0) {
+		height = VIDEO_HEIGHT;
+		getConfig().setInt("height", height);
+	}
 	if (fullscreen)
-		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
+		screen = SDL_SetVideoMode(width, height,
 			VIDEO_BPP,VIDEO_SDL_FLAGS|SDL_FULLSCREEN);
 	else
-		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
+		screen = SDL_SetVideoMode(width, height,
 			VIDEO_BPP,VIDEO_SDL_FLAGS);
 }
 Device::~Device()
@@ -83,10 +94,10 @@ void Device::toggleFullscreen()
 	fullscreen = !fullscreen;
 	getConfig().setBool("fullscreen",fullscreen);
 	if (fullscreen)
-		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
+		screen = SDL_SetVideoMode(getWidth(), getHeight(),
 			VIDEO_BPP,VIDEO_SDL_FLAGS|SDL_FULLSCREEN);
 	else
-		screen = SDL_SetVideoMode(VIDEO_WIDTH, VIDEO_HEIGHT,
+		screen = SDL_SetVideoMode(getWidth(), getHeight(),
 			VIDEO_BPP,VIDEO_SDL_FLAGS);
 }
 void Device::showCursor(bool show)

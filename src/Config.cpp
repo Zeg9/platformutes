@@ -69,6 +69,18 @@ void Config::setBool(std::string key, bool value)
 {
 	settings[key] = tostring(value);
 }
+
+int Config::getInt(std::string key)
+{
+	if (settings.find(key) == settings.end())
+		settings[key] = tostring(0);
+	return toint(settings[key]);
+}
+void Config::setInt(std::string key, int value)
+{
+	settings[key] = tostring(value);
+}
+
 std::string Config::getString(std::string key)
 {
 	if (settings.find(key) == settings.end())

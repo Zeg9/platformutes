@@ -45,6 +45,7 @@ class Environment
 		Player *player;
 		void render();
 		void step();
+		void s2rstep();
 		void quit();
 	private:
 		std::list<Sprite*> sprites;

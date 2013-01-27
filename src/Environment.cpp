@@ -68,6 +68,11 @@ void Environment::step()
 		i != sprites.end(); i++)
 			(*i)->step();
 	player->step();
+	s2rstep();
+}
+
+void Environment::s2rstep()
+{
 	if (allowSprites) while (!s2r.empty())
 	{
 		if (std::find(sprites.begin(), sprites.end(), s2r.top()) == sprites.end())

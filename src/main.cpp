@@ -41,6 +41,23 @@ struct menuentry {
 void mainMenu()
 {
 	Device &d=getDevice();
+	SoundManager &s = getSoundManager();
+	d.showCursor(false);
+	d.clear();
+	{
+		Image *i = getResourceMgr().getImage("common/pegarprods");
+		d.drawImage(i,
+			d.getWidth()/2-i->getWidth()/2,
+			d.getHeight()/2-i->getHeight()/2);
+	}
+	d.render();
+	s.playSound(getResourceMgr().getSound("common/pegarprods"));
+	d.run();
+	SDL_Delay(2000);
+	d.run();
+	while (d.hasEvent())
+		d.nextEvent();
+	d.showCursor(true);
 	bool menuaccept=false;
 	std::vector<menuentry> menulist;
 	menulist.push_back(menuentry("game","Start game"));
@@ -53,7 +70,12 @@ void mainMenu()
 	while (d.run())
 	{
 		d.clear();
-		d.drawImage(getResourceMgr().getImage("common/title"));
+		{
+			Image *i = getResourceMgr().getImage("common/title");
+			d.drawImage(i,
+				d.getWidth()/2-i->getWidth()/2,
+				d.getHeight()/2-i->getHeight()/2);
+		}
 		int menux = d.getWidth()/2;
 		int menuy = d.getHeight()/2 - (40*menulist.size())/2;
 		for (unsigned int i = 0; i < menulist.size(); i++)

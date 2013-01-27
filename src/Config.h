@@ -28,6 +28,8 @@ class Config
 	public:
 		bool getBool(std::string key);
 		void setBool(std::string key, bool value);
+		int getInt(std::string key);
+		void setInt(std::string key, int value);
 		std::string getString(std::string key);
 		void setString(std::string key, std::string value);
 	private:
