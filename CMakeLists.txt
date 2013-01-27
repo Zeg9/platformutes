@@ -18,7 +18,7 @@ file(
 )
 
 if (WIN32)
-	set(CMAKE_RC_COMPILE_OBJECT "${CMAKE_RC_COMPILER} -i <SOURCE> -o <OBJECT>")
+	set(CMAKE_RC_COMPILE_OBJECT "${CMAKE_RC_COMPILER} -i <SOURCE> -o <OBJECT> -O coff")
 	set(source_files icon.rc ${source_files})
 endif()
 
