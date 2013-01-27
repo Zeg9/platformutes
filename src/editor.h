@@ -24,6 +24,7 @@ class LevelEditor {
 		LevelEditor();
 		void configDialog();
 		void newDialog();
+		void loadDialog();
 	private:
 };
 

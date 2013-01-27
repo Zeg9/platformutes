@@ -232,6 +232,9 @@ LevelEditor::LevelEditor()
 						case SDLK_n:
 							newDialog();
 							break;
+						case SDLK_l:
+							loadDialog();
+							break;
 						default:
 							break;
 					}
@@ -388,6 +391,61 @@ void LevelEditor::newDialog()
 					done = true;
 					break;
 				} catch(...) {}
+			}
+		}
+	}
+	delete scr;
+}
+
+void LevelEditor::loadDialog()
+{
+	Device &d = getDevice();
+	Level &lvl = ENV.lvl;
+	std::string oldlvl = lvl.name;
+	Image *scr = d.screenshot();
+	scr->setAlpha(64);
+	Menu m;
+	m.add(MenuEntry("name","Name: "));
+	m.add(MenuEntry("accept","Accept"));
+	m.add(MenuEntry("cancel","Cancel"));
+	MenuEntry &name = m.get("name");
+	name.editable = true;
+	name.value = lvl.name;
+	name.vmin = '/';
+	name.vmax = '~';
+	SDL_Event e;
+	bool done=false;
+	int s = -1;
+	while (d.run() && !done)
+	{
+		d.clear();
+		d.drawImage(scr);
+		getResourceMgr().getFont("common/FreeSans&48")->render
+			("Load a level",255,255,255,48,48);
+		m.render();
+		d.render();
+		while (d.hasEvent())
+		{
+			e = d.nextEvent();
+			s = m.event(e);
+			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
+				done = true;
+		}
+		if (s >= 0)
+		{
+			MenuEntry &entry = m.get();
+			if (entry.name == "cancel")
+			{
+				done = true;
+				break;
+			}
+			if (entry.name == "accept")
+			{
+				if (name.value != "") try {
+					lvl.load(name.value);
+					done = true;
+					break;
+				} catch(...) { lvl.load(oldlvl); }
 			}
 		}
 	}
