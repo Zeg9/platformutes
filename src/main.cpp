@@ -17,26 +17,16 @@
 */
 
 #include <iostream>
-#include <SDL/SDL.h>
 #include "Video.h"
 #include "Font.h"
 #include "Sound.h"
-#include "Level.h"
-#include "Tileset.h"
-#include "Environment.h"
+#include "Menu.h"
 #include "Config.h"
 #include "game.h"
 #include "editor.h"
 #include "tools.h"
 
 #include "ResourceMgr.h"
-
-struct menuentry {
-	menuentry(std::string r, std::string d) :
-		real(r), display(d) {}
-	std::string real;
-	std::string display;
-};
 
 void mainMenu()
 {
@@ -58,13 +48,12 @@ void mainMenu()
 	while (d.hasEvent())
 		d.nextEvent();
 	d.showCursor(true);
-	bool menuaccept=false;
-	std::vector<menuentry> menulist;
-	menulist.push_back(menuentry("game","Start game"));
-	menulist.push_back(menuentry("editor","Level editor"));
-	menulist.push_back(menuentry("erase","Erase my progress"));
-	menulist.push_back(menuentry("fullscreen","Toggle fullscreen"));
-	menulist.push_back(menuentry("quit","Exit :("));
+	Menu m;
+	m.add(MenuEntry("game","Start game"));
+	m.add(MenuEntry("editor","Level editor"));
+	m.add(MenuEntry("erase","Erase my progress"));
+	m.add(MenuEntry("fullscreen","Toggle fullscreen"));
+	m.add(MenuEntry("quit","Exit :("));
 	int menuselect=0;
 	SDL_Event e;
 	while (d.run())
@@ -76,72 +65,23 @@ void mainMenu()
 				d.getWidth()/2-i->getWidth()/2,
 				d.getHeight()/2-i->getHeight()/2);
 		}
-		int menux = d.getWidth()/2;
-		int menuy = d.getHeight()/2 - (40*menulist.size())/2;
-		for (unsigned int i = 0; i < menulist.size(); i++)
-		{
-			uint8_t grey = 128;
-			if (menuselect == (int)i)
-				grey = 255;
-			getResourceMgr().getFont("common/FreeSans&16")->render(
-				menulist[i].display, grey,grey,grey,
-				menux, menuy+i*40+16,
-				ALIGN_CENTER, ALIGN_MIDDLE);
-			// TODO: Store the generated text images somewhere
-		}
+		int s(-1);
+		m.render();
 		d.render();
 		while(d.hasEvent())
 		{
 			e = d.nextEvent();
-			switch (e.type)
-			{
-				case SDL_KEYDOWN:
-					switch (e.key.keysym.sym)
-					{
-						case SDLK_RETURN:
-						case SDLK_KP_ENTER:
-							menuaccept = true;
-							break;
-						case SDLK_DOWN:
-							if (menuselect < (int)menulist.size()-1)
-								menuselect++;
-							else menuselect = 0;
-							break;
-						case SDLK_UP:
-							if (menuselect > 0)
-								menuselect--;
-							else menuselect = menulist.size()-1;
-							break;
-						default:
-							break;
-					}
-					break;
-				case SDL_MOUSEMOTION:
-					if (e.motion.y > menuy && e.motion.y < menuy+menulist.size()*40
-					 && e.motion.x > menux-128 && e.motion.x < menux+128)
-					{
-						int n = (e.motion.y-menuy)/40;
-						if (n >= 0 && n < (int)menulist.size())
-							menuselect = n;
-					} else menuselect = -1;
-					break;
-				case SDL_MOUSEBUTTONUP:
-					if (e.button.button == SDL_BUTTON_LEFT)
-						menuaccept = true;
-					break;
-				default:
-					break;
-			}
+			s = m.event(e);
 		}
-		if (menuaccept)
+		if (s >= 0)
 		{
-			menuaccept = false;
-			if (menuselect == -1) continue;
-			if (menulist[menuselect].real == "game")
+			MenuEntry &entry = m.get();
+			s = -1;
+			if (entry.name == "game")
 				startGame();
-			else if (menulist[menuselect].real == "editor")
-				startEditor();
-			else if (menulist[menuselect].real == "erase")
+			else if (entry.name == "editor")
+				LevelEditor();
+			else if (entry.name == "erase")
 			{
 				Font*font = getResourceMgr().getFont("common/FreeMono&20");
 				bool done=false;
@@ -201,9 +141,9 @@ void mainMenu()
 					}
 				}
 			}
-			else if (menulist[menuselect].real == "fullscreen")
+			else if (entry.name == "fullscreen")
 				d.toggleFullscreen();
-			else if (menulist[menuselect].real == "quit")
+			else if (entry.name == "quit")
 				d.quit();
 			getConfig().setBool("_ingame",false);
 			d.showCursor(true);

@@ -22,17 +22,20 @@
 #include "Tileset.h"
 #include "Environment.h"
 #include "tools.h"
+#include "Menu.h"
 #include "ResourceMgr.h"
 
 #include "game.h" // for testing levels
 
 #include "editor.h"
 
+#include <iostream>
+
 #define EDITOR_FADE_RESET editor_fade = 0; editor_fadetime = SDL_GetTicks()+1000;
 #define EDITOR_TILE_PREV if (editor_currenttile > 0) editor_currenttile --; else editor_currenttile = tiles.size()-1;
 #define EDITOR_TILE_NEXT if (editor_currenttile < tiles.size()-1) editor_currenttile ++; else editor_currenttile = 0;
 
-void startEditor()
+LevelEditor::LevelEditor()
 {
 	Device &d = getDevice();
 	d.showCursor(true);
@@ -223,6 +226,12 @@ void startEditor()
 							PLAYER->die();
 							ENV.allowSprites = false;
 							break;
+						case SDLK_c:
+							configDialog();
+							break;
+						case SDLK_n:
+							newDialog();
+							break;
 						default:
 							break;
 					}
@@ -255,5 +264,133 @@ void startEditor()
 			}
 		}
 	}
+}
+
+void LevelEditor::configDialog()
+{
+	Device &d = getDevice();
+	Level &lvl = ENV.lvl;
+	Image *scr = d.screenshot();
+	scr->setAlpha(64);
+	Menu m;
+	m.add(MenuEntry("tileset","Tileset: "));
+	m.add(MenuEntry("next","Next: "));
+	m.add(MenuEntry("width","Width: "));
+	m.add(MenuEntry("height","Height: "));
+	m.add(MenuEntry("accept","Accept"));
+	m.add(MenuEntry("cancel","Cancel"));
+	MenuEntry &tileset = m.get("tileset");
+	MenuEntry &next = m.get("next");
+	MenuEntry &width = m.get("width");
+	MenuEntry &height = m.get("height");
+	tileset.editable
+	 = next.editable
+	 = width.editable
+	 = height.editable = true;
+	tileset.value = lvl.tileset;
+	next.value = lvl.next;
+	tileset.vmin = next.vmin = '/';
+	tileset.vmax = next.vmax = '~';
+	width.value = tostring(lvl.getWidth());
+	height.value = tostring(lvl.getHeight());
+	width.vmin = height.vmin = '0';
+	width.vmax = height.vmax = '9';
+	width.vlen = height.vlen = 3;
+	SDL_Event e;
+	bool done=false;
+	int s = -1;
+	while (d.run() && !done)
+	{
+		d.clear();
+		d.drawImage(scr);
+		getResourceMgr().getFont("common/FreeSans&48")->render
+			("Configure level",255,255,255,48,48);
+		m.render();
+		d.render();
+		while (d.hasEvent())
+		{
+			e = d.nextEvent();
+			s = m.event(e);
+			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
+				done = true;
+		}
+		if (s >= 0)
+		{
+			MenuEntry &entry = m.get();
+			if (entry.name == "cancel")
+			{
+				done = true;
+				break;
+			}
+			if (entry.name == "accept")
+			{
+				try {
+					getResourceMgr().getTileset(tileset.value);
+					lvl.tileset = tileset.value;
+					lvl.next = next.value;
+					lvl.resize(toint(width.value), toint(height.value));
+					done = true;
+					break;
+				} catch(...) {}
+			}
+		}
+	}
+	delete scr;
+}
+
+void LevelEditor::newDialog()
+{
+	Device &d = getDevice();
+	Level &lvl = ENV.lvl;
+	Image *scr = d.screenshot();
+	scr->setAlpha(64);
+	Menu m;
+	m.add(MenuEntry("name","Name: "));
+	m.add(MenuEntry("accept","Accept"));
+	m.add(MenuEntry("cancel","Cancel"));
+	MenuEntry &name = m.get("name");
+	name.editable = true;
+	name.value = lvl.name;
+	name.vmin = '/';
+	name.vmax = '~';
+	SDL_Event e;
+	bool done=false;
+	int s = -1;
+	while (d.run() && !done)
+	{
+		d.clear();
+		d.drawImage(scr);
+		getResourceMgr().getFont("common/FreeSans&48")->render
+			("Create a new level",255,255,255,48,48);
+		m.render();
+		d.render();
+		while (d.hasEvent())
+		{
+			e = d.nextEvent();
+			s = m.event(e);
+			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
+				done = true;
+		}
+		if (s >= 0)
+		{
+			MenuEntry &entry = m.get();
+			if (entry.name == "cancel")
+			{
+				done = true;
+				break;
+			}
+			if (entry.name == "accept")
+			{
+				if (name.value != "") try {
+					lvl.name = name.value;
+					lvl.resize(0,0);
+					configDialog();
+					done = true;
+					break;
+				} catch(...) {}
+			}
+		}
+	}
+	delete scr;
 }
 

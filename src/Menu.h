@@ -15,16 +15,39 @@
  You should have received a copy of the GNU General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#ifndef __MENU_H__
+#define __MENU_H__
 
-#ifndef __EDITOR_H__
-#define __EDITOR_H__
+#include <vector>
+#include <string>
+#include <SDL/SDL.h>
 
-class LevelEditor {
-	public:
-		LevelEditor();
-		void configDialog();
-		void newDialog();
-	private:
+class Menu;
+
+struct MenuEntry {
+	MenuEntry(std::string n, std::string t);
+	std::string name;
+	std::string text;
+	std::string value;
+	bool editable;
+	char vmin, vmax;
+	unsigned int vlen;
+	void updateText();
+	void event(SDL_Event &e, Menu*menu);
 };
 
-#endif//__EDITOR_H__
+class Menu {
+	friend struct MenuEntry;
+	public:
+		Menu();
+		void add(MenuEntry e);
+		MenuEntry &get();
+		MenuEntry &get(std::string name);
+		int event(SDL_Event &e);
+		void render();
+	private:
+		std::vector<MenuEntry> entries;
+		int select;
+};
+
+#endif//__MENU_H__

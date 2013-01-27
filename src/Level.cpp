@@ -85,22 +85,25 @@ void Level::reload()
 	std::string fl;
 	getline(ifs,fl);
 	std::vector<std::string> fls = split(stripspaces(fl),';');
+	int w(-1), h(-1);
 	for (unsigned int i = 0; i < fls.size(); i++)
 	{
 		std::vector<std::string> kv = split(fls[i],':');
 		if (kv.size() != 2) continue;
 		std::string key = kv[0], value = kv[1];
-		if (key == "width") width = toint(value);
-		if (key == "height") height = toint(value);
+		if (key == "width") w = toint(value);
+		if (key == "height") h = toint(value);
 		if (key == "tileset") tileset = value;
 		if (key == "background") background = value;
 		if (key == "next") next = value;
 	}
-	if (tileset == "" || width == 0 || height == 0)
-		throw std::runtime_error("Please specify a tileset, a width and a height.");
-	/*std::cout << "Tileset: " << tileset << std::endl;
-	std::cout << "Background: " << background << std::endl;
-	std::cout << "Size: " << width << "x" << height << std::endl;*/
+	if (blocks != 0 && width > 0 && height > 0)
+	{
+		for (int x = 0; x < width; x++)
+			delete[] blocks[x];
+		delete[] blocks;
+	}
+	width = w; height = h;
 	blocks = new int*[width];
 	for (int x = 0; x < width; x++)
 	{
@@ -108,6 +111,8 @@ void Level::reload()
 		for (int y = 0; y < height; y++)
 			blocks[x][y] = 0;
 	}
+	if (tileset == "" || width == -1 || height == -1)
+		throw std::runtime_error("Please specify a tileset, a width and a height.");
 	int x=0, y=0;
 	std::string b("");
 	char c(0);
@@ -139,6 +144,27 @@ void Level::reload()
 	}
 	runScript(getTileset()->scripts["on_level_load"]);
 	//std::cout << "== Level loaded !" << std::endl;
+}
+void Level::resize(int w, int h)
+{
+	int **oldBlocks = blocks;
+	int oldwidth = width, oldheight = height;
+	width = w; height = h;
+	blocks = new int*[width];
+	for (int x = 0; x < width; x++)
+	{
+		blocks[x] = new int[height];
+		for (int y = 0; y < height; y++)
+		{
+			if (x < oldwidth && y < oldheight)
+				blocks[x][y] = oldBlocks[x][y];
+			else
+				blocks[x][y] = 0;
+		}
+	}
+	for (int x = 0; x < oldwidth; x++)
+		delete[] oldBlocks[x];
+	delete[] oldBlocks;
 }
 void Level::save()
 {

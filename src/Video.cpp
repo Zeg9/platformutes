@@ -54,6 +54,10 @@ vec2 Image::getSize()
 	return vec2(getWidth(), getHeight());
 }
 
+void Image::setAlpha(Uint8 a)
+{
+	SDL_SetAlpha(surf, SDL_SRCALPHA|SDL_RLEACCEL, a);
+}
 
 Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 {
@@ -61,6 +65,7 @@ Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
 	TTF_Init();
 	SDL_ShowCursor(false);
 	SDL_EnableKeyRepeat(100,100);
+	SDL_EnableUNICODE(SDL_ENABLE);
 	SDL_WM_SetCaption("Platformutes",0);
 	fullscreen = getConfig().getBool("fullscreen");
 	int width = getConfig().getInt("width"),
@@ -196,6 +201,11 @@ SDL_Event Device::nextEvent()
 int Device::getDTime()
 {
 	return SDL_GetTicks()-lastticks;
+}
+
+Image *Device::screenshot()
+{
+	return new Image(SDL_DisplayFormat(screen));
 }
 
 void Device::quit()

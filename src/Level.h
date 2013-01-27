@@ -32,11 +32,13 @@ class Image;
 
 class Level
 {
+	friend class LevelEditor;
 	public:
 		Level();
 		void load(std::string _name);
 		void load_next();
 		void reload();
+		void resize(int w, int h);
 		void save();
 		int getId(int x, int y);
 		Tile &get(int x, int y);

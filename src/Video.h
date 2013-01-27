@@ -59,6 +59,7 @@ class Image
 		int getWidth();
 		int getHeight();
 		vec2 getSize();
+		void setAlpha(Uint8 a);
 	private:
 		SDL_Surface *surf;
 };
@@ -83,6 +84,7 @@ class Device
 		bool hasEvent();
 		SDL_Event nextEvent();
 		int getDTime();
+		Image *screenshot();
 		void quit(); // done = true
 		void close(); // This closes the window faster
 	private:
