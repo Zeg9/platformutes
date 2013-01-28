@@ -107,20 +107,28 @@ LevelEditor::LevelEditor()
 			if (SDL_GetTicks() > editor_fadetime)
 				editor_fade+=2;
 		}
-		int x, y;
-		SDL_GetMouseState(&x, &y);
-		Tile &tile = lvl.getTileset()->get(tiles[editor_currenttile]);
-		d.drawImage(tile.getImage(), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
-		if (tile.hasShading())
 		{
-			d.drawImage(getResourceMgr().getImage("common/shading/t"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
-			d.drawImage(getResourceMgr().getImage("common/shading/b"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
-			d.drawImage(getResourceMgr().getImage("common/shading/l"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
-			d.drawImage(getResourceMgr().getImage("common/shading/r"), x-TILE_WIDTH/2, y-TILE_HEIGHT/2);
+			int x, y;
+			SDL_GetMouseState(&x, &y);
+			vec2 mp = getRealPos(vec2(x,y));
+			mp = getDrawPos(vec2(mp.x/TILE_WIDTH*TILE_WIDTH,mp.y/TILE_HEIGHT*TILE_HEIGHT));
+			Tile &tile = lvl.getTileset()->get(tiles[editor_currenttile]);
+			Image *s = d.screenshot();
+			d.drawImage(tile.getImage(), mp);
+			if (tile.hasShading())
+			{
+				d.drawImage(getResourceMgr().getImage("common/shading/t"), mp);
+				d.drawImage(getResourceMgr().getImage("common/shading/b"), mp);
+				d.drawImage(getResourceMgr().getImage("common/shading/l"), mp);
+				d.drawImage(getResourceMgr().getImage("common/shading/r"), mp);
+			}
+			s->setAlpha(64);
+			d.drawImage(s,mp.x,mp.y,mp.x,mp.y,TILE_WIDTH,TILE_HEIGHT);
+			delete s;
+			getResourceMgr().getFont("common/FreeMono&16")->render(
+				tostring(tiles[editor_currenttile]),255,255,255,
+				mp.x, mp.y, ALIGN_LEFT, ALIGN_BOTTOM);
 		}
-		getResourceMgr().getFont("common/FreeMono&16")->render(
-			tostring(tiles[editor_currenttile]),255,255,255,
-			x-TILE_WIDTH/2, y-TILE_HEIGHT/2, ALIGN_LEFT, ALIGN_BOTTOM);
 		if (showRaw)
 		{
 			getResourceMgr().getFont("common/FreeMono&16")->render(
@@ -129,8 +137,9 @@ LevelEditor::LevelEditor()
 		// we're done, let's render
 		d.render();
 		// handle events
-		Uint8 buttons = SDL_GetMouseState(&x,&y);
-		vec2 p = getRealPos(vec2(x,y));
+		vec2 p (0,0);
+		Uint8 buttons = SDL_GetMouseState(&p.x,&p.y);
+		p = getRealPos(p);
 		if (buttons & SDL_BUTTON(SDL_BUTTON_LEFT))
 			lvl.set(p.x/TILE_WIDTH, p.y/TILE_HEIGHT,
 				lvl.getTileset()->getValidTiles()[editor_currenttile]);
