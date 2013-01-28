@@ -31,22 +31,6 @@
 void mainMenu()
 {
 	Device &d=getDevice();
-	SoundManager &s = getSoundManager();
-	d.showCursor(false);
-	d.clear();
-	{
-		Image *i = getResourceMgr().getImage("common/pegarprods");
-		d.drawImage(i,
-			d.getWidth()/2-i->getWidth()/2,
-			d.getHeight()/2-i->getHeight()/2);
-	}
-	d.render();
-	s.playSound(getResourceMgr().getSound("common/pegarprods"));
-	d.run();
-	SDL_Delay(2000);
-	d.run();
-	while (d.hasEvent())
-		d.nextEvent();
 	d.showCursor(true);
 	Menu m;
 	m.add(MenuEntry("game","Start game"));
@@ -54,7 +38,6 @@ void mainMenu()
 	m.add(MenuEntry("erase","Erase my progress"));
 	m.add(MenuEntry("fullscreen","Toggle fullscreen"));
 	m.add(MenuEntry("quit","Exit :("));
-	int menuselect=0;
 	SDL_Event e;
 	while (d.run())
 	{
