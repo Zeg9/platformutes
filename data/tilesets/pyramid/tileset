@@ -126,10 +126,22 @@
 			level.set_tile(0,0,29)
 			level.set_tile(0,2,0)
 		endif()
-	
+[28]
+	img: lever_off;
+	solid: false;
+	on_hit:
+		ifeq($player.image, common.character)
+			play_sound(lever)
+			level.set_tile(0,0,29)
+		endif()
 [29]
 	img: lever_on;
 	solid: false;
+	on_hit:
+		ifeq($player.image, common.character)
+			play_sound(lever)
+			level.set_tile(0,0,28)
+		endif()
 [30]
 	img: plate;
 	solid: false;
