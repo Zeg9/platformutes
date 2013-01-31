@@ -204,6 +204,10 @@ Tile &Level::get(int x, int y)
 {
 	return getTileset()->get(getId(x,y));
 }
+Tile &Level::get(vec2 p)
+{
+	return get(p.x, p.y);
+}
 void Level::set(int x, int y, int tile)
 {
 	if (!(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())) return;

@@ -45,10 +45,13 @@ bool canwrite(std::string fn); // warning: this creates the file
 struct vec2
 {
 	vec2(int _x, int _y);
+	vec2 toTile();
+	vec2 toSprite();
 	int x, y;
 };
 bool operator==(vec2 const&a, vec2 const&b);
 
+//TODO move getDrawPos and getRealPos to vec2
 vec2 getDrawPos(vec2 realPos);
 vec2 getRealPos(vec2 drawPos);
 

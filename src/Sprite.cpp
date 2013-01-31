@@ -60,6 +60,13 @@ vec2 Sprite::getPos() { return p; }
 void Sprite::setVel(int x, int y) { v = vec2(x,y); }
 vec2 Sprite::getVel() { return v; }
 vec2 Sprite::getSize() { return getImage()->getSize(); }
+bool Sprite::hasContact(vec2 t)
+{
+	return (t.x+getSize().x >= p.x
+	     && t.x <= p.x + getSize().x-1
+	     && t.y+getSize().y >= p.y
+	     && t.y <= p.y + getSize().y-1);
+}
 
 void Sprite::jump()
 {
@@ -86,7 +93,16 @@ void Sprite::render()
 void Sprite::step()
 {
 	Level &lvl = getEnvironment().lvl;
-	vec2 slowness = lvl.get(p.x/TILE_WIDTH,p.y/TILE_HEIGHT+1).getSlowness();
+	vec2 slowness (1,1);
+	SPRITE_FOR_CONTACT_TILES
+	{
+		vec2 p = vec2(x,y).toTile();
+		vec2 c = lvl.get(p).getSlowness();
+		if (c.x > slowness.x)
+			slowness.x = c.x;
+		if (c.y > slowness.y)
+			slowness.y = c.y;
+	}
 	if (!physics)
 	{
 		p.x += v.x; p.y += v.y;

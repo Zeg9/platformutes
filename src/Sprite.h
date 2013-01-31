@@ -23,6 +23,11 @@
 #include <string>
 #include "tools.h"
 
+#define SPRITE_FOR_CONTACT_TILES\
+	for (int x = getPos().x; x-getPos().x <= getSize().x; x += TILE_WIDTH)\
+	for (int y = getPos().y; y-getPos().y <= getSize().y; y += TILE_HEIGHT)\
+	if (hasContact(vec2(x,y).toTile().toSprite()))
+
 class Image;
 
 class Sprite
@@ -41,6 +46,7 @@ class Sprite
 		void setVel(int x, int y);
 		vec2 getVel();
 		vec2 getSize();
+		bool hasContact(vec2 t);
 		void jump();
 		virtual void hit();
 		virtual void die();

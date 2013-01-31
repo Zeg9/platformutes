@@ -31,26 +31,16 @@ Player::Player() : Sprite("common.character", 32, 64) {}
 
 void Player::doHit()
 {
-	for (int x = 0; x <= PSIZE.x; x += TILE_WIDTH)
-	for (int y = 0; y <= PSIZE.y; y += TILE_HEIGHT)
+	SPRITE_FOR_CONTACT_TILES
 	{
-		vec2 t (
-			((x+PPOS.x)/TILE_WIDTH),
-			((y+PPOS.y)/TILE_HEIGHT));
-		if (!(t.x*TILE_WIDTH+getSize().x >= p.x
-		 && t.x*TILE_WIDTH <= p.x + getSize().x-1
-		 && t.y*TILE_HEIGHT+getSize().y >= p.y
-		 && t.y*TILE_HEIGHT <= p.y + getSize().y-1)) continue;
-		runScript(ENV.lvl.get(t.x,t.y).getScripts()["on_hit"],0,t);
+		vec2 t = vec2(x,y).toTile();
+		runScript(ENV.lvl.get(t).getScripts()["on_hit"],0,t);
 	}
 	for (std::list<Sprite*>::iterator i = ENV.sprites.begin();
 		i != ENV.sprites.end(); i++)
 	{
 		vec2 t = (*i)->getPos();
-		if (t.x+getSize().x >= p.x
-		 && t.x <= p.x + getSize().x-1
-		 && t.y+getSize().y >= p.y
-		 && t.y <= p.y + getSize().y-1)
+		if (hasContact(t))
 			(*i)->hit();
 	}
 }
@@ -69,16 +59,9 @@ void Player::step()
 	// run tiles on_contact scripts
 	// TODO maybe this needs some more work...
 	std::stack<vec2> tokeep;
-	for (int x = 0; x <= PSIZE.x; x += TILE_WIDTH)
-	for (int y = 0; y <= PSIZE.y; y += TILE_HEIGHT)
+	SPRITE_FOR_CONTACT_TILES
 	{
-		vec2 t (
-			((x+PPOS.x)/TILE_WIDTH),
-			((y+PPOS.y)/TILE_HEIGHT));
-		if (!(t.x*TILE_WIDTH+getSize().x >= p.x
-		 && t.x*TILE_WIDTH <= p.x + getSize().x-1
-		 && t.y*TILE_HEIGHT+getSize().y >= p.y
-		 && t.y*TILE_HEIGHT <= p.y + getSize().y-1)) continue;
+		vec2 t = vec2(x,y).toTile();
 		bool c = false;
 		for (std::list<vec2>::iterator i = contact.begin(); i != contact.end(); i++)
 			if ((*i) == t)

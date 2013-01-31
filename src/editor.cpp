@@ -285,29 +285,12 @@ void LevelEditor::configDialog()
 	Image *scr = d.screenshot();
 	scr->setAlpha(64);
 	Menu m;
-	m.add(MenuEntry("tileset","Tileset: "));
-	m.add(MenuEntry("next","Next: "));
-	m.add(MenuEntry("width","Width: "));
-	m.add(MenuEntry("height","Height: "));
+	m.add(MenuEntry("tileset","Tileset: ",lvl.tileset,true,'/','~'));
+	m.add(MenuEntry("next","Next: ",lvl.next,true,'/','~'));
+	m.add(MenuEntry("width","Width: ",tostring(lvl.width),true,'0','9',3));
+	m.add(MenuEntry("height","Height: ",tostring(lvl.height),true,'0','9',3));
 	m.add(MenuEntry("accept","Accept"));
 	m.add(MenuEntry("cancel","Cancel"));
-	MenuEntry &tileset = m.get("tileset");
-	MenuEntry &next = m.get("next");
-	MenuEntry &width = m.get("width");
-	MenuEntry &height = m.get("height");
-	tileset.editable
-	 = next.editable
-	 = width.editable
-	 = height.editable = true;
-	tileset.value = lvl.tileset;
-	next.value = lvl.next;
-	tileset.vmin = next.vmin = '/';
-	tileset.vmax = next.vmax = '~';
-	width.value = tostring(lvl.getWidth());
-	height.value = tostring(lvl.getHeight());
-	width.vmin = height.vmin = '0';
-	width.vmax = height.vmax = '9';
-	width.vlen = height.vlen = 3;
 	SDL_Event e;
 	bool done=false;
 	int s = -1;
@@ -337,10 +320,12 @@ void LevelEditor::configDialog()
 			if (entry.name == "accept")
 			{
 				try {
-					getResourceMgr().getTileset(tileset.value);
-					lvl.tileset = tileset.value;
-					lvl.next = next.value;
-					lvl.resize(toint(width.value), toint(height.value));
+					getResourceMgr().getTileset(m.get("tileset").value);
+					lvl.tileset = m.get("tileset").value;
+					lvl.next = m.get("next").value;
+					lvl.resize(
+						toint(m.get("width").value),
+						toint(m.get("height").value));
 					done = true;
 					break;
 				} catch(...) {}
@@ -357,14 +342,9 @@ void LevelEditor::newDialog()
 	Image *scr = d.screenshot();
 	scr->setAlpha(64);
 	Menu m;
-	m.add(MenuEntry("name","Name: "));
+	m.add(MenuEntry("name","Name: ",lvl.name,true,'/','~'));
 	m.add(MenuEntry("accept","Accept"));
 	m.add(MenuEntry("cancel","Cancel"));
-	MenuEntry &name = m.get("name");
-	name.editable = true;
-	name.value = lvl.name;
-	name.vmin = '/';
-	name.vmax = '~';
 	SDL_Event e;
 	bool done=false;
 	int s = -1;
@@ -393,8 +373,8 @@ void LevelEditor::newDialog()
 			}
 			if (entry.name == "accept")
 			{
-				if (name.value != "") try {
-					lvl.name = name.value;
+				if (m.get("name").value != "") try {
+					lvl.name = m.get("name").value;
 					lvl.resize(0,0);
 					configDialog();
 					done = true;
@@ -408,56 +388,15 @@ void LevelEditor::newDialog()
 
 void LevelEditor::loadDialog()
 {
-	Device &d = getDevice();
 	Level &lvl = ENV.lvl;
 	std::string oldlvl = lvl.name;
-	Image *scr = d.screenshot();
-	scr->setAlpha(64);
-	Menu m;
-	m.add(MenuEntry("name","Name: "));
+	Menu m("Load a level");
+	m.add(MenuEntry("name","Name: ","",true,'/','~'));
 	m.add(MenuEntry("accept","Accept"));
 	m.add(MenuEntry("cancel","Cancel"));
-	MenuEntry &name = m.get("name");
-	name.editable = true;
-	name.value = lvl.name;
-	name.vmin = '/';
-	name.vmax = '~';
-	SDL_Event e;
-	bool done=false;
-	int s = -1;
-	while (d.run() && !done)
-	{
-		d.clear();
-		d.drawImage(scr);
-		getResourceMgr().getFont("common/FreeSans&48")->render
-			("Load a level",255,255,255,48,48);
-		m.render();
-		d.render();
-		while (d.hasEvent())
-		{
-			e = d.nextEvent();
-			s = m.event(e);
-			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
-				done = true;
-		}
-		if (s >= 0)
-		{
-			MenuEntry &entry = m.get();
-			if (entry.name == "cancel")
-			{
-				done = true;
-				break;
-			}
-			if (entry.name == "accept")
-			{
-				if (name.value != "") try {
-					lvl.load(name.value);
-					done = true;
-					break;
-				} catch(...) { lvl.load(oldlvl); }
-			}
-		}
-	}
-	delete scr;
+	if (m.loop())
+		if (m.get("name").value != "") try {
+			lvl.load(m.get("name").value);
+		} catch(...) { lvl.load(oldlvl); loadDialog(); }
 }
 

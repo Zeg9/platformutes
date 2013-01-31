@@ -21,6 +21,7 @@
 
 #include <vector>
 #include <string>
+#include "tools.h"
 
 // don't change this
 #define TILE_WIDTH 32
@@ -42,6 +43,7 @@ class Level
 		void save();
 		int getId(int x, int y);
 		Tile &get(int x, int y);
+		Tile &get(vec2 p);
 		void set(int x, int y, int tile);
 		Image *getBackground();
 		Tileset *getTileset();

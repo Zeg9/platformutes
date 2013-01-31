@@ -25,7 +25,8 @@
 class Menu;
 
 struct MenuEntry {
-	MenuEntry(std::string n, std::string t);
+	MenuEntry(std::string n, std::string t, std::string v="",
+		bool e=false, char i=0, char a=0, unsigned int l=0);
 	std::string name;
 	std::string text;
 	std::string value;
@@ -39,14 +40,16 @@ struct MenuEntry {
 class Menu {
 	friend struct MenuEntry;
 	public:
-		Menu();
+		Menu(std::string t="");
 		void add(MenuEntry e);
 		MenuEntry &get();
 		MenuEntry &get(std::string name);
 		int event(SDL_Event &e);
 		void render();
+		bool loop();
 	private:
 		std::vector<MenuEntry> entries;
+		std::string title;
 		int select;
 };
 

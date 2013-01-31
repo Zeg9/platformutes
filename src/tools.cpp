@@ -144,6 +144,15 @@ vec2::vec2(int _x, int _y) :
 	x(_x), y(_y)
 	{}
 
+vec2 vec2::toTile()
+{
+	return vec2(x/TILE_WIDTH, y/TILE_HEIGHT);
+}
+vec2 vec2::toSprite()
+{
+	return vec2(x*TILE_WIDTH, y*TILE_HEIGHT);
+}
+
 bool operator==(vec2 const&a, vec2 const&b)
 {
 	return a.x == b.x && a.y == b.y;

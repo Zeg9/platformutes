@@ -22,9 +22,11 @@
 #include "ResourceMgr.h"
 #include "Menu.h"
 
-MenuEntry::MenuEntry(std::string n, std::string t)
- : name(n), text(t), value(""),
-   editable(false), vmin(0), vmax(0), vlen(0) {}
+MenuEntry::MenuEntry(
+	std::string n, std::string t, std::string v,
+	bool e, char i, char a, unsigned int l)
+ : name(n), text(t), value(v),
+   editable(e), vmin(i), vmax(a), vlen(l) {}
 
 void MenuEntry::updateText()
 {
@@ -62,7 +64,7 @@ void MenuEntry::event(SDL_Event &e, Menu*menu)
 	text = text + '_';
 }
 
-Menu::Menu() : select(-1)
+Menu::Menu(std::string t) : title(t), select(0)
 {}
 
 void Menu::add(MenuEntry e)
@@ -148,5 +150,47 @@ void Menu::render()
 			menux, menuy+i*40+16,
 			ALIGN_CENTER, ALIGN_MIDDLE);
 	}
+}
+
+bool Menu::loop()
+{
+	Device &d = getDevice();
+	Image *scr = d.screenshot();
+	scr->setAlpha(64);
+	SDL_Event e;
+	bool accept=false;
+	bool done=false;
+	while (d.run() && !done)
+	{
+		d.clear();
+		d.drawImage(scr);
+		getResourceMgr().getFont("common/FreeSans&48")->render
+			(title,255,255,255,48,48);
+		render();
+		d.render();
+		while (d.hasEvent())
+		{
+			e = d.nextEvent();
+			if (e.type == SDL_KEYDOWN) switch(e.key.keysym.sym)
+			{
+				case SDLK_ESCAPE:
+					done = true;
+					break;
+			}
+			if (event(e) >= 0)
+			{
+				MenuEntry &entry = get();
+				if (entry.name == "cancel")
+					done = true;
+				if (entry.name == "accept")
+				{
+					accept = true;
+					done = true;
+				}
+			}
+		}
+	}
+	delete scr;
+	return accept;
 }
 

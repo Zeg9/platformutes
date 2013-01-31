@@ -66,7 +66,7 @@ void mainMenu()
 				LevelEditor();
 			else if (entry.name == "erase")
 			{
-				Font*font = getResourceMgr().getFont("common/FreeMono&20");
+				Font*font = getResourceMgr().getFont("common/FreeSans&20");
 				bool done=false;
 				while(d.run() &&!done)
 				{
@@ -75,7 +75,7 @@ void mainMenu()
 					"Press Y to erase your progress\n"
 					"Warning: you can't revert this action !\n"
 					"Press any other key to cancel.\n",
-					255,255,255,d.getWidth()/2,d.getHeight()/2,ALIGN_CENTER,ALIGN_MIDDLE);
+					255,128,128,d.getWidth()/2,d.getHeight()/2,ALIGN_CENTER,ALIGN_MIDDLE);
 					d.render();
 					while (d.hasEvent())
 					{
@@ -134,6 +134,24 @@ void mainMenu()
 	}
 }
 
+void start()
+{
+	try {
+		mainMenu();
+	} catch (std::exception &e) {
+		try {
+			Menu m("There was an error...");
+			m.add(MenuEntry("",e.what()));
+			m.add(MenuEntry("accept","Restart"));
+			m.add(MenuEntry("cancel","Close"));
+			if (m.loop())
+				start();
+		} catch (...) {
+			std::cerr << "There was an error..." << std::endl << e.what() << std::endl;
+		}
+	}
+}
+
 int main(int argc, char ** argv)
 {
 	std::cout <<
@@ -154,11 +172,7 @@ int main(int argc, char ** argv)
 	getConfig(); // load settings
 	getDevice(); // init video
 	getSoundManager(); // init sound system
-	try {
-		mainMenu();
-	} catch (std::exception &e) {
-		std::cerr << "There was an error..." << std::endl << e.what() << std::endl;
-	}
+	start();
 	getResourceMgr().unloadAll();
 	getDevice().close();
 	return 0;
