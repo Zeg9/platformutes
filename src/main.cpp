@@ -26,6 +26,8 @@
 #include "editor.h"
 #include "tools.h"
 
+#include "error.xpm"
+
 #include "ResourceMgr.h"
 
 void mainMenu()
@@ -148,6 +150,17 @@ void start()
 				start();
 		} catch (...) {
 			std::cerr << "There was an error..." << std::endl << e.what() << std::endl;
+			Device &d = getDevice();
+			Image *error = new Image(error_xpm);
+			while (d.run())
+			{
+				d.clear();
+				d.drawImage(error,
+					d.getWidth()/2-error->getWidth()/2,
+					d.getHeight()/2-error->getHeight()/2);
+				d.render();
+			}
+			delete error;
 		}
 	}
 }

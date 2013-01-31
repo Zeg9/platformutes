@@ -34,6 +34,12 @@ Image::Image(std::string filename)
 }
 Image::Image(SDL_Surface *_surf) : surf(_surf)
 {}
+Image::Image(const char **xpm)
+{
+	surf = IMG_ReadXPMFromArray(const_cast<char**>(xpm));
+	if (!surf)
+		throw std::runtime_error("Couldn't load xpm");
+}
 Image::~Image()
 {
 	SDL_FreeSurface(surf);
@@ -134,10 +140,13 @@ void Device::drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch)
 
 void Device::render()
 {
-	if (cursor)
+	if (cursor) try
 	{
 		int x, y; SDL_GetMouseState(&x, &y);
 		drawImage(getResourceMgr().getImage("common/cursor"), x, y);
+	} catch(...) {
+		SDL_ShowCursor(true);
+		cursor = false;
 	}
 	SDL_Flip(screen);
 }

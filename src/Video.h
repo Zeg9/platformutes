@@ -55,6 +55,7 @@ class Image
 	public:
 		Image(std::string filename);
 		Image(SDL_Surface *_surf);
+		Image(const char **xpm);
 		~Image();
 		int getWidth();
 		int getHeight();
