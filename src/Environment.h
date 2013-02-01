@@ -50,6 +50,7 @@ class Environment
 	private:
 		std::list<Sprite*> sprites;
 		std::stack<Sprite*> s2r; // sprites to remove
+		bool cls; // clear sprites
 		Environment();
 		~Environment();
 };

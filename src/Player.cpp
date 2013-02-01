@@ -34,15 +34,12 @@ void Player::doHit()
 	SPRITE_FOR_CONTACT_TILES
 	{
 		vec2 t = vec2(x,y).toTile();
-		runScript(ENV.lvl.get(t).getScripts()["on_hit"],0,t);
+		runScript(ENV.lvl.get(t)->getScripts()["on_hit"],0,t);
 	}
 	for (std::list<Sprite*>::iterator i = ENV.sprites.begin();
 		i != ENV.sprites.end(); i++)
-	{
-		vec2 t = (*i)->getPos();
-		if (hasContact(t))
+		if (hasContact((*i)->getPos(), (*i)->getSize()))
 			(*i)->hit();
-	}
 }
 
 void Player::die()
@@ -66,8 +63,8 @@ void Player::step()
 		for (std::list<vec2>::iterator i = contact.begin(); i != contact.end(); i++)
 			if ((*i) == t)
 				c = true;
-		if (!c && !ENV.lvl.get(t.x,t.y).isSolid())
-			runScript(ENV.lvl.get(t.x,t.y).getScripts()["on_contact"],0,t);
+		if (!c && !ENV.lvl.get(t.x,t.y)->isSolid())
+			runScript(ENV.lvl.get(t.x,t.y)->getScripts()["on_contact"],0,t);
 		tokeep.push(t);
 	}
 	contact.clear();

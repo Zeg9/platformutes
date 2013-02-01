@@ -32,46 +32,60 @@
 #define H getSize().y
 
 Sprite::Sprite(std::string _img, int x, int y) :
-	img(_img), state("stand_r"), p(x, y), v(0,0), physics(true)
+	img(_img), imgptr(0), state("stand_r"), p(x, y), v(0,0), physics(true)
 {}
 
 Sprite::~Sprite()
 {
+	std::cout << "Removing " << img << "..." << std::endl;
 }
 
 void Sprite::enablePhysics(bool b) { physics = b; }
 
-void Sprite::setImage(std::string _img) { img = _img; }
-Image *Sprite::getImage()
+void Sprite::setImage(std::string _img)
+{
+	img = _img;
+	updateImage();
+}
+void Sprite::updateImage()
 {
 	std::vector<std::string> tokens = split(img,'.');
 	if (tokens.size() == 2 && tokens[0]=="common")
-		return getResourceMgr().getImage(
+		imgptr = getResourceMgr().getImage(
 			"common/sprites/"+tokens[1]+'/'+state);
-	return getResourceMgr().getImage(
-		"tilesets/"+getEnvironment().lvl.getTilesetName()
-		+"/sprites/"+img+'/'+state);
+	else
+		imgptr = getResourceMgr().getImage(
+			"tilesets/"+getEnvironment().lvl.getTilesetName()
+			+"/sprites/"+img+'/'+state);
+}
+Image *Sprite::getImage()
+{
+	if (!imgptr) updateImage();
+	return imgptr;
 }
 std::string Sprite::getImageName() { return img; }
-void Sprite::setState(std::string _state) { state = _state; }
+void Sprite::setState(std::string _state) {
+	state = _state;
+	updateImage();
+}
 std::string Sprite::getState() { return state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }
 vec2 Sprite::getPos() { return p; }
 void Sprite::setVel(int x, int y) { v = vec2(x,y); }
 vec2 Sprite::getVel() { return v; }
 vec2 Sprite::getSize() { return getImage()->getSize(); }
-bool Sprite::hasContact(vec2 t)
+bool Sprite::hasContact(vec2 po, vec2 si)
 {
-	return (t.x+getSize().x >= p.x
-	     && t.x <= p.x + getSize().x-1
-	     && t.y+getSize().y >= p.y
-	     && t.y <= p.y + getSize().y-1);
+	return (po.x+si.x >= p.x
+	     && po.x <= p.x + getSize().x-1
+	     && po.y+si.y >= p.y
+	     && po.y <= p.y + getSize().y-1);
 }
 
 void Sprite::jump()
 {
-	if (ENV.lvl.get(p.x/TILE_WIDTH,p.y/TILE_WIDTH+2).canJump()
-	 || ENV.lvl.get((p.x-1)/TILE_WIDTH+1,p.y/TILE_WIDTH+2).canJump())
+	if (ENV.lvl.get(p.x/TILE_WIDTH,p.y/TILE_WIDTH+2)->canJump()
+	 || ENV.lvl.get((p.x-1)/TILE_WIDTH+1,p.y/TILE_WIDTH+2)->canJump())
 		setVel(getVel().x,-10);
 }
 
@@ -97,7 +111,7 @@ void Sprite::step()
 	SPRITE_FOR_CONTACT_TILES
 	{
 		vec2 p = vec2(x,y).toTile();
-		vec2 c = lvl.get(p).getSlowness();
+		vec2 c = lvl.get(p)->getSlowness();
 		if (c.x > slowness.x)
 			slowness.x = c.x;
 		if (c.y > slowness.y)
@@ -111,8 +125,8 @@ void Sprite::step()
 	int nx = p.x+(v.x/slowness.x),
 	    ny = p.y+(v.y/slowness.y);
 	if (v.y < 0 && !(
-		lvl.get(p.x/TILE_WIDTH,ny/TILE_HEIGHT).isSolid() ||
-		lvl.get((p.x-1)/TILE_WIDTH+1,ny/TILE_HEIGHT).isSolid()
+		lvl.get(p.x/TILE_WIDTH,ny/TILE_HEIGHT)->isSolid() ||
+		lvl.get((p.x-1)/TILE_WIDTH+1,ny/TILE_HEIGHT)->isSolid()
 		))
 		p.y = ny;
 	else if (v.y < 0)
@@ -121,8 +135,8 @@ void Sprite::step()
 		v.y = 0;
 	}
 	if (v.y > 0 && !(
-		lvl.get(p.x/TILE_WIDTH,(ny-1+H)/TILE_HEIGHT).isSolid() ||
-		lvl.get((p.x-1)/TILE_WIDTH+1,(ny-1+H)/TILE_HEIGHT).isSolid()
+		lvl.get(p.x/TILE_WIDTH,(ny-1+H)/TILE_HEIGHT)->isSolid() ||
+		lvl.get((p.x-1)/TILE_WIDTH+1,(ny-1+H)/TILE_HEIGHT)->isSolid()
 		))
 		p.y = ny;
 	else if (v.y > 0)
@@ -132,18 +146,18 @@ void Sprite::step()
 	}
 	if (v.x < 0 && !(
 		nx < 0 ||
-		lvl.get(nx/TILE_WIDTH, p.y/TILE_HEIGHT).isSolid() ||
-		lvl.get(nx/TILE_WIDTH, (p.y-1+TILE_HEIGHT)/TILE_HEIGHT).isSolid() ||
-		lvl.get(nx/TILE_WIDTH, (p.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).isSolid()
+		lvl.get(nx/TILE_WIDTH, p.y/TILE_HEIGHT)->isSolid() ||
+		lvl.get(nx/TILE_WIDTH, (p.y-1+TILE_HEIGHT)/TILE_HEIGHT)->isSolid() ||
+		lvl.get(nx/TILE_WIDTH, (p.y-1+TILE_HEIGHT*2)/TILE_HEIGHT)->isSolid()
 		))
 		p.x = nx;
 	else if (v.x < 0)
 		p.x = round(p.x,TILE_WIDTH);
 	if (v.x > 0 && !(
 		nx+getSize().x > lvl.getWidth()*TILE_WIDTH ||
-		lvl.get((nx-1)/TILE_WIDTH+1, p.y/TILE_HEIGHT).isSolid() ||
-		lvl.get((nx-1)/TILE_WIDTH+1, (p.y-1+TILE_HEIGHT)/TILE_HEIGHT).isSolid() ||
-		lvl.get((nx-1)/TILE_WIDTH+1, (p.y-1+TILE_HEIGHT*2)/TILE_HEIGHT).isSolid()
+		lvl.get((nx-1)/TILE_WIDTH+1, p.y/TILE_HEIGHT)->isSolid() ||
+		lvl.get((nx-1)/TILE_WIDTH+1, (p.y-1+TILE_HEIGHT)/TILE_HEIGHT)->isSolid() ||
+		lvl.get((nx-1)/TILE_WIDTH+1, (p.y-1+TILE_HEIGHT*2)/TILE_HEIGHT)->isSolid()
 		))
 		p.x = nx;
 	else if (v.x > 0)

@@ -24,9 +24,11 @@
 
 Tile::Tile() :
 	img(""), sprite("none"), slowness(1,1),
-	jumping(false), solid(true), shading(false) {}
-
-void Tile::parse(std::string in)
+	jumping(false), solid(true), shading(false)
+{}
+Tile::Tile(std::string in) :
+	img(""), sprite("none"), slowness(1,1),
+	jumping(false), solid(true), shading(false)
 {
 	raw = in;
 	std::vector<std::string> toks = split(raw,';');
@@ -47,33 +49,39 @@ void Tile::parse(std::string in)
 		if (key == "shading") shading = tobool(value);
 		if (startswith(key,"on_")) scripts[key] = value;
 	}
+	updateImage();
 }
+Tile::~Tile() {}
 
 std::string Tile::getRawData()
 {
 	return raw;
 }
 
-Image *Tile::getImage()
+void Tile::updateImage()
 {
 	try {
-		return getResourceMgr().getImage(
+		imgptr = getResourceMgr().getImage(
 			"tilesets/"+ENV.lvl.getTilesetName()+"/tiles/"+split(img,'&')[0]);
 	} catch(...) {
 		try {
-			return getResourceMgr().getImage(
+			imgptr = getResourceMgr().getImage(
 				"tilesets/"+ENV.lvl.getTilesetName()+"/sprites/"+img+"/stand_r");
 		} catch(...) {
 			try {
 				std::vector<std::string> is = split(img,'&',2);
-				return getResourceMgr().getImage(
+				imgptr = getResourceMgr().getImage(
 					"tilesets/"+ENV.lvl.getTilesetName()+"/sprites/"+is[0]+'/'+is[1]);
 			} catch(...) {
-				return 0;
+				imgptr = 0;
 			}
 		}
 	}
-	return 0;
+}
+
+Image *Tile::getImage()
+{
+	return imgptr;
 }
 std::string Tile::getImageName() { return img; }
 std::string Tile::getSprite() { return sprite; }
@@ -87,9 +95,9 @@ bool Tile::isAir() { return false; }
 AirTile::AirTile() : Tile() { solid = false; }
 bool AirTile::isAir() { return true; }
 
-AirTile &getAirTile()
+AirTile *getAirTile()
 {
 	static AirTile airTile;
-	return airTile;
+	return &airTile;
 }
 

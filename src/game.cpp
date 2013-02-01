@@ -43,7 +43,6 @@ void startGame(bool loadLevel)
 			lvl.load(FIRST_LEVEL);
 	}
 	PLAYER->die();
-	ENV.s2rstep();
 	SDL_Event e;
 	bool pause(false), end(false);
 	while (d.run() && !end)

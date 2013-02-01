@@ -42,10 +42,11 @@ class Level
 		void resize(int w, int h);
 		void save();
 		int getId(int x, int y);
-		Tile &get(int x, int y);
-		Tile &get(vec2 p);
+		Tile *get(int x, int y);
+		Tile *get(vec2 p);
 		void set(int x, int y, int tile);
 		Image *getBackground();
+		void updateTileset();
 		Tileset *getTileset();
 		std::string getTilesetName();
 		int getWidth();
@@ -53,7 +54,8 @@ class Level
 		void render();
 	protected:
 		std::string tileset;
-		std::string background;
+		Tileset* tsptr;
+		Image *background;
 		std::string name, next;
 		int width, height;
 		int ** blocks;

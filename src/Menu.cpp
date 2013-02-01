@@ -171,12 +171,8 @@ bool Menu::loop()
 		while (d.hasEvent())
 		{
 			e = d.nextEvent();
-			if (e.type == SDL_KEYDOWN) switch(e.key.keysym.sym)
-			{
-				case SDLK_ESCAPE:
-					done = true;
-					break;
-			}
+			if (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_ESCAPE)
+				done = true;
 			if (event(e) >= 0)
 			{
 				MenuEntry &entry = get();

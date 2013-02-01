@@ -24,15 +24,18 @@
 #include <string>
 #include "Tile.h"
 
+#define TILESET_LENGTH 128
+
 class Tileset
 {
 	public:
 		Tileset(std::string filename);
-		Tile &get(int num);
+		~Tileset();
+		Tile *get(int num);
 		std::vector<int> getValidTiles();
 		std::map<std::string, std::string> scripts;
 	private:
-		std::map<int, Tile> tiles;
+		Tile* tiles[128];
 };
 
 #endif//__TILESET_H__

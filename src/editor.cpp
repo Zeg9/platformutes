@@ -92,10 +92,10 @@ LevelEditor::LevelEditor()
 				int ci = (int)editor_currenttile + i;
 				if (ci < 0) ci = tiles.size()+ci;
 				if (ci >= (int)tiles.size()) ci = ci%tiles.size();
-				Tile &t = lvl.getTileset()->get(tiles[ci]);
-				if (!t.isAir())
+				Tile *t = lvl.getTileset()->get(tiles[ci]);
+				if (!t->isAir())
 				{
-					d.drawImage(t.getImage(),
+					d.drawImage(t->getImage(),
 						d.getWidth()-TILE_WIDTH+editor_fade,
 						d.getHeight()/2-TILE_HEIGHT/2+i*TILE_HEIGHT,
 						0,0, TILE_WIDTH, TILE_HEIGHT);
@@ -112,10 +112,10 @@ LevelEditor::LevelEditor()
 			SDL_GetMouseState(&x, &y);
 			vec2 mp = getRealPos(vec2(x,y));
 			mp = getDrawPos(vec2(mp.x/TILE_WIDTH*TILE_WIDTH,mp.y/TILE_HEIGHT*TILE_HEIGHT));
-			Tile &tile = lvl.getTileset()->get(tiles[editor_currenttile]);
+			Tile *tile = lvl.getTileset()->get(tiles[editor_currenttile]);
 			Image *s = d.screenshot();
-			d.drawImage(tile.getImage(), mp);
-			if (tile.hasShading())
+			d.drawImage(tile->getImage(), mp);
+			if (tile->hasShading())
 			{
 				d.drawImage(getResourceMgr().getImage("common/shading/t"), mp);
 				d.drawImage(getResourceMgr().getImage("common/shading/b"), mp);
@@ -131,8 +131,10 @@ LevelEditor::LevelEditor()
 		}
 		if (showRaw)
 		{
-			getResourceMgr().getFont("common/FreeMono&16")->render(
-				lvl.getTileset()->get(tiles[editor_currenttile]).getRawData(),255,255,255);
+			getResourceMgr().getFont("common/FreeSans&16")->render(
+				"Level: " + lvl.name + "\n"
+				"Current tile:" "\n" +
+				lvl.getTileset()->get(tiles[editor_currenttile])->getRawData(),255,255,255);
 		}
 		// we're done, let's render
 		d.render();

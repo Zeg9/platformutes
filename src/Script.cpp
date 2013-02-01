@@ -24,6 +24,7 @@
 #include "Environment.h"
 #include "Sound.h"
 #include "ResourceMgr.h"
+#include "Config.h"
 #include "Script.h"
 
 #include <iostream>
@@ -118,17 +119,9 @@ void runScript(std::string script, Sprite*sprite, vec2 pos)
 		else if (function == "sprite.remove")
 			ENV.removeSprite(sprite);
 		else if (function == "level.load")
-		{
-			PLAYER->setPos(32,64);
-			PLAYER->setImage("common.character");
 			ENV.lvl.load(args[0]);
-		}
 		else if (function == "level.load_next")
-		{
-			PLAYER->setPos(32,64);
-			PLAYER->setImage("common.character");
 			ENV.lvl.load_next();
-		}
 		else if (function == "level.set_tile")
 		{
 			ENV.lvl.set(

@@ -22,6 +22,7 @@
 #include <map>
 #include <string>
 #include "tools.h"
+#include "Level.h"
 
 #define SPRITE_FOR_CONTACT_TILES\
 	for (int x = getPos().x; x-getPos().x <= getSize().x; x += TILE_WIDTH)\
@@ -37,6 +38,7 @@ class Sprite
 		virtual ~Sprite();
 		void enablePhysics(bool b);
 		void setImage(std::string _img);
+		void updateImage();
 		Image *getImage();
 		std::string getImageName();
 		void setState(std::string _state);
@@ -46,7 +48,7 @@ class Sprite
 		void setVel(int x, int y);
 		vec2 getVel();
 		vec2 getSize();
-		bool hasContact(vec2 t);
+		bool hasContact(vec2 po, vec2 si=vec2(TILE_WIDTH,TILE_HEIGHT));
 		void jump();
 		virtual void hit();
 		virtual void die();
@@ -54,6 +56,7 @@ class Sprite
 		virtual void step();
 	protected:
 		std::string img;
+		Image *imgptr;
 		std::string state;
 		vec2 p; // position
 		vec2 v; // velocity

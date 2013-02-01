@@ -26,6 +26,8 @@
 
 Tileset::Tileset(std::string filename)
 {
+	for (unsigned int i = 0; i < TILESET_LENGTH; i++)
+		tiles[i] = 0;
 	std::cout << "== Loading tileset: " << filename << "..." << std::endl;
 	std::ifstream ifs(filename.c_str());
 	std::string contents;
@@ -49,22 +51,30 @@ Tileset::Tileset(std::string filename)
 		} else {
 			int num = toint(stripspaces(ls[0]));
 			if (!num) continue;
-			tiles[num].parse(ls[1]);
+			tiles[num] = new Tile(ls[1]);
 		}
 	}
 }
-
-Tile &Tileset::get(int num)
+Tileset::~Tileset()
 {
-	if (num >0 && tiles.find(num)!=tiles.end()) return tiles[num];
+	for (unsigned int i = 0; i < TILESET_LENGTH; i++)
+		if (tiles[i])
+			delete tiles[i];
+}
+
+Tile *Tileset::get(int num)
+{
+	if (num > 0 && num < TILESET_LENGTH && tiles[num])
+		return tiles[num];
 	return getAirTile();
 }
 
 std::vector<int> Tileset::getValidTiles()
 {
 	std::vector<int> r;
-	for (std::map<int, Tile>::iterator i = tiles.begin(); i != tiles.end(); i++)
-		r.push_back(i->first);
+	for (unsigned int i = 0; i < TILESET_LENGTH; i++)
+		if (tiles[i])
+			r.push_back(i);
 	return r;
 }
 

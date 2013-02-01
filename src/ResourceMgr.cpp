@@ -32,7 +32,8 @@
 #define GET_RESOURCE(FUNCTION, MAP, TYPE, PRE, SUF)\
 	TYPE* ResourceMgr::FUNCTION(std::string name)\
 	{\
-		if (MAP.find(name) == MAP.end())\
+		std::map<std::string,TYPE*>::iterator i = MAP.find(name);\
+		if (i == MAP.end())\
 		{\
 			std::vector<std::string> toks = split(name,'&',2);\
 			if (toks.size()==1)\
@@ -41,8 +42,9 @@
 				MAP[name] = new TYPE(getPath(PRE+toks[0]+SUF)+'&'+toks[1]);\
 			else\
 				throw std::runtime_error("Error parsing resource name: "+name);\
+			return MAP[name];\
 		}\
-		return MAP[name];\
+		return i->second;\
 	}
 
 #define DEL_RESOURCE(MAP,TYPE)\

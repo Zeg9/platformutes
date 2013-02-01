@@ -29,8 +29,10 @@ class Tile
 	friend class Tileset;
 	public:
 		Tile();
-		void parse(std::string in);
+		Tile(std::string in);
+		virtual ~Tile();
 		std::string getRawData();
+		void updateImage();
 		Image *getImage();
 		std::string getImageName();
 		std::string getSprite();
@@ -43,18 +45,19 @@ class Tile
 	protected:
 		std::string raw;
 		std::string img, sprite;
+		Image *imgptr;
 		std::map<std::string,std::string> scripts;
 		vec2 slowness;
 		bool jumping, solid, shading;
 };
 class AirTile : public Tile
 {
-	friend AirTile &getAirTile();
+	friend AirTile *getAirTile();
 	public:
 		virtual bool isAir();
 	private:
 		AirTile();
 };
-AirTile &getAirTile();
+AirTile *getAirTile();
 
 #endif//__TILE_H__

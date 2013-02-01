@@ -45,9 +45,23 @@ void Font::render(std::string text,
 	int cx, cy;
 	Image *t(0);
 	std::vector<std::string> stext = split(text,"\n\r");
+	std::string c("");
 	for (unsigned int i = 0; i < stext.size(); i++)
 	{
-		t=new Image(TTF_RenderText_Blended(font, stext[i].c_str(), color));
+		c="";
+		for (unsigned int j = 0; j < stext[i].size(); j++)
+		{
+			switch (stext[i][j])
+			{
+				case '\t':
+					c += "    ";
+					break;
+				default:
+					c += stext[i][j];
+					break;
+			}
+		}
+		t=new Image(TTF_RenderText_Blended(font, c.c_str(), color));
 		if (a==ALIGN_LEFT) cx = x;
 		else if (a==ALIGN_CENTER) cx = x-t->getWidth()/2;
 		else if (a==ALIGN_RIGHT) cx = x-t->getWidth();

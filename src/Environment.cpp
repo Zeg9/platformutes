@@ -23,7 +23,8 @@
 
 Environment::Environment() :
 	allowSprites(true),
-	player(new Player())
+	player(new Player()),
+	cls(false)
 {}
 Environment::~Environment()
 {
@@ -35,9 +36,7 @@ Environment::~Environment()
 
 void Environment::reset()
 {
-	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
-		i != sprites.end(); i++)
-			s2r.push((*i));
+	cls = true;
 	PLAYER->setPos(32,64);
 	PLAYER->setVel(0,0);
 	PLAYER->setImage("common.character");
@@ -54,26 +53,40 @@ void Environment::removeSprite(Sprite *s)
 
 void Environment::render()
 {
+	s2rstep();
 	lvl.render();
 	if (!allowSprites) return;
 	for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
-		(*i)->render();
+			(*i)->render();
 	player->render();
 }
 
 void Environment::step()
 {
+	s2rstep();
 	if (allowSprites) for (std::list<Sprite*>::iterator i = sprites.begin();
 		i != sprites.end(); i++)
-			(*i)->step();
+			try {
+				(*i)->step();
+			} catch (...) {
+				s2r.push(*i);
+			}
+	s2rstep();
 	player->step();
 	s2rstep();
 }
 
 void Environment::s2rstep()
 {
-	if (allowSprites) while (!s2r.empty())
+	if (cls)
+	{
+		for (std::list<Sprite*>::iterator i = sprites.begin();
+			i != sprites.end(); i++)
+				s2r.push((*i));
+		cls = false;
+	}
+	while (!s2r.empty())
 	{
 		if (std::find(sprites.begin(), sprites.end(), s2r.top()) == sprites.end())
 		{

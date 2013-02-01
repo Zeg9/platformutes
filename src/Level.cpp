@@ -33,35 +33,47 @@
 
 #include <iostream>
 
-void spriteFromTile (int x, int y, Tile&t)
+static Image* shading[8];
+
+void spriteFromTile (int x, int y, Tile*t)
 {
-	std::string image = t.getImageName();
+	std::string image = t->getImageName();
 	std::vector<std::string> tokens = split(image,'&',2);
 	if (tokens.size()==2)
 		image = tokens[0];
 	Sprite * s = 0;
-	if(t.getSprite() == "badguy")
+	if(t->getSprite() == "badguy")
 		s = new Badguy(
 			image, x*TILE_WIDTH, y*TILE_HEIGHT,
-			t.getScripts());
-	else if (t.getSprite() == "scripted")
+			t->getScripts());
+	else if (t->getSprite() == "scripted")
 		s = new ScriptedSprite(
 			image, x*TILE_WIDTH, y*TILE_HEIGHT,
-			t.getScripts());
+			t->getScripts());
 	if (s != 0)
 	{
 		if (tokens.size()==2)
 			s->setState(tokens[1]);
-		s->enablePhysics(t.isSolid());
+		s->enablePhysics(t->isSolid());
 		ENV.addSprite(s);
 	}
 }
 
 Level::Level():
-	tileset(""), background(""), name(""),
+	tileset(""), tsptr(0), background(0),
+	name(""), next(""),
 	width(0), height(0),
 	blocks(0)
-{}
+{
+	shading[0] = getResourceMgr().getImage("common/shading/t");
+	shading[1] = getResourceMgr().getImage("common/shading/b");
+	shading[2] = getResourceMgr().getImage("common/shading/l");
+	shading[3] = getResourceMgr().getImage("common/shading/r");
+	shading[4] = getResourceMgr().getImage("common/shading/tr");
+	shading[5] = getResourceMgr().getImage("common/shading/br");
+	shading[6] = getResourceMgr().getImage("common/shading/bl");
+	shading[7] = getResourceMgr().getImage("common/shading/tl");
+}
 void Level::load(std::string _name)
 {
 	name = _name;
@@ -76,11 +88,12 @@ void Level::load_next()
 void Level::reload()
 {
 	ENV.reset();
+	getScriptVars().clear();
 	if (getConfig().getBool("_ingame"))
 		getConfig().setString("current_level",name);
 	std::cout << "== Loading level: " << name << "..." << std::endl;
 	width = height = 0;
-	tileset = background = next = "";
+	tileset = next = "";
 	std::ifstream ifs((getResourceMgr().getPath("levels/"+name+".pmlvl")).c_str());
 	std::string fl;
 	getline(ifs,fl);
@@ -94,9 +107,10 @@ void Level::reload()
 		if (key == "width") w = toint(value);
 		if (key == "height") h = toint(value);
 		if (key == "tileset") tileset = value;
-		if (key == "background") background = value;
 		if (key == "next") next = value;
 	}
+	updateTileset();
+	background = getResourceMgr().getImage("tilesets/"+tileset+"/background");
 	if (blocks != 0 && width > 0 && height > 0)
 	{
 		for (int x = 0; x < width; x++)
@@ -174,7 +188,6 @@ void Level::save()
 	out << "width: " << width << "; ";
 	out << "height: " << height << "; ";
 	out << "tileset: " << tileset << "; ";
-	out << "background: " << background << "; ";
 	out << "next: " << next << "; ";
 	out << '\n';
 	for (int y = 0; y < height; y++)
@@ -194,25 +207,28 @@ void Level::save()
 	out << std::flush;
 }
 
-int Level::getId(int x, int y)
+int Level::getId(int _x, int _y)
 {
-	if (x >= 0 && y >= 0 && x < width && y < height)
-		return blocks[x][y];
-	return 0;
+	unsigned int x(_x), y(_y);
+	if (_x < 0) x = 0;
+	if (_x >= width) x = width-1;
+	if (_y < 0) y = 0;
+	if (_y >= height) y = height-1;
+	return blocks[x][y];
 }
-Tile &Level::get(int x, int y)
+Tile *Level::get(int x, int y)
 {
 	return getTileset()->get(getId(x,y));
 }
-Tile &Level::get(vec2 p)
+Tile *Level::get(vec2 p)
 {
 	return get(p.x, p.y);
 }
 void Level::set(int x, int y, int tile)
 {
 	if (!(x >= 0 && x < getWidth() && y >= 0 && y < getHeight())) return;
-	Tile &t = getTileset()->get(tile);
-	if (ENV.allowSprites && t.getSprite() != "none")
+	Tile *t = getTileset()->get(tile);
+	if (ENV.allowSprites && t->getSprite() != "none")
 		spriteFromTile(x,y,t);
 	else
 		blocks[x][y] = tile;
@@ -220,11 +236,16 @@ void Level::set(int x, int y, int tile)
 
 Image *Level::getBackground()
 {
-	return getResourceMgr().getImage("tilesets/"+tileset+"/background");
+	return background;
+}
+void Level::updateTileset()
+{
+	tsptr = getResourceMgr().getTileset(tileset);
 }
 Tileset *Level::getTileset()
 {
-	return getResourceMgr().getTileset(tileset);
+	if (!tsptr) updateTileset();
+	return tsptr;
 }
 std::string Level::getTilesetName() { return tileset; }
 int Level::getWidth() { return width; }
@@ -247,43 +268,43 @@ void Level::render()
 				y = sy;
 			else if (PPOS.y+TILE_HEIGHT > getHeight()*TILE_HEIGHT-d.getHeight()/2)
 				y = getHeight()-d.getHeight()/TILE_HEIGHT+sy;
-			if (get(x,y).isAir()) continue;
+			if (get(x,y)->isAir()) continue;
 			
-			if (ENV.allowSprites && get(x,y).getSprite() != "none")
+			if (ENV.allowSprites && get(x,y)->getSprite() != "none")
 			{
 				spriteFromTile(x,y,get(x,y));
 				blocks[x][y] = -1;
 				continue;
 			}
 			vec2 dp = getDrawPos(vec2(x*TILE_WIDTH, y*TILE_HEIGHT));
-			d.drawImage(get(x,y).getImage(), dp);
-			if (!get(x,y).hasShading()) continue;
+			d.drawImage(get(x,y)->getImage(), dp);
+			if (!get(x,y)->hasShading()) continue;
 			bool t, b, l, r, tr, br, bl, tl;
 			int w = getWidth(), h = getHeight();
-			t = !get(x,y-1).hasShading();
-			b = !get(x,y+1).hasShading();
-			l = !get(x-1,y).hasShading();
-			r = !get(x+1,y).hasShading();
-			tr = !get(x+1,y-1).hasShading();
-			br = !get(x+1,y+1).hasShading();
-			bl = !get(x-1,y+1).hasShading();
-			tl = !get(x-1,y-1).hasShading();
+			t = !get(x,y-1)->hasShading();
+			b = !get(x,y+1)->hasShading();
+			l = !get(x-1,y)->hasShading();
+			r = !get(x+1,y)->hasShading();
+			tr = !get(x+1,y-1)->hasShading();
+			br = !get(x+1,y+1)->hasShading();
+			bl = !get(x-1,y+1)->hasShading();
+			tl = !get(x-1,y-1)->hasShading();
 			if (y > 0 && t)
-				d.drawImage(getResourceMgr().getImage("common/shading/t"),dp);
+				d.drawImage(shading[0],dp); // top
 			if (y < h-1 && b)
-				d.drawImage(getResourceMgr().getImage("common/shading/b"),dp);
+				d.drawImage(shading[1],dp); // bottom
 			if (x > 0 && l)
-				d.drawImage(getResourceMgr().getImage("common/shading/l"),dp);
+				d.drawImage(shading[2],dp); // left
 			if (x < w-1 && r)
-				d.drawImage(getResourceMgr().getImage("common/shading/r"),dp);
+				d.drawImage(shading[3],dp); // right
 			if (tr && !(t || r))
-				d.drawImage(getResourceMgr().getImage("common/shading/tr"),dp);
+				d.drawImage(shading[4],dp); // top right
 			if (br && !(b || r))
-				d.drawImage(getResourceMgr().getImage("common/shading/br"),dp);
+				d.drawImage(shading[5],dp); // bottom right
 			if (bl && !(b || l))
-				d.drawImage(getResourceMgr().getImage("common/shading/bl"),dp);
+				d.drawImage(shading[6],dp); // bottom left
 			if (tl && !(t || l))
-				d.drawImage(getResourceMgr().getImage("common/shading/tl"),dp);
+				d.drawImage(shading[7],dp); // top left
 		}
 	}
 }
