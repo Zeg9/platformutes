@@ -65,7 +65,8 @@ void Image::setAlpha(Uint8 a)
 	SDL_SetAlpha(surf, SDL_SRCALPHA|SDL_RLEACCEL, a);
 }
 
-Device::Device() : lastticks(0), fullscreen(false), cursor(true), done(false)
+Device::Device() : lastticks(0), cfps(0), lfps(0),
+	fullscreen(false), cursor(true), done(false)
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
@@ -149,6 +150,13 @@ void Device::render()
 		cursor = false;
 	}
 	SDL_Flip(screen);
+	int ticks = SDL_GetTicks();
+	if (ticks/1000 > lastticks/1000)
+	{
+		lfps = cfps;
+		cfps = 0;
+	}
+	cfps ++;
 }
 
 void Device::clear()
@@ -161,8 +169,7 @@ bool Device::run()
 	int ticks = SDL_GetTicks();
 	if (ticks - lastticks < TBF)
 		SDL_Delay(TBF-(ticks-lastticks));
-	SDL_WM_SetCaption(("Platformutes [FPS="+
-		tostring(1000/getDTime())+"]").c_str(),
+	SDL_WM_SetCaption(("Platformutes [FPS="+tostring(lfps)+"]").c_str(),
 		"Platformutes");
 	lastticks = ticks;
 	SDL_Event e;

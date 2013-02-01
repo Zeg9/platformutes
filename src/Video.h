@@ -46,7 +46,7 @@
 #define MAX_FPS 60
 
 // You shouldn't modify this.
-#define TBF 1000/MAX_FPS // Time between frames
+#define TBF 1000/MAX_FPS+1 // Time between frames
 
 
 class Image
@@ -94,6 +94,7 @@ class Device
 		SDL_Surface *screen;
 		std::stack<SDL_Event> eventStack;
 		int lastticks; // last frame SDL_GetTicks()
+		int cfps, lfps; // current, last fps
 		bool fullscreen;
 		bool cursor;
 		bool done; // When set to true, the application exits
