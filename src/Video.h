@@ -46,7 +46,7 @@
 #define MAX_FPS 60
 
 // You shouldn't modify this.
-#define TBF 1000/MAX_FPS+1 // Time between frames
+#define TBF (1000/MAX_FPS+1) // Time between frames
 
 
 class Image

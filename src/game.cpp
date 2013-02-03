@@ -130,7 +130,7 @@ void startGame(bool loadLevel)
 		// update everything
 		if (!pause){
 			int i;
-			for (i = 0; i <= d.getDTime()/(TBF); i++)
+			for (i = 0; i <= d.getDTime()/TBF; i++)
 				getEnvironment().step();
 		}
 	}
