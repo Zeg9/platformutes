@@ -1,0 +1,7 @@
+[1]
+	img: steel;
+	shading: true;
+[3]
+	img: acid;
+	solid: false;
+

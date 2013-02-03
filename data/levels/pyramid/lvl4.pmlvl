@@ -1,4 +1,4 @@
-width: 50; height: 50; tileset: pyramid; background: pyramid; next: pyramid/lvl5; 
+width: 50; height: 50; tileset: pyramid; next: pyramid/lvl5; 
 1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
 1   0   0   0   0   0   0   0   0   0   0   1   1   1   1   1   1   1   1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0
 1   0   2   0   0   0   0   0   0   0   0   0   1   1   1   0   0   1   1   1   1   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0

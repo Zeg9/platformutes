@@ -1,7 +1,3 @@
-[tileset]
-	on_level_load:
-		set_var(health, 5)
-	;
 [1]
 	img: sand;
 [2]
@@ -15,9 +11,42 @@
 	solid: false;
 	jumping: true;
 	slowness: 2,4;
+[20]
+	img: lever_off;
+	solid: false;
+	on_hit:
+		ifeq($player.image, common.character)
+			play_sound(lever)
+			level.set_tile(0,0,29)
+			level.set_tile(-3,-1,50)
+		endif()
+[28]
+	img: lever_off;
+	solid: false;
+	on_hit:
+		ifeq($player.image, common.character)
+			play_sound(lever)
+			level.set_tile(0,0,29)
+		endif()
+[29]
+	img: lever_on;
+	solid: false;
+	on_hit:
+		ifeq($player.image, common.character)
+			play_sound(lever)
+			level.set_tile(0,0,28)
+		endif()
 [50]
 	img: sandstone;
 	shading: true;
 [51]
 	img: sandstone_bg;
 	solid: false;
+[101]
+	img: portal&idle;
+	sprite: scripted;
+	solid: false;
+	on_hit:
+		play_sound(portal)
+		level.load_next()
+	;
