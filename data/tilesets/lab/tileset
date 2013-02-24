@@ -1,7 +1,58 @@
 [1]
-	img: steel;
-	shading: true;
+	img:steel;
+	shading:true;
+[2]
+	img:lamp;
+	light:2;
+	solid:0;
 [3]
-	img: acid;
-	solid: false;
+	img:acid;
+	on_contact:
+		player.die();
+	solid:0;
+[4]
+	img:door_top;
+	solid:0;
+[5]
+	img:door_bottom;
+	solid:0;
+[6]
+	img:door_top_closed;
+[7]
+	img:door_bottom_closed;
+[8]
+	img:shaft;
+	solid:0;
+	on_contact:
+		level.load_next();
+[9]
+	img:bed_l;
+	solid:0;
+[10]
+	img:bed_r;
+	solid:0;
+[11]
+	img:key;
+	solid:0;
+	on_contact:
+		level.set_tile(0,0,0)
+		set_var(key_y, true)
+[12]
+	img:lock_l;
+	solid:0;
+	on_contact:		
+		ifeq ($script.key_y, true)
+			level.set_tile(-1,0,4)
+			level.set_tile(-1,1,5)
+			set_var(key_y, false)
+		endif()
+[13]
+	img:lock_r;
+	solid:0;
+	on_contact:		
+		ifeq ($script.key_y, true)
+			level.set_tile(1,0,4)
+			level.set_tile(1,1,5)
+			set_var(key_y, false)
+		endif();
 
