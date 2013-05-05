@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.6)
-		
+
 project(platformutes)
 
 # We have some custom .cmake scripts not in the official distribution.
