@@ -44,19 +44,15 @@ void MenuEntry::event(SDL_Event &e, Menu*menu)
 	switch (e.type)
 	{
 		case SDL_KEYDOWN:
-			switch (e.key.keysym.sym)
+			if (e.key.keysym.sym == SDLK_BACKSPACE)
+				value = value.substr(0,value.size()-1);
+			break;
+		case SDL_TEXTINPUT:
 			{
-				case SDLK_BACKSPACE:
-					value = value.substr(0,value.size()-1);
-					break;
-				default:
-					break;
-			}
-			{
-				char u = e.key.keysym.unicode;
+				/*char u = e.key.keysym.unicode;
 				if (vlen > 0 && value.size() >= vlen) break;
-				if (u < vmin || u > vmax) break;
-				value += u;
+				if (u < vmin || u > vmax) break;*/
+				value += e.text.text;
 			}
 			break;
 	}
@@ -155,15 +151,15 @@ void Menu::render()
 bool Menu::loop()
 {
 	Device &d = getDevice();
-	Image *scr = d.screenshot();
-	scr->setAlpha(64);
+	/*Image *scr = d.screenshot();
+	scr->setAlpha(64);*/ // FIXME- it was better with this hacky thing
 	SDL_Event e;
 	bool accept=false;
 	bool done=false;
 	while (d.run() && !done)
 	{
 		d.clear();
-		d.drawImage(scr);
+		/*d.drawImage(scr);*/
 		getResourceMgr().getFont("common/FreeSans&48")->render
 			(title,255,255,255,48,48);
 		render();
@@ -186,7 +182,7 @@ bool Menu::loop()
 			}
 		}
 	}
-	delete scr;
+	//delete scr;
 	return accept;
 }
 

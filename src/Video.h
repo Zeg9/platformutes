@@ -19,9 +19,11 @@
 #ifndef __VIDEO_H__
 #define __VIDEO_H__
 
+#include <iostream>//TODO REMOVE
+
 #include <stack>
 #include <string>
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include "tools.h"
 
 // You can change the resolution here
@@ -54,7 +56,7 @@ class Image
 	friend class Device;
 	public:
 		Image(std::string filename);
-		Image(SDL_Surface *_surf);
+		Image(SDL_Surface *surf);
 		Image(const char **xpm);
 		~Image();
 		int getWidth();
@@ -62,12 +64,16 @@ class Image
 		vec2 getSize();
 		void setAlpha(Uint8 a);
 	private:
-		SDL_Surface *surf;
+		int w, h;
+		SDL_Texture *tex;
 };
 
 class Device
 {
 	friend Device &getDevice();
+	friend Image::Image(std::string filename);
+	friend Image::Image(SDL_Surface *surf); // this frees the surface...
+	friend Image::Image(const char **xpm);
 	public:
 		int getWidth();
 		int getHeight();
@@ -85,13 +91,13 @@ class Device
 		bool hasEvent();
 		SDL_Event nextEvent();
 		int getDTime();
-		Image *screenshot();
 		void quit(); // done = true
 		void close(); // This closes the window faster
 	private:
 		Device();
 		~Device();
-		SDL_Surface *screen;
+		SDL_Window *window;
+		SDL_Renderer *renderer;
 		std::stack<SDL_Event> eventStack;
 		int lastticks; // last frame SDL_GetTicks()
 		int cfps, lfps; // current, last fps

@@ -18,9 +18,9 @@
 
 #include <string>
 #include <stdexcept>
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
+#include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_ttf.h>
 #include "tools.h"
 #include "ResourceMgr.h"
 #include "Config.h"
@@ -28,31 +28,41 @@
 
 Image::Image(std::string filename)
 {
-	surf = IMG_Load(filename.c_str());
+	SDL_Surface *surf = IMG_Load(filename.c_str());
+	w = surf->w; h = surf->h;
 	if (!surf)
 		throw std::runtime_error("Couldn't load image: "+filename);
+	tex = SDL_CreateTextureFromSurface(getDevice().renderer, surf);
+	SDL_FreeSurface(surf);
 }
-Image::Image(SDL_Surface *_surf) : surf(_surf)
-{}
+Image::Image(SDL_Surface *surf)
+{
+	w = surf->w; h = surf->h;
+	tex = SDL_CreateTextureFromSurface(getDevice().renderer, surf);
+	SDL_FreeSurface(surf);
+}
 Image::Image(const char **xpm)
 {
-	surf = IMG_ReadXPMFromArray(const_cast<char**>(xpm));
+	SDL_Surface *surf = IMG_ReadXPMFromArray(const_cast<char**>(xpm));
+	w = surf->w; h = surf->h;
 	if (!surf)
 		throw std::runtime_error("Couldn't load xpm");
+	tex = SDL_CreateTextureFromSurface(getDevice().renderer, surf);
+	SDL_FreeSurface(surf);
 }
 Image::~Image()
 {
-	SDL_FreeSurface(surf);
+	SDL_DestroyTexture(tex);
 }
 
 int Image::getWidth()
 {
-	return surf->w;
+	return w;
 }
 
 int Image::getHeight()
 {
-	return surf->h;
+	return h;
 }
 
 vec2 Image::getSize()
@@ -60,9 +70,9 @@ vec2 Image::getSize()
 	return vec2(getWidth(), getHeight());
 }
 
-void Image::setAlpha(Uint8 a)
+void Image::setAlpha(Uint8 a) // FIXME: remove me, I'm obsolete
 {
-	SDL_SetAlpha(surf, SDL_SRCALPHA|SDL_RLEACCEL, a);
+	//SDL_SetAlpha(surf, SDL_SRCALPHA|SDL_RLEACCEL, a);
 }
 
 Device::Device() : lastticks(0), cfps(0), lfps(0),
@@ -71,9 +81,6 @@ Device::Device() : lastticks(0), cfps(0), lfps(0),
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
 	SDL_ShowCursor(false);
-	SDL_EnableKeyRepeat(100,100);
-	SDL_EnableUNICODE(SDL_ENABLE);
-	SDL_WM_SetCaption("Platformutes",0);
 	fullscreen = getConfig().getBool("fullscreen");
 	int width = getConfig().getInt("width"),
 	    height = getConfig().getInt("height");
@@ -85,32 +92,32 @@ Device::Device() : lastticks(0), cfps(0), lfps(0),
 		height = VIDEO_HEIGHT;
 		getConfig().setInt("height", height);
 	}
-	if (fullscreen)
-		screen = SDL_SetVideoMode(width, height,
-			VIDEO_BPP,VIDEO_SDL_FLAGS|SDL_FULLSCREEN);
-	else
-		screen = SDL_SetVideoMode(width, height,
-			VIDEO_BPP,VIDEO_SDL_FLAGS);
+	window = SDL_CreateWindow("Platformutes",
+	                          SDL_WINDOWPOS_UNDEFINED,
+	                          SDL_WINDOWPOS_UNDEFINED,
+	                          0,0,
+	                          SDL_WINDOW_FULLSCREEN_DESKTOP);
+
+
+	renderer = SDL_CreateRenderer(window, -1, 0);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");  // keep pixelated
+	SDL_RenderSetLogicalSize(renderer, 640, 480);
+	// FIXME: get fullscreen-toggle back
 }
 Device::~Device()
 {
 	TTF_Quit();
-	SDL_Quit();
+	SDL_Quit(); //FIXME destroy window and renderer? maybe?
 }
 
-int Device::getWidth() { return screen->w; }
-int Device::getHeight() { return screen->h; }
+int Device::getWidth() { return VIDEO_WIDTH; }
+int Device::getHeight() { return VIDEO_HEIGHT; }
 
 void Device::toggleFullscreen()
 {
-	fullscreen = !fullscreen;
-	getConfig().setBool("fullscreen",fullscreen);
-	if (fullscreen)
-		screen = SDL_SetVideoMode(getWidth(), getHeight(),
-			VIDEO_BPP,VIDEO_SDL_FLAGS|SDL_FULLSCREEN);
-	else
-		screen = SDL_SetVideoMode(getWidth(), getHeight(),
-			VIDEO_BPP,VIDEO_SDL_FLAGS);
+	// FIXME: repair meh
+	/*fullscreen = !fullscreen;
+	getConfig().setBool("fullscreen",fullscreen);*/
 }
 void Device::showCursor(bool show)
 {
@@ -121,8 +128,8 @@ void Device::drawImage(Image *i, int x, int y)
 {
 	SDL_Rect dstrect;
 	dstrect.x = x; dstrect.y = y;
-	dstrect.w = dstrect.h = 0;
-	SDL_BlitSurface(i->surf, 0, screen, &dstrect);
+	dstrect.w = i->getWidth(); dstrect.h = i->getHeight();
+	SDL_RenderCopy(renderer, i->tex, 0, &dstrect);
 }
 void Device::drawImage(Image *i, vec2 p)
 {
@@ -136,7 +143,7 @@ void Device::drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch)
 	SDL_Rect srcrect;
 	srcrect.x = cx; srcrect.y = cy;
 	srcrect.w = cw; srcrect.h = ch;
-	SDL_BlitSurface(i->surf, &srcrect, screen, &dstrect);
+	SDL_RenderCopy(renderer, i->tex, &srcrect, &dstrect);
 }
 
 void Device::render()
@@ -149,7 +156,7 @@ void Device::render()
 		SDL_ShowCursor(true);
 		cursor = false;
 	}
-	SDL_Flip(screen);
+	SDL_RenderPresent(renderer);
 	int ticks = SDL_GetTicks();
 	if (ticks/1000 > lastticks/1000)
 	{
@@ -161,7 +168,7 @@ void Device::render()
 
 void Device::clear()
 {
-	SDL_FillRect(screen,0,SDL_MapRGB(screen->format,0,0,0));
+	SDL_RenderClear(renderer);
 }
 
 bool Device::run()
@@ -169,8 +176,6 @@ bool Device::run()
 	int ticks = SDL_GetTicks();
 	if (ticks - lastticks < TBF)
 		SDL_Delay(TBF-(ticks-lastticks));
-	SDL_WM_SetCaption(("Platformutes [FPS="+tostring(lfps)+"]").c_str(),
-		"Platformutes");
 	lastticks = ticks;
 	SDL_Event e;
 	while(SDL_PollEvent(&e))
@@ -217,11 +222,6 @@ SDL_Event Device::nextEvent()
 int Device::getDTime()
 {
 	return SDL_GetTicks()-lastticks;
-}
-
-Image *Device::screenshot()
-{
-	return new Image(SDL_DisplayFormat(screen));
 }
 
 void Device::quit()

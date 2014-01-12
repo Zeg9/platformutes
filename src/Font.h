@@ -20,7 +20,7 @@
 #define __FONT_H__
 
 #include <string>
-#include <SDL/SDL_ttf.h>
+#include <SDL_ttf.h>
 
 enum Align {
 	ALIGN_LEFT,

@@ -19,7 +19,7 @@
 #include <stdexcept>
 #include <AL/al.h>
 #include <AL/alut.h>
-#include <SDL/SDL.h>
+#include <SDL.h>
 #include <vorbis/vorbisfile.h>
 #include "Environment.h"
 #include "Sound.h"
