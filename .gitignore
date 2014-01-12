@@ -1,13 +1,3 @@
 *~
 build
 windows
-xcf
-pages
-CMakeCache.txt
-CMakeFiles
-cmake_install.cmake
-Makefile
-platformutes
-install_manifest.txt
-*.dll
-platformutes.exe
