@@ -90,6 +90,7 @@ class Device
 		bool run();
 		bool hasEvent();
 		SDL_Event nextEvent();
+		vec2 getMousePos();
 		int getDTime();
 		void quit(); // done = true
 		void close(); // This closes the window faster
@@ -104,6 +105,7 @@ class Device
 		bool fullscreen;
 		bool cursor;
 		bool done; // When set to true, the application exits
+		vec2 mousepos;
 };
 Device &getDevice();
 

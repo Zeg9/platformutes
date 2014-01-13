@@ -70,13 +70,14 @@ vec2 Image::getSize()
 	return vec2(getWidth(), getHeight());
 }
 
-void Image::setAlpha(Uint8 a) // FIXME: remove me, I'm obsolete
+void Image::setAlpha(Uint8 a)
 {
-	//SDL_SetAlpha(surf, SDL_SRCALPHA|SDL_RLEACCEL, a);
+	SDL_SetTextureAlphaMod(tex,a);
+
 }
 
 Device::Device() : lastticks(0), cfps(0), lfps(0),
-	fullscreen(false), cursor(true), done(false)
+	fullscreen(false), cursor(true), done(false), mousepos(0,0)
 {
 	SDL_Init(SDL_INIT_VIDEO);
 	TTF_Init();
@@ -139,7 +140,7 @@ void Device::drawImage(Image *i, int x, int y, int cx, int cy, int cw, int ch)
 {
 	SDL_Rect dstrect;
 	dstrect.x = x; dstrect.y = y;
-	dstrect.w = dstrect.h = 0;
+	dstrect.w = cw; dstrect.h = ch;
 	SDL_Rect srcrect;
 	srcrect.x = cx; srcrect.y = cy;
 	srcrect.w = cw; srcrect.h = ch;
@@ -150,8 +151,7 @@ void Device::render()
 {
 	if (cursor) try
 	{
-		int x, y; SDL_GetMouseState(&x, &y);
-		drawImage(getResourceMgr().getImage("common/cursor"), x, y);
+		drawImage(getResourceMgr().getImage("common/cursor"), getMousePos());
 	} catch(...) {
 		SDL_ShowCursor(true);
 		cursor = false;
@@ -199,6 +199,10 @@ bool Device::run()
 						break;
 				}
 				break;
+			case SDL_MOUSEMOTION:
+				mousepos.x = e.motion.x;
+				mousepos.y = e.motion.y;
+				break;
 			default:
 				break;
 		}
@@ -217,6 +221,11 @@ SDL_Event Device::nextEvent()
 	SDL_Event e = eventStack.top();
 	eventStack.pop();
 	return e;
+}
+
+vec2 Device::getMousePos()
+{
+	return mousepos;
 }
 
 int Device::getDTime()
