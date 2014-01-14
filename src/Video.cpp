@@ -99,10 +99,15 @@ Device::Device() : lastticks(0), cfps(0), lfps(0),
 	                          0,0,
 	                          SDL_WINDOW_FULLSCREEN_DESKTOP);
 
+	std::string filter = getConfig().getString("filter");
+	if (filter == "") {
+		filter = "linear";
+		getConfig().setString("filter",filter);
+	}
 
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");  // keep pixelated
-	SDL_RenderSetLogicalSize(renderer, 640, 480);
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, filter.c_str());
+	SDL_RenderSetLogicalSize(renderer, width, height);
 	// FIXME: get fullscreen-toggle back
 }
 Device::~Device()
@@ -111,8 +116,8 @@ Device::~Device()
 	SDL_Quit(); //FIXME destroy window and renderer? maybe?
 }
 
-int Device::getWidth() { return VIDEO_WIDTH; }
-int Device::getHeight() { return VIDEO_HEIGHT; }
+int Device::getWidth() { return getConfig().getInt("width"); }
+int Device::getHeight() { return getConfig().getInt("height"); }
 
 void Device::toggleFullscreen()
 {
