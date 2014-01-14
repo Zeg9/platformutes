@@ -32,7 +32,7 @@
 #define H getSize().y
 
 Sprite::Sprite(std::string _img, int x, int y) :
-	img(_img), imgptr(0), state("stand_r"), p(x, y), v(0,0), physics(true)
+	img(_img), imgptr(0), state("stand_r"), p(x, y), v(0,0), physics(true), jumping(false)
 {}
 
 Sprite::~Sprite()
@@ -89,6 +89,9 @@ void Sprite::jump()
 		setVel(getVel().x,-10);
 }
 
+void Sprite::setJumping(bool j) { jumping = j; }
+bool Sprite::isJumping() { return jumping; }
+
 void Sprite::hit()
 {
 	// When the player hits the sprite
@@ -122,6 +125,7 @@ void Sprite::step()
 		p.x += v.x; p.y += v.y;
 		return;
 	}
+	if (jumping) jump();
 	int nx = p.x+(v.x/slowness.x),
 	    ny = p.y+(v.y/slowness.y);
 	if (v.y < 0 && !(

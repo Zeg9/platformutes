@@ -84,24 +84,25 @@ void startGame(bool loadLevel)
 						default:
 							break;
 					}
-					if (!pause) switch (e.key.keysym.sym)
+					if (!pause) switch (e.key.keysym.scancode)
 					{
-						case SDLK_LEFT:
+						case SDL_SCANCODE_LEFT:
 							PLAYER->setVel(-2,PLAYER->getVel().y);
 							PLAYER->setState("stand_l");
 							break;
-						case SDLK_RIGHT:
+						case SDL_SCANCODE_RIGHT:
 							PLAYER->setVel(2,PLAYER->getVel().y);
 							PLAYER->setState("stand_r");
 							break;
-						case SDLK_SPACE:
+						case SDL_SCANCODE_SPACE:
 							PLAYER->jump();
+							PLAYER->setJumping(true);
 							break;
-						case SDLK_LCTRL:
-						case SDLK_UP:
+						case SDL_SCANCODE_LCTRL:
+						case SDL_SCANCODE_UP:
 							PLAYER->doHit();
 							break;
-						case SDLK_BACKSPACE:
+						case SDL_SCANCODE_BACKSPACE:
 							getEnvironment().player->die();
 							break;
 						default:
@@ -109,15 +110,18 @@ void startGame(bool loadLevel)
 					}
 					break;
 				case SDL_KEYUP:
-					switch (e.key.keysym.sym)
+					switch (e.key.keysym.scancode)
 					{
-						case SDLK_LEFT:
+						case SDL_SCANCODE_LEFT:
 							if (PLAYER->getVel().x < 0)
 								PLAYER->setVel(0,PLAYER->getVel().y);
 							break;
-						case SDLK_RIGHT:
+						case SDL_SCANCODE_RIGHT:
 							if (PLAYER->getVel().x > 0)
 								PLAYER->setVel(0,PLAYER->getVel().y);
+							break;
+						case SDL_SCANCODE_SPACE:
+							PLAYER->setJumping(false);
 							break;
 						default:
 							break;

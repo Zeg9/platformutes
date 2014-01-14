@@ -50,6 +50,8 @@ class Sprite
 		vec2 getSize();
 		bool hasContact(vec2 po, vec2 si=vec2(TILE_WIDTH,TILE_HEIGHT));
 		void jump();
+		void setJumping(bool j);
+		bool isJumping();
 		virtual void hit();
 		virtual void die();
 		virtual void render();
@@ -61,6 +63,7 @@ class Sprite
 		vec2 p; // position
 		vec2 v; // velocity
 		bool physics;
+		bool jumping;
 };
 
 

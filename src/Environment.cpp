@@ -39,6 +39,7 @@ void Environment::reset()
 	cls = true;
 	PLAYER->setPos(32,64);
 	PLAYER->setVel(0,0);
+	PLAYER->setJumping(false);
 	PLAYER->setImage("common.character");
 }
 
