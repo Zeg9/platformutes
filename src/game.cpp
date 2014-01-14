@@ -88,11 +88,11 @@ void startGame(bool loadLevel)
 					{
 						case SDL_SCANCODE_LEFT:
 							PLAYER->setVel(-2,PLAYER->getVel().y);
-							PLAYER->setState("stand_l");
+							PLAYER->setState("walk_l");
 							break;
 						case SDL_SCANCODE_RIGHT:
 							PLAYER->setVel(2,PLAYER->getVel().y);
-							PLAYER->setState("stand_r");
+							PLAYER->setState("walk_r");
 							break;
 						case SDL_SCANCODE_SPACE:
 							PLAYER->jump();
@@ -113,13 +113,15 @@ void startGame(bool loadLevel)
 					switch (e.key.keysym.scancode)
 					{
 						case SDL_SCANCODE_LEFT:
-							if (PLAYER->getVel().x < 0)
+							if (PLAYER->getVel().x < 0) {
 								PLAYER->setVel(0,PLAYER->getVel().y);
-							break;
+								PLAYER->setState("stand_l");
+							} break;
 						case SDL_SCANCODE_RIGHT:
-							if (PLAYER->getVel().x > 0)
+							if (PLAYER->getVel().x > 0) {
 								PLAYER->setVel(0,PLAYER->getVel().y);
-							break;
+								PLAYER->setState("stand_r");
+							} break;
 						case SDL_SCANCODE_SPACE:
 							PLAYER->setJumping(false);
 							break;

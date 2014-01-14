@@ -21,6 +21,7 @@
 
 #include <map>
 #include <string>
+#include <iostream> // tmp
 #include "tools.h"
 #include "Level.h"
 
@@ -59,6 +60,8 @@ class Sprite
 	protected:
 		std::string img;
 		Image *imgptr;
+		unsigned int framecount;
+		unsigned int frame;
 		std::string state;
 		vec2 p; // position
 		vec2 v; // velocity

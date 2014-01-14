@@ -32,7 +32,7 @@
 #define H getSize().y
 
 Sprite::Sprite(std::string _img, int x, int y) :
-	img(_img), imgptr(0), state("stand_r"), p(x, y), v(0,0), physics(true), jumping(false)
+	img(_img), imgptr(0), framecount(0), frame(0), state("stand_r"), p(x, y), v(0,0), physics(true), jumping(false)
 {}
 
 Sprite::~Sprite()
@@ -45,28 +45,58 @@ void Sprite::enablePhysics(bool b) { physics = b; }
 void Sprite::setImage(std::string _img)
 {
 	img = _img;
+	setState(state);
 	updateImage();
 }
 void Sprite::updateImage()
 {
+	if (framecount != 0)
+	{
+		frame = frame+1;
+		if (frame >= framecount) frame = 1;
+	}
 	std::vector<std::string> tokens = split(img,'.');
+	std::string filename("");
 	if (tokens.size() == 2 && tokens[0]=="common")
-		imgptr = getResourceMgr().getImage(
-			"common/sprites/"+tokens[1]+'/'+state);
+		filename += "common/sprites/"+tokens[1];
 	else
-		imgptr = getResourceMgr().getImage(
-			"tilesets/"+getEnvironment().lvl.getTilesetName()
-			+"/sprites/"+img+'/'+state);
+		filename += "tilesets/"+ENV.lvl.getTilesetName()+"/sprites/"+img;
+	filename += '/'+state;
+	if (frame != 0)
+		filename += '_'+tostring((int)frame+1);
+	imgptr = getResourceMgr().getImage(filename);
 }
 Image *Sprite::getImage()
 {
-	if (!imgptr) updateImage();
+	updateImage();
 	return imgptr;
 }
 std::string Sprite::getImageName() { return img; }
 void Sprite::setState(std::string _state) {
 	state = _state;
-	updateImage();
+	
+	try {
+		// see if there is no animation
+		framecount = 0;
+		frame = 0;
+		updateImage();
+		std::cout << "Loaded static sprite for " << img << std::endl;
+	} catch (...) {
+		// try to load an animated sprite
+		framecount = 0;
+		frame = 1;
+		bool done = false;
+		while (!done)
+		{
+			try {
+				framecount += 1;
+				updateImage();
+			} catch(...) { done = true; }
+		}
+		framecount -= 1;
+		frame = 1;
+		std::cout << "Loaded anim for " << img << ", framecount=" << framecount << std::endl;
+	}
 }
 std::string Sprite::getState() { return state; }
 void Sprite::setPos(int x, int y) { p = vec2(x,y); }

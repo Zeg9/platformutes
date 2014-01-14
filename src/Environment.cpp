@@ -40,6 +40,7 @@ void Environment::reset()
 	PLAYER->setPos(32,64);
 	PLAYER->setVel(0,0);
 	PLAYER->setJumping(false);
+	PLAYER->setState("stand_r");
 	PLAYER->setImage("common.character");
 }
 
