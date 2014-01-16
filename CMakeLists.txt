@@ -20,6 +20,8 @@ file(
 if (WIN32)
 	set(CMAKE_RC_COMPILE_OBJECT "${CMAKE_RC_COMPILER} -i <SOURCE> -o <OBJECT> -O coff")
 	set(source_files icon.rc ${source_files})
+	set(PLATFORM_FLAGS WIN32)
+	set(PLATFORM_LIBS -lmingw32 -lSDL2main) # FIXME this only works with mingw
 endif()
 
 
@@ -35,6 +37,7 @@ Find_Package(Boost COMPONENTS system filesystem REQUIRED)
 
 add_executable(
 	platformutes
+	${PLATFORM_FLAGS}
 	${source_files}
 )
 
@@ -46,6 +49,7 @@ include_directories(
 
 target_link_libraries (
    platformutes
+   ${PLATFORM_LIBS}
    ${SDL2_LIBRARIES}
    ${SDL2_IMAGE_LIBRARIES}
    ${SDL2_TTF_LIBRARIES}

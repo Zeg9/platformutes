@@ -29,9 +29,9 @@
 Image::Image(std::string filename)
 {
 	SDL_Surface *surf = IMG_Load(filename.c_str());
-	w = surf->w; h = surf->h;
 	if (!surf)
 		throw std::runtime_error("Couldn't load image: "+filename);
+	w = surf->w; h = surf->h;
 	tex = SDL_CreateTextureFromSurface(getDevice().renderer, surf);
 	SDL_FreeSurface(surf);
 }
@@ -99,14 +99,18 @@ Device::Device() : lastticks(0), cfps(0), lfps(0),
 	                          0,0,
 	                          SDL_WINDOW_FULLSCREEN_DESKTOP);
 
+	std::string driver = getConfig().getString("driver");
+	if (driver != "")
+		SDL_SetHint(SDL_HINT_RENDER_DRIVER, driver.c_str());
+
 	std::string filter = getConfig().getString("filter");
 	if (filter == "") {
 		filter = "linear";
 		getConfig().setString("filter",filter);
 	}
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, filter.c_str());
 
 	renderer = SDL_CreateRenderer(window, -1, 0);
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, filter.c_str());
 	SDL_RenderSetLogicalSize(renderer, width, height);
 	// FIXME: get fullscreen-toggle back
 }
