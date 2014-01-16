@@ -19,8 +19,6 @@
 #ifndef __VIDEO_H__
 #define __VIDEO_H__
 
-#include <iostream>//TODO REMOVE
-
 #include <stack>
 #include <string>
 #include <SDL.h>
@@ -77,6 +75,7 @@ class Device
 	public:
 		int getWidth();
 		int getHeight();
+		void applyFullscreen();
 		void toggleFullscreen();
 		void showCursor(bool show);
 		// draw image by position

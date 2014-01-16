@@ -96,8 +96,8 @@ Device::Device() : lastticks(0), cfps(0), lfps(0),
 	window = SDL_CreateWindow("Platformutes",
 	                          SDL_WINDOWPOS_UNDEFINED,
 	                          SDL_WINDOWPOS_UNDEFINED,
-	                          0,0,
-	                          SDL_WINDOW_FULLSCREEN_DESKTOP);
+	                          width,height,
+	                          0);
 
 	std::string driver = getConfig().getString("driver");
 	if (driver != "")
@@ -112,7 +112,7 @@ Device::Device() : lastticks(0), cfps(0), lfps(0),
 
 	renderer = SDL_CreateRenderer(window, -1, 0);
 	SDL_RenderSetLogicalSize(renderer, width, height);
-	// FIXME: get fullscreen-toggle back
+	applyFullscreen();
 }
 Device::~Device()
 {
@@ -123,11 +123,15 @@ Device::~Device()
 int Device::getWidth() { return getConfig().getInt("width"); }
 int Device::getHeight() { return getConfig().getInt("height"); }
 
+void Device::applyFullscreen()
+{
+	SDL_SetWindowFullscreen(window, fullscreen ? SDL_WINDOW_FULLSCREEN_DESKTOP : 0);
+}
 void Device::toggleFullscreen()
 {
-	// FIXME: repair meh
-	/*fullscreen = !fullscreen;
-	getConfig().setBool("fullscreen",fullscreen);*/
+	fullscreen = !fullscreen;
+	getConfig().setBool("fullscreen",fullscreen);
+	applyFullscreen();
 }
 void Device::showCursor(bool show)
 {
