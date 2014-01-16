@@ -80,7 +80,6 @@ void Sprite::setState(std::string _state) {
 		framecount = 0;
 		frame = 0;
 		updateImage();
-		std::cout << "Loaded static sprite for " << img << std::endl;
 	} catch (...) {
 		// try to load an animated sprite
 		framecount = 0;
@@ -95,7 +94,6 @@ void Sprite::setState(std::string _state) {
 		}
 		framecount -= 1;
 		frame = 1;
-		std::cout << "Loaded anim for " << img << ", framecount=" << framecount << std::endl;
 	}
 }
 std::string Sprite::getState() { return state; }
